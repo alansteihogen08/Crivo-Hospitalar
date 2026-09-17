@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --crivo-bg: #F0F4F8;
+    --crivo-sf: #FFFFFF;
+    --crivo-bd: #D9E2EC;
+    --crivo-navy: #0B1F3A;
+    --crivo-teal: #0D9488;
+    --crivo-ac: #0A7EA4;
+    --crivo-red: #DC2626;
+    --crivo-amber: #CA8A04;
+    --crivo-green: #1A6B4A;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--crivo-bg);
+    color: #1A202C;
+  }
+
+  h1, h2, h3, .font-syne {
+    font-family: 'Syne', sans-serif;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+.crivo-card {
+  background: #ffffff;
+  border: 1px solid #D9E2EC;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.crivo-card-header {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #627D98;
+  font-weight: 700;
+}

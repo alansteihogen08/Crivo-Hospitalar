@@ -1,0 +1,6 @@
+{
+  "name": "Crivo — Triagem de Prescrição Hospitalar",
+  "description": "Sistema clínico para triagem de prescrições hospitalares, ajuste de dose por função renal (Cockcroft-Gault), detecção de interações medicamentosas e evolução por setor e leito.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
