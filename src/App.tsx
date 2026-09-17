@@ -80,6 +80,8 @@ export default function App() {
       setUser(currentUser);
       if (currentUser) {
         await crivoFirestore.ensureUsuarioDoc(currentUser);
+      } else {
+        setViewMode('landing');
       }
       refreshSetores();
     });
@@ -215,12 +217,16 @@ export default function App() {
     showToast(`Carregado: ${leito}`);
   };
 
-  // If in Landing mode, render the Landing Page
-  if (viewMode === 'landing') {
+  // If in Landing mode or unauthenticated, render the Landing Page
+  if (viewMode === 'landing' || !user) {
     return (
       <div className="min-h-screen">
         <LandingPage
           onEnterApp={() => {
+            if (!auth.currentUser) {
+              showToast('Cadastre-se ou entre com seu e-mail institucional.');
+              return;
+            }
             setViewMode('app');
             showToast('Ambiente Clínico ativado.');
           }}

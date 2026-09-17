@@ -23,20 +23,13 @@ import {
   arrayRemove
 } from 'firebase/firestore';
 import { EvolucaoEntry, LeitoDocData, SetorHospital } from '../types';
+import firebaseAppletConfig from '../../firebase-applet-config.json';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDYR4tJwMsJtC0VzxCovD0-4zviT68ElvU",
-  authDomain: "crivo-23c29.firebaseapp.com",
-  projectId: "crivo-23c29",
-  storageBucket: "crivo-23c29.firebasestorage.app",
-  messagingSenderId: "512094295397",
-  appId: "1:512094295397:web:11cb297eef1fc82f80bd8c",
-  measurementId: "G-Q2K94NR2GB"
-};
-
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const app = !getApps().length ? initializeApp(firebaseAppletConfig) : getApp();
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const db = (firebaseAppletConfig as any).firestoreDatabaseId
+  ? getFirestore(app, (firebaseAppletConfig as any).firestoreDatabaseId)
+  : getFirestore(app);
 
 // Fallback storage key prefixes
 const LOCAL_SETORES_KEY = 'crivo_local_setores';

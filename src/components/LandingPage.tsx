@@ -58,16 +58,27 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
     } catch (err: any) {
       setIsLoading(false);
       console.error('Auth error:', err);
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
-        setErrorMsg('E-mail ou senha incorretos.');
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+        setErrorMsg('E-mail ou senha incorretos. Se ainda não possui cadastro, clique em "Cadastre-se" abaixo.');
       } else if (err.code === 'auth/email-already-in-use') {
-        setErrorMsg('Este e-mail já está cadastrado. Faça login.');
+        setErrorMsg('Este e-mail já está cadastrado. Alterne para o modo de login.');
       } else if (err.code === 'auth/weak-password') {
         setErrorMsg('A senha deve ter pelo menos 6 caracteres.');
+      } else if (err.code === 'auth/invalid-email') {
+        setErrorMsg('Por favor, informe um endereço de e-mail válido.');
       } else {
-        // Allow seamless offline / sandbox access if Firebase is not yet provisioned
-        onEnterApp();
+        setErrorMsg(err.message || 'Falha ao autenticar. Verifique suas credenciais.');
       }
+    }
+  };
+
+  const handleProtectedEnterApp = () => {
+    if (auth.currentUser) {
+      onEnterApp();
+    } else {
+      setErrorMsg('Acesso restrito. Cadastre-se ou faça login com seu e-mail institucional para acessar o sistema.');
+      const emailInput = document.getElementById('login-email-input');
+      emailInput?.focus();
     }
   };
 
@@ -134,7 +145,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
 
           <button
             type="button"
-            onClick={onEnterApp}
+            onClick={handleProtectedEnterApp}
             className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono bg-teal-600 hover:bg-teal-500 text-white transition shadow-sm cursor-pointer"
           >
             <Smartphone className="w-3.5 h-3.5" />
@@ -193,6 +204,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
                 E-mail
               </label>
               <input
+                id="login-email-input"
                 type="email"
                 required
                 value={email}
@@ -416,7 +428,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
                 type="button"
                 onClick={() => {
                   setIsPresentationOpen(false);
-                  onEnterApp();
+                  handleProtectedEnterApp();
                 }}
                 className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white font-mono font-bold text-xs rounded-xl transition cursor-pointer"
               >

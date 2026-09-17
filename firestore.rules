@@ -1,0 +1,72 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    match /usuarios/{userId} {
+      allow read: if signedIn();
+      allow write: if signedIn() && request.auth.uid == userId;
+    }
+
+    match /setores_hospital/{setorId} {
+      allow read: if signedIn() &&
+        (resource.data.ownerUid == request.auth.uid ||
+         (resource.data.membros != null && request.auth.uid in resource.data.membros));
+
+      allow create: if signedIn() &&
+        request.resource.data.ownerUid == request.auth.uid;
+
+      allow update, delete: if signedIn() &&
+        resource.data.ownerUid == request.auth.uid;
+    }
+
+    match /evolucoes_setores/{documentId} {
+
+      function donoDoSetor(setorId) {
+        return get(/databases/$(database)/documents/setores_hospital/$(setorId)).data.ownerUid;
+      }
+      function membrosDoSetor(setorId) {
+        return get(/databases/$(database)/documents/setores_hospital/$(setorId)).data.membros;
+      }
+
+      allow read: if signedIn() &&
+        (!exists(/databases/$(database)/documents/evolucoes_setores/$(documentId)) ||
+         resource.data.ownerUid == request.auth.uid ||
+         request.auth.uid == donoDoSetor(resource.data.setorId) ||
+         request.auth.uid in membrosDoSetor(resource.data.setorId));
+
+      allow create: if signedIn() &&
+        request.resource.data.ownerUid == request.auth.uid &&
+        request.resource.data.ownerEmail == request.auth.token.email &&
+        (request.auth.uid == donoDoSetor(request.resource.data.setorId) ||
+         request.auth.uid in membrosDoSetor(request.resource.data.setorId));
+
+      allow update: if signedIn() &&
+        (resource.data.ownerUid == request.auth.uid ||
+         request.auth.uid == donoDoSetor(resource.data.setorId) ||
+         request.auth.uid in membrosDoSetor(resource.data.setorId));
+
+      allow delete: if signedIn() && resource.data.ownerUid == request.auth.uid;
+    }
+
+    match /leitos_ativos/{documentId} {
+      function donoDoSetorLA(setorId) {
+        return get(/databases/$(database)/documents/setores_hospital/$(setorId)).data.ownerUid;
+      }
+      function membrosDoSetorLA(setorId) {
+        return get(/databases/$(database)/documents/setores_hospital/$(setorId)).data.membros;
+      }
+      allow read: if signedIn() &&
+        (!exists(/databases/$(database)/documents/leitos_ativos/$(documentId)) ||
+         request.auth.uid == donoDoSetorLA(resource.data.setorId) ||
+         (resource.data.membros != null && request.auth.uid in membrosDoSetorLA(resource.data.setorId)));
+      allow create, update: if signedIn() &&
+        (request.auth.uid == donoDoSetorLA(request.resource.data.setorId) ||
+         request.auth.uid in membrosDoSetorLA(request.resource.data.setorId));
+    }
+  }
+}

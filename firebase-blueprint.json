@@ -1,0 +1,78 @@
+{
+  "entities": {
+    "Usuario": {
+      "title": "Usuario",
+      "description": "Perfil e identificação do usuário profissional",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" }
+      },
+      "required": ["email"]
+    },
+    "SetorHospital": {
+      "title": "SetorHospital",
+      "description": "Setor hospitalar gerenciado por farmacêuticos e equipe",
+      "type": "object",
+      "properties": {
+        "nome": { "type": "string" },
+        "ownerUid": { "type": "string" },
+        "ownerEmail": { "type": "string" },
+        "membros": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "membrosEmails": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["nome", "ownerUid"]
+    },
+    "EvolucaoSetor": {
+      "title": "EvolucaoSetor",
+      "description": "Evoluções e checagens farmacêuticas de leito/paciente",
+      "type": "object",
+      "properties": {
+        "setorId": { "type": "string" },
+        "setorNome": { "type": "string" },
+        "leito": { "type": "string" },
+        "entries": { "type": "array" },
+        "encerrado": { "type": "boolean" },
+        "atualizadoEm": { "type": "number" },
+        "ownerUid": { "type": "string" },
+        "ownerEmail": { "type": "string" }
+      },
+      "required": ["setorId", "leito"]
+    },
+    "LeitoAtivo": {
+      "title": "LeitoAtivo",
+      "description": "Rastreamento do episódio e status atual do leito",
+      "type": "object",
+      "properties": {
+        "setorId": { "type": "string" },
+        "leito": { "type": "string" },
+        "episodioAtual": { "type": "string" },
+        "atualizadoEm": { "type": "number" }
+      },
+      "required": ["setorId", "leito"]
+    }
+  },
+  "firestore": {
+    "/usuarios/{userId}": {
+      "entity": "Usuario",
+      "description": "Documentos de usuários para busca de compartilhamento"
+    },
+    "/setores_hospital/{setorId}": {
+      "entity": "SetorHospital",
+      "description": "Setores clínicos cadastrados no hospital"
+    },
+    "/evolucoes_setores/{docId}": {
+      "entity": "EvolucaoSetor",
+      "description": "Histórico de condutas e evoluções clínicas por leito"
+    },
+    "/leitos_ativos/{leitoId}": {
+      "entity": "LeitoAtivo",
+      "description": "Episódio corrente do leito hospitalar"
+    }
+  }
+}
