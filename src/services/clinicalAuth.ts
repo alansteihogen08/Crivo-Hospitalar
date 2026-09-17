@@ -1,5 +1,5 @@
 import { ClinicalUser } from '../types';
-import { auth } from './firebase';
+import { auth, crivoFirestore } from './firebase';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -136,6 +136,7 @@ export const clinicalAuth = {
     };
 
     this.setActiveSession(clinicalUser);
+    crivoFirestore.ensureUsuarioDoc(clinicalUser).catch(() => {});
     return { user: clinicalUser };
   },
 
@@ -170,6 +171,7 @@ export const clinicalAuth = {
 
     if (firebaseUser) {
       this.setActiveSession(firebaseUser);
+      crivoFirestore.ensureUsuarioDoc(firebaseUser).catch(() => {});
       return { user: firebaseUser };
     }
 
@@ -200,11 +202,17 @@ export const clinicalAuth = {
     };
 
     this.setActiveSession(clinicalUser);
+    crivoFirestore.ensureUsuarioDoc(clinicalUser).catch(() => {});
     return { user: clinicalUser };
   },
 
   // Login with Google
-  async loginWithGoogle(): Promise<{ user: ClinicalUser; error?: string }> {
+  async loginWithGoogle(): Promise<{
+    user: ClinicalUser;
+    error?: string;
+    errorCode?: string;
+    unauthorizedDomain?: string;
+  }> {
     try {
       const provider = new GoogleAuthProvider();
       const cred = await signInWithPopup(auth, provider);
@@ -233,10 +241,21 @@ export const clinicalAuth = {
       }
 
       this.setActiveSession(clinicalUser);
+      crivoFirestore.ensureUsuarioDoc(clinicalUser).catch(() => {});
       return { user: clinicalUser };
     } catch (err: any) {
+      console.warn('Google Auth Error:', err?.code, err?.message);
       if (err.code === 'auth/popup-closed-by-user') {
         return { user: null as any, error: 'Login com Google cancelado pelo usuário.' };
+      }
+      if (err.code === 'auth/unauthorized-domain' || err?.message?.includes('unauthorized-domain')) {
+        const domain = typeof window !== 'undefined' ? window.location.hostname : 'vercel.app';
+        return {
+          user: null as any,
+          errorCode: 'auth/unauthorized-domain',
+          unauthorizedDomain: domain,
+          error: `Domínio (${domain}) não está autorizado no Firebase Google Auth. Autorize-o no Console ou use seu E-mail e Senha abaixo.`
+        };
       }
       return { user: null as any, error: err.message || 'Falha ao autenticar com conta Google.' };
     }
@@ -272,6 +291,7 @@ export const clinicalAuth = {
     };
 
     this.setActiveSession(clinicalUser);
+    crivoFirestore.ensureUsuarioDoc(clinicalUser).catch(() => {});
     return { user: clinicalUser };
   },
 

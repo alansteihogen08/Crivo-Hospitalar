@@ -13,7 +13,10 @@ import {
   Activity,
   Layers,
   FileText,
-  Zap
+  Zap,
+  AlertTriangle,
+  Copy,
+  Check
 } from 'lucide-react';
 import { CrivoLogo } from './CrivoLogo';
 import { BiometricModal } from './BiometricModal';
@@ -36,12 +39,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
   const [isPresentationOpen, setIsPresentationOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [infoNotice, setInfoNotice] = useState<string | null>(null);
+  const [unauthorizedDomain, setUnauthorizedDomain] = useState<string | null>(null);
+  const [copiedDomain, setCopiedDomain] = useState(false);
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     setErrorMsg('');
+    setUnauthorizedDomain(null);
     const res = await clinicalAuth.loginWithGoogle();
     setIsLoading(false);
+
+    if (res.errorCode === 'auth/unauthorized-domain') {
+      const dom = res.unauthorizedDomain || (typeof window !== 'undefined' ? window.location.hostname : 'vercel.app');
+      setUnauthorizedDomain(dom);
+      if (!email.trim()) {
+        setEmail('alansteihogen08@gmail.com');
+      }
+      return;
+    }
+
     if (res.error) {
       setErrorMsg(res.error);
       return;
@@ -197,7 +213,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={isLoading}
-            className="w-full py-2.5 px-4 mb-4 bg-white border border-slate-300 hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-semibold text-sm rounded-full shadow-xs transition-all cursor-pointer flex items-center justify-center gap-3 disabled:opacity-50"
+            className="w-full py-2.5 px-4 mb-3 bg-white border border-slate-300 hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-semibold text-sm rounded-full shadow-xs transition-all cursor-pointer flex items-center justify-center gap-3 disabled:opacity-50"
           >
             <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -207,6 +223,57 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
             </svg>
             <span>Continuar com Google</span>
           </button>
+
+          {/* Diagnostic & Solution Box for Google Auth Domain Restriction */}
+          {unauthorizedDomain && (
+            <div className="mb-4 p-3.5 bg-amber-50/95 border border-amber-300/90 rounded-2xl text-left space-y-2.5 shadow-xs">
+              <div className="flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-bold text-xs text-slate-900 leading-snug">
+                    Domínio de hospedagem não autorizado no Google Auth
+                  </h4>
+                  <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                    O Google bloqueia popups de domínios desconhecidos por segurança. Para usar a conta Google neste endereço, autorize-o no Firebase:
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-2 bg-white border border-amber-200 rounded-xl font-mono text-[11px] text-slate-800 flex items-center justify-between gap-2">
+                <span className="truncate select-all font-semibold">{unauthorizedDomain}</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(unauthorizedDomain);
+                    setCopiedDomain(true);
+                    setTimeout(() => setCopiedDomain(false), 2500);
+                  }}
+                  className="px-2 py-1 bg-amber-100 hover:bg-amber-200 text-amber-900 font-sans font-semibold rounded-md text-[10px] shrink-0 flex items-center gap-1 transition cursor-pointer"
+                >
+                  {copiedDomain ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                  <span>{copiedDomain ? 'Copiado!' : 'Copiar URL'}</span>
+                </button>
+              </div>
+
+              <div className="text-[11px] text-slate-600 space-y-1 bg-amber-100/50 p-2 rounded-lg">
+                <p className="font-semibold text-slate-800">Passo a passo no Console:</p>
+                <ol className="list-decimal list-inside space-y-0.5 text-[10.5px]">
+                  <li>Acesse o <strong>Firebase Console</strong></li>
+                  <li>Vá em <strong>Authentication</strong> &rarr; aba <strong>Settings</strong></li>
+                  <li>Em <strong>Authorized domains</strong>, clique em <em>Add domain</em> e cole o endereço</li>
+                </ol>
+              </div>
+
+              <div className="pt-2 border-t border-amber-200/80">
+                <p className="text-[11px] font-semibold text-slate-800">
+                  Acesse agora sem esperar:
+                </p>
+                <p className="text-[11px] text-slate-600 mt-0.5">
+                  Preenchemos seu e-mail abaixo. Basta digitar sua senha ou clicar em "Cadastre-se" para entrar imediatamente!
+                </p>
+              </div>
+            </div>
+          )}
 
           <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">

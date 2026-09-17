@@ -59,7 +59,7 @@ export const SectorManagerView: React.FC<SectorManagerViewProps> = ({
 
   const handleRemoverMembro = async (setor: SetorHospital, email: string) => {
     const idx = (setor.membrosEmails || []).indexOf(email);
-    const uid = idx >= 0 ? setor.membros[idx] : '';
+    const uid = (idx >= 0 && Array.isArray(setor.membros)) ? (setor.membros[idx] || '') : '';
     const ok = await crivoFirestore.removerMembro(setor.id, uid, email);
     if (ok) {
       onShowToast(`Colaborador ${email} removido.`);

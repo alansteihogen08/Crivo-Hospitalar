@@ -91,6 +91,7 @@ export default function App() {
         const active = clinicalAuth.getActiveSession();
         if (active) {
           setUser(active);
+          await crivoFirestore.ensureUsuarioDoc(active);
         } else {
           setUser(null);
           setViewMode('landing');
@@ -101,9 +102,10 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-  const refreshSetores = async () => {
+  const refreshSetores = async (activeUserParam?: any) => {
     setIsSyncing(true);
-    const list = await crivoFirestore.getSetores();
+    const target = activeUserParam || user || clinicalAuth.getActiveSession();
+    const list = await crivoFirestore.getSetores(target);
     setSetores(list);
     setIsSyncing(false);
   };
@@ -244,6 +246,7 @@ export default function App() {
             clinicalAuth.setActiveSession(activeUser);
             setUser(activeUser);
             setViewMode('app');
+            refreshSetores(activeUser);
             showToast(`Ambiente Clínico ativado: ${activeUser.email || 'Profissional'}`);
           }}
         />
