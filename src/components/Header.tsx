@@ -1,11 +1,11 @@
 import React from 'react';
 import { LogOut, BookOpen, User as UserIcon } from 'lucide-react';
 import { User } from 'firebase/auth';
-import { SetorHospital } from '../types';
+import { SetorHospital, ClinicalUser } from '../types';
 import { CrivoLogo } from './CrivoLogo';
 
 interface HeaderProps {
-  user: User | null;
+  user: ClinicalUser | User | null;
   currentSetor?: SetorHospital | null;
   currentLeito: string;
   onOpenAuth: () => void;

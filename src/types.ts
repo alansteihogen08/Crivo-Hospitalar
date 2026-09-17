@@ -93,3 +93,10 @@ export interface LeitoDocData {
   ownerUid?: string;
   ownerEmail?: string;
 }
+
+export interface ClinicalUser {
+  uid: string;
+  email: string | null;
+  displayName: string | null;
+  photoURL?: string | null;
+}

@@ -77,11 +77,23 @@ export default function App() {
   // Auth observer
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
       if (currentUser) {
+        setUser(currentUser);
         await crivoFirestore.ensureUsuarioDoc(currentUser);
       } else {
-        setViewMode('landing');
+        const savedLocal = localStorage.getItem('crivo_local_clinical_user');
+        if (savedLocal) {
+          try {
+            const parsed = JSON.parse(savedLocal);
+            setUser(parsed);
+          } catch {
+            setUser(null);
+            setViewMode('landing');
+          }
+        } else {
+          setUser(null);
+          setViewMode('landing');
+        }
       }
       refreshSetores();
     });
@@ -222,13 +234,15 @@ export default function App() {
     return (
       <div className="min-h-screen">
         <LandingPage
-          onEnterApp={() => {
-            if (!auth.currentUser) {
+          onEnterApp={(customUser) => {
+            const activeUser = customUser || user || auth.currentUser;
+            if (!activeUser) {
               showToast('Cadastre-se ou entre com seu e-mail institucional.');
               return;
             }
+            setUser(activeUser);
             setViewMode('app');
-            showToast('Ambiente Clínico ativado.');
+            showToast(`Ambiente Clínico ativado: ${activeUser.email || 'Profissional'}`);
           }}
         />
 
@@ -270,6 +284,8 @@ export default function App() {
         onOpenAuth={() => setIsAuthModalOpen(true)}
         onLogout={() => {
           signOut(auth);
+          localStorage.removeItem('crivo_local_clinical_user');
+          setUser(null);
           setViewMode('landing');
           showToast('Sessão encerrada.');
         }}

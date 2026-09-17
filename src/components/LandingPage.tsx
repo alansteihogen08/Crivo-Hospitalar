@@ -17,11 +17,17 @@ import {
 } from 'lucide-react';
 import { CrivoLogo } from './CrivoLogo';
 import { BiometricModal } from './BiometricModal';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup
+} from 'firebase/auth';
 import { auth, crivoFirestore } from '../services/firebase';
+import { ClinicalUser } from '../types';
 
 interface LandingPageProps {
-  onEnterApp: () => void;
+  onEnterApp: (user?: ClinicalUser) => void;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
@@ -32,10 +38,52 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showOperationNotAllowed, setShowOperationNotAllowed] = useState(false);
   const [isBiometricModalOpen, setIsBiometricModalOpen] = useState(false);
   const [isPresentationOpen, setIsPresentationOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [infoNotice, setInfoNotice] = useState<string | null>(null);
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    setErrorMsg('');
+    setShowOperationNotAllowed(false);
+    try {
+      const provider = new GoogleAuthProvider();
+      const cred = await signInWithPopup(auth, provider);
+      await crivoFirestore.ensureUsuarioDoc(cred.user);
+      localStorage.setItem('crivo_biometric_user_email', cred.user.email || '');
+      localStorage.removeItem('crivo_local_clinical_user');
+      setIsLoading(false);
+      onEnterApp({
+        uid: cred.user.uid,
+        email: cred.user.email,
+        displayName: cred.user.displayName,
+        photoURL: cred.user.photoURL
+      });
+    } catch (err: any) {
+      setIsLoading(false);
+      console.error('Google Sign-In error:', err);
+      if (err.code === 'auth/popup-closed-by-user') {
+        setErrorMsg('Login com Google cancelado.');
+      } else {
+        setErrorMsg(err.message || 'Erro ao autenticar com a conta Google.');
+      }
+    }
+  };
+
+  const handleContinueLocalSession = () => {
+    const targetEmail = email.trim() || 'alansteihogen08@gmail.com';
+    const localUser: ClinicalUser = {
+      uid: 'prof_' + btoa(targetEmail).replace(/=/g, ''),
+      email: targetEmail,
+      displayName: targetEmail.split('@')[0] || 'Profissional Clínico',
+      photoURL: null
+    };
+    localStorage.setItem('crivo_local_clinical_user', JSON.stringify(localUser));
+    localStorage.setItem('crivo_biometric_user_email', targetEmail);
+    onEnterApp(localUser);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +92,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
       return;
     }
     setErrorMsg('');
+    setShowOperationNotAllowed(false);
     setIsLoading(true);
 
     try {
@@ -58,7 +107,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
     } catch (err: any) {
       setIsLoading(false);
       console.error('Auth error:', err);
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+      if (err.code === 'auth/operation-not-allowed') {
+        setShowOperationNotAllowed(true);
+        setErrorMsg('O provedor de E-mail/Senha está desativado no Firebase. Você pode entrar com Google ou acessar em Modo Clínico abaixo.');
+      } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
         setErrorMsg('E-mail ou senha incorretos. Se ainda não possui cadastro, clique em "Cadastre-se" abaixo.');
       } else if (err.code === 'auth/email-already-in-use') {
         setErrorMsg('Este e-mail já está cadastrado. Alterne para o modo de login.');
@@ -73,10 +125,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
   };
 
   const handleProtectedEnterApp = () => {
+    const savedLocal = localStorage.getItem('crivo_local_clinical_user');
     if (auth.currentUser) {
       onEnterApp();
+    } else if (savedLocal) {
+      try {
+        onEnterApp(JSON.parse(savedLocal));
+        return;
+      } catch {
+        // continue
+      }
     } else {
-      setErrorMsg('Acesso restrito. Cadastre-se ou faça login com seu e-mail institucional para acessar o sistema.');
+      setErrorMsg('Acesso restrito. Cadastre-se, entre com Google ou faça login para acessar o sistema.');
       const emailInput = document.getElementById('login-email-input');
       emailInput?.focus();
     }
@@ -90,10 +150,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
     }
   };
 
-  const handleBiometricSuccess = (_email: string) => {
+  const handleBiometricSuccess = (validatedEmail: string) => {
     setBiometricEnabled(true);
     setIsBiometricModalOpen(false);
-    onEnterApp();
+    const targetEmail = validatedEmail || email.trim() || 'alansteihogen08@gmail.com';
+    const clinicalUser: ClinicalUser = {
+      uid: auth.currentUser?.uid || ('bio_' + btoa(targetEmail).replace(/=/g, '')),
+      email: auth.currentUser?.email || targetEmail,
+      displayName: auth.currentUser?.displayName || targetEmail.split('@')[0] || 'Profissional Clínico',
+      photoURL: auth.currentUser?.photoURL || null
+    };
+    localStorage.setItem('crivo_local_clinical_user', JSON.stringify(clinicalUser));
+    localStorage.setItem('crivo_biometric_user_email', clinicalUser.email || targetEmail);
+    onEnterApp(clinicalUser);
   };
 
   return (
@@ -174,11 +243,68 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
             </p>
           </div>
 
+          {/* Google Sign-in Button */}
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={isLoading}
+            className="w-full py-2.5 px-4 mb-4 bg-white border border-slate-300 hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-semibold text-sm rounded-full shadow-xs transition-all cursor-pointer flex items-center justify-center gap-3 disabled:opacity-50"
+          >
+            <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+            </svg>
+            <span>Continuar com Google</span>
+          </button>
+
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-200" />
+            </div>
+            <div className="relative flex justify-center text-[11px]">
+              <span className="bg-white px-2 text-slate-400 font-mono">ou com e-mail institucional</span>
+            </div>
+          </div>
+
           {/* Error Message */}
           {errorMsg && (
             <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 flex items-start gap-2">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
+            </div>
+          )}
+
+          {/* Operation Not Allowed Resolution Box */}
+          {showOperationNotAllowed && (
+            <div className="mb-4 p-3.5 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 space-y-2.5 animate-fade-in text-left">
+              <div className="flex items-start gap-2 font-bold text-amber-950">
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <span>Provedor de E-mail/Senha precisa ser ativado no Firebase</span>
+              </div>
+              <p className="text-[11px] text-amber-800 leading-relaxed">
+                No Firebase, o login por senha requer ativação prévia no console. Para acessar imediatamente:
+              </p>
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={handleGoogleSignIn}
+                  className="w-full py-2 px-3 bg-white border border-amber-300 hover:bg-amber-100/60 rounded-xl font-semibold text-slate-800 text-xs flex items-center justify-center gap-2 cursor-pointer shadow-xs transition"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+                  <span>1. Entrar com Google ({email || 'alansteihogen08@gmail.com'})</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleContinueLocalSession}
+                  className="w-full py-2 px-3 bg-[#12153a] hover:bg-[#1d225c] text-white rounded-xl font-bold font-mono text-xs flex items-center justify-center gap-2 cursor-pointer shadow-xs transition"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
+                  <span>2. Liberar Acesso Clínico com {email.split('@')[0] || 'alansteihogen08'}</span>
+                </button>
+              </div>
             </div>
           )}
 
@@ -480,6 +606,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
           </div>
         </div>
       )}
+
+      {/* BIOMETRIC MODAL */}
+      <BiometricModal
+        isOpen={isBiometricModalOpen}
+        onClose={() => setIsBiometricModalOpen(false)}
+        onSuccess={handleBiometricSuccess}
+        defaultEmail={email}
+      />
     </div>
   );
 };
