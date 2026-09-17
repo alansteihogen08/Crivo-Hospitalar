@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { Layers, Plus, Trash2, UserPlus, Users, X, Check, Shield, AlertCircle } from 'lucide-react';
-import { SetorHospital } from '../types';
+import { SetorHospital, ClinicalUser } from '../types';
 import { crivoFirestore } from '../services/firebase';
 
 interface SectorManagerViewProps {
+  user: ClinicalUser | null;
   setores: SetorHospital[];
   onRefreshSetores: () => Promise<void>;
   onShowToast: (msg: string) => void;
 }
 
 export const SectorManagerView: React.FC<SectorManagerViewProps> = ({
+  user,
   setores,
   onRefreshSetores,
   onShowToast,
@@ -22,20 +24,20 @@ export const SectorManagerView: React.FC<SectorManagerViewProps> = ({
     e.preventDefault();
     if (!novoNome.trim()) return;
     setIsCreating(true);
-    const id = await crivoFirestore.criarSetor(novoNome.trim());
+    const id = await crivoFirestore.criarSetor(novoNome.trim(), user);
     setIsCreating(false);
     if (id) {
       setNovoNome('');
       onShowToast('Setor cadastrado com sucesso.');
       await onRefreshSetores();
     } else {
-      onShowToast(`Erro ao criar: ${crivoFirestore.lastError}`);
+      onShowToast(`Erro ao criar: ${crivoFirestore.lastError || 'Tente novamente.'}`);
     }
   };
 
   const handleExcluirSetor = async (setor: SetorHospital) => {
     if (!confirm(`Remover permanentemente o setor "${setor.nome}"?`)) return;
-    const ok = await crivoFirestore.excluirSetor(setor.id);
+    const ok = await crivoFirestore.excluirSetor(setor.id, user);
     if (ok) {
       onShowToast('Setor excluído com sucesso.');
       await onRefreshSetores();
@@ -47,7 +49,7 @@ export const SectorManagerView: React.FC<SectorManagerViewProps> = ({
   const handleCompartilhar = async (setorId: string) => {
     const email = (collabEmail[setorId] || '').trim();
     if (!email) return;
-    const ok = await crivoFirestore.compartilharSetor(setorId, email);
+    const ok = await crivoFirestore.compartilharSetor(setorId, email, user);
     if (ok) {
       onShowToast(`Setor compartilhado com ${email}.`);
       setCollabEmail((prev) => ({ ...prev, [setorId]: '' }));
@@ -60,7 +62,7 @@ export const SectorManagerView: React.FC<SectorManagerViewProps> = ({
   const handleRemoverMembro = async (setor: SetorHospital, email: string) => {
     const idx = (setor.membrosEmails || []).indexOf(email);
     const uid = (idx >= 0 && Array.isArray(setor.membros)) ? (setor.membros[idx] || '') : '';
-    const ok = await crivoFirestore.removerMembro(setor.id, uid, email);
+    const ok = await crivoFirestore.removerMembro(setor.id, uid, email, user);
     if (ok) {
       onShowToast(`Colaborador ${email} removido.`);
       await onRefreshSetores();

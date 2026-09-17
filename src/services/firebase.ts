@@ -31,32 +31,39 @@ export const db = (firebaseAppletConfig as any).firestoreDatabaseId
   ? getFirestore(app, (firebaseAppletConfig as any).firestoreDatabaseId)
   : getFirestore(app);
 
-// Fallback storage key prefixes
-const LOCAL_SETORES_KEY = 'crivo_local_setores';
+// User-scoped storage helpers
 const LOCAL_EVOLUCOES_KEY = 'crivo_local_evolucoes';
 
-function getLocalSetores(): SetorHospital[] {
+// Purge legacy shared key if present to prevent cross-account contamination
+try {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    window.localStorage.removeItem('crivo_local_setores');
+  }
+} catch {
+  // ignore
+}
+
+function getUserLocalSetoresKey(email: string): string {
+  const clean = (email || '').toLowerCase().trim().replace(/[^a-z0-9]/g, '_');
+  return `crivo_user_setores_${clean}`;
+}
+
+function getLocalSetores(email?: string): SetorHospital[] {
+  if (!email) return [];
   try {
-    const raw = localStorage.getItem(LOCAL_SETORES_KEY);
-    if (!raw) {
-      // Default demo sectors so the user has immediate data even before login
-      const defaults: SetorHospital[] = [
-        { id: 'uti_adulto', nome: 'UTI Adulto - Geral', ownerUid: 'local', ownerEmail: 'farmacia@hospital.com', membros: [], membrosEmails: [], souDono: true },
-        { id: 'enfermaria_clinica', nome: 'Enfermaria Clínica Médica', ownerUid: 'local', ownerEmail: 'farmacia@hospital.com', membros: [], membrosEmails: [], souDono: true },
-        { id: 'uti_cardio', nome: 'UTI Coronariana (UCO)', ownerUid: 'local', ownerEmail: 'farmacia@hospital.com', membros: [], membrosEmails: [], souDono: true }
-      ];
-      localStorage.setItem(LOCAL_SETORES_KEY, JSON.stringify(defaults));
-      return defaults;
-    }
-    return JSON.parse(raw);
+    const key = getUserLocalSetoresKey(email);
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
   }
 }
 
-function saveLocalSetores(setores: SetorHospital[]) {
+function saveLocalSetores(email: string, setores: SetorHospital[]) {
+  if (!email) return;
   try {
-    localStorage.setItem(LOCAL_SETORES_KEY, JSON.stringify(setores));
+    const key = getUserLocalSetoresKey(email);
+    localStorage.setItem(key, JSON.stringify(setores));
   } catch (e) {
     console.warn('LocalStorage error:', e);
   }
@@ -118,12 +125,6 @@ export const crivoFirestore = {
         email: String(providedUser.email).toLowerCase().trim()
       };
     }
-    if (auth.currentUser?.email) {
-      return {
-        uid: auth.currentUser.uid,
-        email: String(auth.currentUser.email).toLowerCase().trim()
-      };
-    }
     try {
       const raw = localStorage.getItem('crivo_active_session_v1');
       if (raw) {
@@ -138,6 +139,12 @@ export const crivoFirestore = {
     } catch {
       // ignore
     }
+    if (auth.currentUser?.email) {
+      return {
+        uid: auth.currentUser.uid,
+        email: String(auth.currentUser.email).toLowerCase().trim()
+      };
+    }
     return { uid: '', email: '' };
   },
 
@@ -146,6 +153,10 @@ export const crivoFirestore = {
     const user = this.getActiveUser(activeUser);
     const emailNorm = user.email;
     const uid = user.uid;
+
+    if (!emailNorm) {
+      return [];
+    }
 
     try {
       const colRef = collection(db, "setores_hospital");
@@ -161,12 +172,19 @@ export const crivoFirestore = {
           ? data.membrosEmails.map((e: string) => String(e).toLowerCase().trim())
           : [];
 
-        // Check ownership
-        const isOwner = (uid && sOwnerUid === uid) || (emailNorm && sOwnerEmail === emailNorm);
+        // Strict ownership check
+        const isOwner = Boolean(
+          (uid && sOwnerUid && sOwnerUid === uid) ||
+          (emailNorm && sOwnerEmail && sOwnerEmail === emailNorm)
+        );
 
-        // Check collaborator membership
-        const isMember = (uid && sMembros.includes(uid)) || (emailNorm && sMembrosEmails.includes(emailNorm));
+        // Strict collaborator check
+        const isMember = Boolean(
+          (uid && sMembros.includes(uid)) ||
+          (emailNorm && sMembrosEmails.includes(emailNorm))
+        );
 
+        // Include ONLY if this user is the owner or an authorized member
         if (isOwner || isMember) {
           map.set(d.id, {
             id: d.id,
@@ -180,14 +198,14 @@ export const crivoFirestore = {
         }
       });
 
-      // Merge with local storage cache if any
-      const localList = getLocalSetores();
+      // Merge with user-scoped local storage cache for offline created sectors
+      const localList = getLocalSetores(emailNorm);
       localList.forEach(l => {
         if (!map.has(l.id)) {
           const lOwnerEmail = (l.ownerEmail || '').toLowerCase().trim();
           const lMembrosEmails = (l.membrosEmails || []).map(e => e.toLowerCase().trim());
-          const isOwner = (uid && l.ownerUid === uid) || (emailNorm && lOwnerEmail === emailNorm);
-          const isMember = emailNorm && lMembrosEmails.includes(emailNorm);
+          const isOwner = Boolean((uid && l.ownerUid === uid) || (emailNorm && lOwnerEmail === emailNorm));
+          const isMember = Boolean(emailNorm && lMembrosEmails.includes(emailNorm));
           if (isOwner || isMember) {
             map.set(l.id, {
               ...l,
@@ -198,15 +216,12 @@ export const crivoFirestore = {
       });
 
       const list = [...map.values()].sort((a, b) => (a.nome || '').localeCompare(b.nome || ''));
-      if (list.length > 0) {
-        saveLocalSetores(list);
-        return list;
-      }
-      return getLocalSetores();
+      saveLocalSetores(emailNorm, list);
+      return list;
     } catch (e) {
       this.setError(e);
-      console.warn('getSetores Firestore query fallback to local:', e);
-      return getLocalSetores();
+      console.warn('getSetores Firestore fallback to user local cache:', e);
+      return getLocalSetores(emailNorm);
     }
   },
 
@@ -215,8 +230,13 @@ export const crivoFirestore = {
     const trimmed = nome.trim();
     if (!trimmed) return null;
     const user = this.getActiveUser(activeUser);
-    const emailNorm = user.email || 'farmacia@hospital.com';
-    const uid = user.uid || ('u_' + btoa(emailNorm).replace(/=/g, ''));
+    const emailNorm = user.email;
+    const uid = user.uid || (emailNorm ? 'u_' + btoa(emailNorm).replace(/=/g, '') : '');
+
+    if (!emailNorm) {
+      this.lastError = 'É necessário estar autenticado para criar um setor.';
+      return null;
+    }
 
     try {
       const ref = await addDoc(collection(db, "setores_hospital"), {
@@ -237,13 +257,13 @@ export const crivoFirestore = {
         membrosEmails: [],
         souDono: true
       };
-      const list = getLocalSetores();
+      const list = getLocalSetores(emailNorm);
       list.push(newSetor);
-      saveLocalSetores(list);
+      saveLocalSetores(emailNorm, list);
       return ref.id;
     } catch (e) {
       this.setError(e);
-      const list = getLocalSetores();
+      const list = getLocalSetores(emailNorm);
       const id = `local_${Date.now()}`;
       list.push({
         id,
@@ -254,26 +274,30 @@ export const crivoFirestore = {
         membrosEmails: [],
         souDono: true
       });
-      saveLocalSetores(list);
+      saveLocalSetores(emailNorm, list);
       return id;
     }
   },
 
-  async excluirSetor(setorId: string): Promise<boolean> {
+  async excluirSetor(setorId: string, activeUser?: any): Promise<boolean> {
     this.clearError();
+    const user = this.getActiveUser(activeUser);
     try {
       await deleteDoc(doc(db, "setores_hospital", setorId));
     } catch (e) {
       console.warn('Delete cloud sector error:', e);
     }
-    const list = getLocalSetores().filter(s => s.id !== setorId);
-    saveLocalSetores(list);
+    if (user.email) {
+      const list = getLocalSetores(user.email).filter(s => s.id !== setorId);
+      saveLocalSetores(user.email, list);
+    }
     return true;
   },
 
-  async compartilharSetor(setorId: string, email: string): Promise<boolean> {
+  async compartilharSetor(setorId: string, email: string, activeUser?: any): Promise<boolean> {
     this.clearError();
     const emailNorm = email.trim().toLowerCase();
+    const user = this.getActiveUser(activeUser);
     if (!emailNorm || !emailNorm.includes('@')) {
       this.lastError = 'Informe um endereço de e-mail válido.';
       return false;
@@ -302,37 +326,42 @@ export const crivoFirestore = {
       }
       await updateDoc(sectorRef, updates);
 
-      // 3. Update local cache
-      const list = getLocalSetores();
-      const item = list.find(s => s.id === setorId);
-      if (item) {
-        if (!item.membrosEmails) item.membrosEmails = [];
-        if (!item.membrosEmails.includes(emailNorm)) item.membrosEmails.push(emailNorm);
-        if (targetUid) {
-          if (!item.membros) item.membros = [];
-          if (!item.membros.includes(targetUid)) item.membros.push(targetUid);
+      // 3. Update local cache for active user
+      if (user.email) {
+        const list = getLocalSetores(user.email);
+        const item = list.find(s => s.id === setorId);
+        if (item) {
+          if (!item.membrosEmails) item.membrosEmails = [];
+          if (!item.membrosEmails.includes(emailNorm)) item.membrosEmails.push(emailNorm);
+          if (targetUid) {
+            if (!item.membros) item.membros = [];
+            if (!item.membros.includes(targetUid)) item.membros.push(targetUid);
+          }
+          saveLocalSetores(user.email, list);
         }
-        saveLocalSetores(list);
       }
       return true;
     } catch (e) {
       this.setError(e);
       // Fallback local update
-      const list = getLocalSetores();
-      const item = list.find(s => s.id === setorId);
-      if (item) {
-        if (!item.membrosEmails) item.membrosEmails = [];
-        if (!item.membrosEmails.includes(emailNorm)) item.membrosEmails.push(emailNorm);
-        saveLocalSetores(list);
-        return true;
+      if (user.email) {
+        const list = getLocalSetores(user.email);
+        const item = list.find(s => s.id === setorId);
+        if (item) {
+          if (!item.membrosEmails) item.membrosEmails = [];
+          if (!item.membrosEmails.includes(emailNorm)) item.membrosEmails.push(emailNorm);
+          saveLocalSetores(user.email, list);
+          return true;
+        }
       }
       return false;
     }
   },
 
-  async removerMembro(setorId: string, uid: string, email: string): Promise<boolean> {
+  async removerMembro(setorId: string, uid: string, email: string, activeUser?: any): Promise<boolean> {
     this.clearError();
     const emailNorm = email.trim().toLowerCase();
+    const user = this.getActiveUser(activeUser);
     try {
       const sectorRef = doc(db, "setores_hospital", setorId);
       const updates: any = {
@@ -345,14 +374,16 @@ export const crivoFirestore = {
     } catch (e) {
       console.warn('Remove member remote error:', e);
     }
-    const list = getLocalSetores();
-    const item = list.find(s => s.id === setorId);
-    if (item && item.membrosEmails) {
-      item.membrosEmails = item.membrosEmails.filter(e => e.toLowerCase().trim() !== emailNorm);
-      if (uid && item.membros) {
-        item.membros = item.membros.filter(u => u !== uid);
+    if (user.email) {
+      const list = getLocalSetores(user.email);
+      const item = list.find(s => s.id === setorId);
+      if (item && item.membrosEmails) {
+        item.membrosEmails = item.membrosEmails.filter(e => e.toLowerCase().trim() !== emailNorm);
+        if (uid && item.membros) {
+          item.membros = item.membros.filter(u => u !== uid);
+        }
+        saveLocalSetores(user.email, list);
       }
-      saveLocalSetores(list);
     }
     return true;
   },

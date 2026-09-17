@@ -4,7 +4,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  signOut
 } from 'firebase/auth';
 
 interface StoredAccount {
@@ -296,7 +297,12 @@ export const clinicalAuth = {
   },
 
   // Logout
-  logout() {
+  async logout() {
     this.setActiveSession(null);
+    try {
+      await signOut(auth);
+    } catch {
+      // ignore
+    }
   }
 };

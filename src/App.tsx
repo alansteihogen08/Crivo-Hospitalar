@@ -115,6 +115,20 @@ export default function App() {
     return setores.find((s) => s.id === patientCtx.setorId) || null;
   }, [setores, patientCtx.setorId]);
 
+  // Keep patientCtx.setorId aligned with available setores
+  useEffect(() => {
+    if (setores.length > 0) {
+      const exists = setores.some((s) => s.id === patientCtx.setorId);
+      if (!exists) {
+        setPatientCtx((prev) => ({ ...prev, setorId: setores[0].id }));
+      }
+    } else {
+      if (patientCtx.setorId) {
+        setPatientCtx((prev) => ({ ...prev, setorId: '' }));
+      }
+    }
+  }, [setores, patientCtx.setorId]);
+
   // Real-time clinical findings computation
   const currentFindings = useMemo<ClinicalFinding[]>(() => {
     return computeFindings(selectedDrugIds, patientCtx);
@@ -237,7 +251,7 @@ export default function App() {
     return (
       <div className="min-h-screen">
         <LandingPage
-          onEnterApp={(customUser) => {
+          onEnterApp={async (customUser) => {
             const activeUser = customUser || user;
             if (!activeUser) {
               showToast('Cadastre-se ou entre com seu e-mail e senha.');
@@ -245,8 +259,10 @@ export default function App() {
             }
             clinicalAuth.setActiveSession(activeUser);
             setUser(activeUser);
+            setPatientCtx(initialPatientCtx);
+            setEvolutionEntries([]);
             setViewMode('app');
-            refreshSetores(activeUser);
+            await refreshSetores(activeUser);
             showToast(`Ambiente Clínico ativado: ${activeUser.email || 'Profissional'}`);
           }}
         />
@@ -287,10 +303,13 @@ export default function App() {
         currentSetor={currentSetorObj}
         currentLeito={patientCtx.leito}
         onOpenAuth={() => setIsAuthModalOpen(true)}
-        onLogout={() => {
-          signOut(auth);
-          clinicalAuth.logout();
+        onLogout={async () => {
+          await clinicalAuth.logout();
           setUser(null);
+          setSetores([]);
+          setPatientCtx(initialPatientCtx);
+          setEvolutionEntries([]);
+          setActiveTab('triagem');
           setViewMode('landing');
           showToast('Sessão encerrada.');
         }}
@@ -438,6 +457,7 @@ export default function App() {
         {/* TAB 3: GERENCIAR SETORES */}
         {activeTab === 'setores' && (
           <SectorManagerView
+            user={user}
             setores={setores}
             onRefreshSetores={refreshSetores}
             onShowToast={showToast}
