@@ -17,13 +17,7 @@ import {
 } from 'lucide-react';
 import { CrivoLogo } from './CrivoLogo';
 import { BiometricModal } from './BiometricModal';
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup
-} from 'firebase/auth';
-import { auth, crivoFirestore } from '../services/firebase';
+import { clinicalAuth } from '../services/clinicalAuth';
 import { ClinicalUser } from '../types';
 
 interface LandingPageProps {
@@ -38,7 +32,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [showOperationNotAllowed, setShowOperationNotAllowed] = useState(false);
   const [isBiometricModalOpen, setIsBiometricModalOpen] = useState(false);
   const [isPresentationOpen, setIsPresentationOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -47,96 +40,56 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     setErrorMsg('');
-    setShowOperationNotAllowed(false);
-    try {
-      const provider = new GoogleAuthProvider();
-      const cred = await signInWithPopup(auth, provider);
-      await crivoFirestore.ensureUsuarioDoc(cred.user);
-      localStorage.setItem('crivo_biometric_user_email', cred.user.email || '');
-      localStorage.removeItem('crivo_local_clinical_user');
-      setIsLoading(false);
-      onEnterApp({
-        uid: cred.user.uid,
-        email: cred.user.email,
-        displayName: cred.user.displayName,
-        photoURL: cred.user.photoURL
-      });
-    } catch (err: any) {
-      setIsLoading(false);
-      console.error('Google Sign-In error:', err);
-      if (err.code === 'auth/popup-closed-by-user') {
-        setErrorMsg('Login com Google cancelado.');
-      } else {
-        setErrorMsg(err.message || 'Erro ao autenticar com a conta Google.');
-      }
+    const res = await clinicalAuth.loginWithGoogle();
+    setIsLoading(false);
+    if (res.error) {
+      setErrorMsg(res.error);
+      return;
     }
-  };
-
-  const handleContinueLocalSession = () => {
-    const targetEmail = email.trim() || 'alansteihogen08@gmail.com';
-    const localUser: ClinicalUser = {
-      uid: 'prof_' + btoa(targetEmail).replace(/=/g, ''),
-      email: targetEmail,
-      displayName: targetEmail.split('@')[0] || 'Profissional Clínico',
-      photoURL: null
-    };
-    localStorage.setItem('crivo_local_clinical_user', JSON.stringify(localUser));
-    localStorage.setItem('crivo_biometric_user_email', targetEmail);
-    onEnterApp(localUser);
+    if (res.user) {
+      onEnterApp(res.user);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password) {
-      setErrorMsg('Por favor, preencha o e-mail e a senha.');
+      setErrorMsg('Por favor, informe seu e-mail e senha.');
       return;
     }
     setErrorMsg('');
-    setShowOperationNotAllowed(false);
     setIsLoading(true);
 
     try {
       if (isRegisterMode) {
-        const cred = await createUserWithEmailAndPassword(auth, email.trim(), password);
-        await crivoFirestore.ensureUsuarioDoc(cred.user);
+        const res = await clinicalAuth.register(email.trim(), password);
+        setIsLoading(false);
+        if (res.error) {
+          setErrorMsg(res.error);
+          return;
+        }
+        onEnterApp(res.user);
       } else {
-        await signInWithEmailAndPassword(auth, email.trim(), password);
+        const res = await clinicalAuth.login(email.trim(), password);
+        setIsLoading(false);
+        if (res.error) {
+          setErrorMsg(res.error);
+          return;
+        }
+        onEnterApp(res.user);
       }
-      setIsLoading(false);
-      onEnterApp();
     } catch (err: any) {
       setIsLoading(false);
-      console.error('Auth error:', err);
-      if (err.code === 'auth/operation-not-allowed') {
-        setShowOperationNotAllowed(true);
-        setErrorMsg('O provedor de E-mail/Senha está desativado no Firebase. Você pode entrar com Google ou acessar em Modo Clínico abaixo.');
-      } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
-        setErrorMsg('E-mail ou senha incorretos. Se ainda não possui cadastro, clique em "Cadastre-se" abaixo.');
-      } else if (err.code === 'auth/email-already-in-use') {
-        setErrorMsg('Este e-mail já está cadastrado. Alterne para o modo de login.');
-      } else if (err.code === 'auth/weak-password') {
-        setErrorMsg('A senha deve ter pelo menos 6 caracteres.');
-      } else if (err.code === 'auth/invalid-email') {
-        setErrorMsg('Por favor, informe um endereço de e-mail válido.');
-      } else {
-        setErrorMsg(err.message || 'Falha ao autenticar. Verifique suas credenciais.');
-      }
+      setErrorMsg(err.message || 'Falha ao autenticar. Verifique suas credenciais.');
     }
   };
 
   const handleProtectedEnterApp = () => {
-    const savedLocal = localStorage.getItem('crivo_local_clinical_user');
-    if (auth.currentUser) {
-      onEnterApp();
-    } else if (savedLocal) {
-      try {
-        onEnterApp(JSON.parse(savedLocal));
-        return;
-      } catch {
-        // continue
-      }
+    const active = clinicalAuth.getActiveSession();
+    if (active) {
+      onEnterApp(active);
     } else {
-      setErrorMsg('Acesso restrito. Cadastre-se, entre com Google ou faça login para acessar o sistema.');
+      setErrorMsg('Acesso restrito. É obrigatório criar uma conta ou fazer login com sua senha para acessar o Crivo.');
       const emailInput = document.getElementById('login-email-input');
       emailInput?.focus();
     }
@@ -150,19 +103,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
     }
   };
 
-  const handleBiometricSuccess = (validatedEmail: string) => {
+  const handleBiometricSuccess = async (validatedEmail: string) => {
     setBiometricEnabled(true);
     setIsBiometricModalOpen(false);
-    const targetEmail = validatedEmail || email.trim() || 'alansteihogen08@gmail.com';
-    const clinicalUser: ClinicalUser = {
-      uid: auth.currentUser?.uid || ('bio_' + btoa(targetEmail).replace(/=/g, '')),
-      email: auth.currentUser?.email || targetEmail,
-      displayName: auth.currentUser?.displayName || targetEmail.split('@')[0] || 'Profissional Clínico',
-      photoURL: auth.currentUser?.photoURL || null
-    };
-    localStorage.setItem('crivo_local_clinical_user', JSON.stringify(clinicalUser));
-    localStorage.setItem('crivo_biometric_user_email', clinicalUser.email || targetEmail);
-    onEnterApp(clinicalUser);
+    const res = await clinicalAuth.loginWithBiometric(validatedEmail);
+    if (res.user) {
+      onEnterApp(res.user);
+    } else if (res.error) {
+      setErrorMsg(res.error);
+    }
   };
 
   return (
@@ -273,38 +222,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
             <div className="mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 flex items-start gap-2">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
               <span>{errorMsg}</span>
-            </div>
-          )}
-
-          {/* Operation Not Allowed Resolution Box */}
-          {showOperationNotAllowed && (
-            <div className="mb-4 p-3.5 bg-amber-50 border border-amber-200 rounded-2xl text-xs text-amber-900 space-y-2.5 animate-fade-in text-left">
-              <div className="flex items-start gap-2 font-bold text-amber-950">
-                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-                <span>Provedor de E-mail/Senha precisa ser ativado no Firebase</span>
-              </div>
-              <p className="text-[11px] text-amber-800 leading-relaxed">
-                No Firebase, o login por senha requer ativação prévia no console. Para acessar imediatamente:
-              </p>
-              <div className="space-y-2">
-                <button
-                  type="button"
-                  onClick={handleGoogleSignIn}
-                  className="w-full py-2 px-3 bg-white border border-amber-300 hover:bg-amber-100/60 rounded-xl font-semibold text-slate-800 text-xs flex items-center justify-center gap-2 cursor-pointer shadow-xs transition"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                  <span>1. Entrar com Google ({email || 'alansteihogen08@gmail.com'})</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleContinueLocalSession}
-                  className="w-full py-2 px-3 bg-[#12153a] hover:bg-[#1d225c] text-white rounded-xl font-bold font-mono text-xs flex items-center justify-center gap-2 cursor-pointer shadow-xs transition"
-                >
-                  <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
-                  <span>2. Liberar Acesso Clínico com {email.split('@')[0] || 'alansteihogen08'}</span>
-                </button>
-              </div>
             </div>
           )}
 
@@ -613,6 +530,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
         onClose={() => setIsBiometricModalOpen(false)}
         onSuccess={handleBiometricSuccess}
         defaultEmail={email}
+        onGoToRegister={() => {
+          setIsRegisterMode(true);
+          setErrorMsg('');
+          const emailInput = document.getElementById('login-email-input');
+          emailInput?.focus();
+        }}
       />
     </div>
   );

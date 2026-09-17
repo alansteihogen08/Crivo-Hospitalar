@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { X, Lock, Mail, UserPlus, LogIn, AlertCircle, Fingerprint } from 'lucide-react';
-import { auth, crivoFirestore } from '../services/firebase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { clinicalAuth } from '../services/clinicalAuth';
 import { CrivoLogo } from './CrivoLogo';
 
 interface AuthModalProps {
@@ -36,26 +35,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     try {
       if (isRegisterMode) {
-        const cred = await createUserWithEmailAndPassword(auth, email.trim(), password);
-        await crivoFirestore.ensureUsuarioDoc(cred.user);
+        const res = await clinicalAuth.register(email.trim(), password);
+        setIsLoading(false);
+        if (res.error) {
+          setErrorMsg(res.error);
+          return;
+        }
       } else {
-        await signInWithEmailAndPassword(auth, email.trim(), password);
+        const res = await clinicalAuth.login(email.trim(), password);
+        setIsLoading(false);
+        if (res.error) {
+          setErrorMsg(res.error);
+          return;
+        }
       }
-      setIsLoading(false);
       onSuccess();
       onClose();
     } catch (err: any) {
       setIsLoading(false);
-      console.error('Auth error:', err);
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
-        setErrorMsg('E-mail ou senha incorretos.');
-      } else if (err.code === 'auth/email-already-in-use') {
-        setErrorMsg('Este e-mail já está cadastrado. Faça login.');
-      } else if (err.code === 'auth/weak-password') {
-        setErrorMsg('A senha deve ter pelo menos 6 caracteres.');
-      } else {
-        setErrorMsg('Não foi possível autenticar. Verifique sua conexão e os dados digitados.');
-      }
+      setErrorMsg(err.message || 'Falha ao processar autenticação.');
     }
   };
 

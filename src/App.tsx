@@ -22,7 +22,8 @@ import { SectorAuditView } from './components/SectorAuditView';
 import { SectorManagerView } from './components/SectorManagerView';
 import { DrugCatalogModal } from './components/DrugCatalogModal';
 import { LogoCustomizerModal } from './components/LogoCustomizerModal';
-import { PatientContext, SetorHospital, EvolucaoEntry, ClinicalFinding } from './types';
+import { PatientContext, SetorHospital, EvolucaoEntry, ClinicalFinding, ClinicalUser } from './types';
+import { clinicalAuth } from './services/clinicalAuth';
 import { computeFindings } from './services/clinicalEngine';
 import { DRUGS } from './data/drugs';
 
@@ -79,17 +80,17 @@ export default function App() {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
+        clinicalAuth.setActiveSession({
+          uid: currentUser.uid,
+          email: currentUser.email,
+          displayName: currentUser.displayName,
+          photoURL: currentUser.photoURL
+        });
         await crivoFirestore.ensureUsuarioDoc(currentUser);
       } else {
-        const savedLocal = localStorage.getItem('crivo_local_clinical_user');
-        if (savedLocal) {
-          try {
-            const parsed = JSON.parse(savedLocal);
-            setUser(parsed);
-          } catch {
-            setUser(null);
-            setViewMode('landing');
-          }
+        const active = clinicalAuth.getActiveSession();
+        if (active) {
+          setUser(active);
         } else {
           setUser(null);
           setViewMode('landing');
@@ -235,11 +236,12 @@ export default function App() {
       <div className="min-h-screen">
         <LandingPage
           onEnterApp={(customUser) => {
-            const activeUser = customUser || user || auth.currentUser;
+            const activeUser = customUser || user;
             if (!activeUser) {
-              showToast('Cadastre-se ou entre com seu e-mail institucional.');
+              showToast('Cadastre-se ou entre com seu e-mail e senha.');
               return;
             }
+            clinicalAuth.setActiveSession(activeUser);
             setUser(activeUser);
             setViewMode('app');
             showToast(`Ambiente Clínico ativado: ${activeUser.email || 'Profissional'}`);
@@ -284,7 +286,7 @@ export default function App() {
         onOpenAuth={() => setIsAuthModalOpen(true)}
         onLogout={() => {
           signOut(auth);
-          localStorage.removeItem('crivo_local_clinical_user');
+          clinicalAuth.logout();
           setUser(null);
           setViewMode('landing');
           showToast('Sessão encerrada.');
