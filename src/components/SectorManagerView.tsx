@@ -208,7 +208,7 @@ export const SectorManagerView: React.FC<SectorManagerViewProps> = ({
                         </div>
 
                         {/* Invite email input */}
-                        <div className="flex gap-2 pt-1">
+                        <div className="flex flex-col sm:flex-row gap-2 pt-1">
                           <input
                             type="email"
                             value={currentInputEmail}
@@ -219,12 +219,12 @@ export const SectorManagerView: React.FC<SectorManagerViewProps> = ({
                               }))
                             }
                             placeholder="e-mail do farmacêutico ou médico colega..."
-                            className="flex-1 px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:ring-2 focus:ring-teal-500"
+                            className="w-full sm:flex-1 min-w-0 px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:ring-2 focus:ring-teal-500"
                           />
                           <button
                             type="button"
                             onClick={() => handleCompartilhar(setor.id)}
-                            className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-medium font-mono flex items-center gap-1 transition cursor-pointer"
+                            className="w-full sm:w-auto px-3 py-2 sm:py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-medium font-mono flex items-center justify-center gap-1 transition cursor-pointer shrink-0"
                           >
                             <UserPlus className="w-3.5 h-3.5 text-teal-400" />
                             <span>Compartilhar</span>

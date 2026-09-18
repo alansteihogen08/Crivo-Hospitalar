@@ -296,7 +296,7 @@ export default function App() {
 
   // Otherwise, render the Clinical Workspace ("Engineering")
   return (
-    <div className="min-h-screen flex flex-col bg-slate-100 text-slate-900 font-sans">
+    <div className="min-h-screen flex flex-col bg-slate-100 text-slate-900 font-sans w-full max-w-full overflow-x-hidden">
       {/* App Header */}
       <Header
         user={user}
@@ -466,13 +466,14 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-4 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2 font-mono">
-          <div className="flex items-center gap-2">
+      <footer className="border-t border-slate-200 bg-white py-4 mt-auto w-full overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2 font-mono text-center sm:text-left">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 sm:gap-2">
             <span className="font-bold text-slate-800">CRIVO v2.4</span>
-            <span>• Suporte à Decisão Clínica & Farmacoterapia</span>
+            <span className="hidden xs:inline">•</span>
+            <span>Suporte à Decisão Clínica & Farmacoterapia</span>
           </div>
-          <div className="text-[11px] text-slate-400">
+          <div className="text-[10px] sm:text-[11px] text-slate-400 break-words max-w-full">
             Fórmula Cockcroft-Gault • Critérios Beers • Guia ILAS • Tabela SOPTERJ
           </div>
         </div>
