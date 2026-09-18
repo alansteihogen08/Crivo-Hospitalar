@@ -1,5 +1,5 @@
 import React from 'react';
-import { LogOut, BookOpen, User as UserIcon } from 'lucide-react';
+import { LogOut, BookOpen, User as UserIcon, FileText } from 'lucide-react';
 import { User } from 'firebase/auth';
 import { SetorHospital, ClinicalUser } from '../types';
 import { CrivoLogo } from './CrivoLogo';
@@ -11,7 +11,7 @@ interface HeaderProps {
   onOpenAuth: () => void;
   onLogout: () => void;
   onOpenCatalog: () => void;
-  onGoToLanding: () => void;
+  onOpenReferences: () => void;
   isSyncing?: boolean;
 }
 
@@ -20,28 +20,29 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAuth,
   onLogout,
   onOpenCatalog,
-  onGoToLanding,
+  onOpenReferences,
 }) => {
   return (
     <header className="bg-white border-b border-[#D9E2EC] sticky top-0 z-30 shadow-xs font-sans">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
-        {/* Brand from Screenshot 1: Logo + Crivo + TRIAGEM HOSPITALAR */}
-        <div className="flex items-center gap-3">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+        {/* Brand & References Button */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="flex items-center gap-2">
+            <CrivoLogo size={32} variant="light" />
+            <span className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 font-['Syne',sans-serif]">
+              Crivo
+            </span>
+          </div>
+
+          {/* Button: Referências (replaces previous Triagem Hospitalar button that was returning to landing page) */}
           <button
             type="button"
-            onClick={onGoToLanding}
-            className="flex items-center gap-3 text-left hover:opacity-90 transition cursor-pointer"
-            title="Ir para a Apresentação"
+            onClick={onOpenReferences}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-mono font-bold uppercase tracking-wider text-teal-800 bg-teal-50 hover:bg-teal-100/90 border border-teal-300 rounded-lg transition cursor-pointer shadow-2xs"
+            title="Consultar Referências Oficiais e Bulário ANVISA em ordem alfabética"
           >
-            <CrivoLogo size={34} variant="light" />
-            <div className="flex items-center gap-2.5">
-              <span className="text-2xl font-bold tracking-tight text-slate-900 font-['Syne',sans-serif]">
-                Crivo
-              </span>
-              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#627D98] border border-[#D9E2EC] px-2 py-0.5 rounded bg-slate-50">
-                Triagem Hospitalar
-              </span>
-            </div>
+            <FileText className="w-3.5 h-3.5 text-teal-600" />
+            <span>Referências</span>
           </button>
         </div>
 
@@ -55,13 +56,14 @@ export const Header: React.FC<HeaderProps> = ({
             title="Consultar catálogo de fármacos e ajustes"
           >
             <BookOpen className="w-3.5 h-3.5 text-teal-600" />
-            <span className="font-mono font-semibold">Guia de Fármacos</span>
+            <span className="font-mono font-semibold hidden sm:inline">Guia de Fármacos</span>
+            <span className="font-mono font-semibold sm:hidden">Guia</span>
           </button>
 
           {/* User Status / Login */}
           {user ? (
             <div className="flex items-center gap-1.5 bg-slate-50 border border-[#D9E2EC] rounded-lg p-1 pl-2">
-              <span className="text-[11px] font-mono text-slate-700 max-w-[120px] truncate" title={user.email || ''}>
+              <span className="text-[11px] font-mono text-slate-700 max-w-[110px] sm:max-w-[140px] truncate" title={user.email || ''}>
                 {user.email?.split('@')[0]}
               </span>
               <button

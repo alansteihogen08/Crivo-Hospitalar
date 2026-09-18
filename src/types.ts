@@ -22,6 +22,11 @@ export interface MaxDose {
 
 export interface Drug {
   name: string;
+  brandName?: string; // Nome comercial de referência (ex: "Ziagenavir®", "Meronem®", "Unasyn®", "Hidantal®")
+  manufacturer?: string; // Empresa / Laboratório detentor (ex: "GlaxoSmithKline", "Pfizer", "Sanofi", "Teuto")
+  referenceType?: 'referencia' | 'generico_padrao'; // Medicamento de referência ou genérico de referência técnica
+  bulaSlug?: string; // Slug para busca e link direto no bula.com.br (ex: "ziagenavir")
+  anvisaRecord?: string; // Número do registro ou referência de consulta ANVISA
   tags: string[];
   renal?: RenalRange[];
   requiresRenalAdjustment?: boolean;

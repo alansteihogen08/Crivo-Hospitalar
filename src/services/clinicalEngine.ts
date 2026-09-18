@@ -160,12 +160,21 @@ export function runGenericRules(selectedIds: string[], ctx: PatientContext): Cli
   // 8. Duplicidade de risco extrapiramidal (D2 stack)
   const d2 = drugsWithTag(selectedIds, 'risco_extrapiramidal');
   if (d2.length >= 2) {
-    findings.push({
-      key: 'd2_stack',
-      severity: 'critico',
-      drugs: d2.join(' + '),
-      text: 'Dois ou mais antagonistas dopaminérgicos D2 associados — risco somado de reação extrapiramidal aguda (distonia, acatisia) e parkinsonismo medicamentoso.'
+    // Se todos os fármacos forem apenas procinéticos (ex: bromoprida + metoclopramida),
+    // a regra específica de procinéticos já emite o alerta de forma direta e sem redundância.
+    const allProcineticos = d2.every(name => {
+      const drugObj = Object.values(DRUGS).find(d => d.name === name);
+      return drugObj?.tags?.includes('procinetico');
     });
+
+    if (!allProcineticos) {
+      findings.push({
+        key: 'd2_stack',
+        severity: 'critico',
+        drugs: d2.join(' + '),
+        text: 'Dois ou mais antagonistas dopaminérgicos D2 associados (ex: antipsicótico + antiemético) — risco somado de reação extrapiramidal aguda (distonia, acatisia) e parkinsonismo medicamentoso.'
+      });
+    }
   }
 
   // 9. Nefrotoxicidade cumulativa
@@ -279,10 +288,32 @@ export function computeFindings(
   selectedIds: string[],
   ctx: PatientContext
 ): ClinicalFinding[] {
-  const specific = runSpecificRules(selectedIds);
+  let specific = runSpecificRules(selectedIds);
+
+  // Se a regra tríplice de procinéticos estiver ativa, suprimir os pares individuais de procinéticos para não poluir visualmente a interface
+  const hasTripliceProcinetica = specific.some(r => r.key === 'triplice_procinetica');
+  if (hasTripliceProcinetica) {
+    const procineticPairs = new Set([
+      'bromoprida_metoclopramida',
+      'metoclopramida_domperidona',
+      'bromoprida_domperidona'
+    ]);
+    specific = specific.filter(r => !procineticPairs.has(r.key));
+  }
+
   const generic = runGenericRules(selectedIds, ctx);
   let findings = [...specific, ...generic];
   findings = applyContextModifiers(findings, ctx.indications);
+
+  // Deduplicação de segurança: caso surjam alertas idênticos para os mesmos fármacos e mesma severidade
+  const seen = new Set<string>();
+  findings = findings.filter(f => {
+    const sig = `${f.severity}:${f.drugs}`;
+    if (seen.has(sig)) return false;
+    seen.add(sig);
+    return true;
+  });
+
   findings.sort((a, b) => SEV_ORDER[a.severity] - SEV_ORDER[b.severity]);
   return findings;
 }

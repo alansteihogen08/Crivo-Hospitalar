@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Lock, Mail, UserPlus, LogIn, AlertCircle, Fingerprint } from 'lucide-react';
+import { X, Lock, Mail, UserPlus, LogIn, AlertCircle } from 'lucide-react';
 import { clinicalAuth } from '../services/clinicalAuth';
 import { CrivoLogo } from './CrivoLogo';
 
@@ -7,14 +7,12 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
-  onOpenBiometric?: () => void;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
   onSuccess,
-  onOpenBiometric
 }) => {
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [email, setEmail] = useState('');
@@ -82,33 +80,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </button>
         </div>
 
-        {/* Biometric Button */}
-        {onOpenBiometric && (
-          <div className="p-6 pb-2">
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                onOpenBiometric();
-              }}
-              className="w-full py-2.5 px-4 bg-teal-600 hover:bg-teal-700 text-white font-mono font-bold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Fingerprint className="w-4 h-4 text-teal-200" />
-              <span>Entrar com Biometria (Touch ID / Face ID)</span>
-            </button>
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200" />
-              </div>
-              <div className="relative flex justify-center text-[10px] uppercase font-mono tracking-wider">
-                <span className="bg-white px-2 text-slate-400">ou com e-mail</span>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 pt-2 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {errorMsg && (
             <div className="p-3 bg-rose-50 border border-rose-200 rounded-lg flex items-start gap-2.5 text-rose-800 text-xs">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />

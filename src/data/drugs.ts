@@ -1,6 +1,7 @@
 import { Drug } from '../types';
+import { DRUG_REFERENCES } from './drugReferences';
 
-export const DRUGS: Record<string, Drug> = {
+const RAW_DRUGS: Record<string, Drug> = {
   meropenem: {
     name: 'Meropenem',
     tags: ['antibiotico', 'carbapenem', 'renal_ajuste'],
@@ -1115,6 +1116,23 @@ export const DRUGS: Record<string, Drug> = {
   }
 };
 
+export const DRUGS: Record<string, Drug> = Object.fromEntries(
+  Object.entries(RAW_DRUGS).map(([id, drug]) => {
+    const ref = DRUG_REFERENCES[id];
+    return [
+      id,
+      {
+        ...drug,
+        brandName: ref?.brandName,
+        manufacturer: ref?.manufacturer,
+        referenceType: ref?.referenceType,
+        bulaSlug: ref?.bulaSlug,
+        anvisaRecord: ref?.anvisaRegNumber,
+      }
+    ];
+  })
+);
+
 export const INDICATIONS: Record<string, { name: string }> = {
   tetano: { name: 'Tétano grave' },
   sepse_mdr: { name: 'Infecção por MDR / Sepse grave' },
@@ -1300,5 +1318,29 @@ export const SPECIFIC_RULES = [
     key: 'varfarina_enoxaparina',
     severity: 'informativo' as const,
     text: 'Sobreposição esperada na fase de ponte/indução da varfarina até que o RNI atinja a faixa terapêutica por 2 dias consecutivos.'
+  },
+  {
+    match: ['bromoprida', 'metoclopramida', 'domperidona'],
+    key: 'triplice_procinetica',
+    severity: 'critico' as const,
+    text: 'Duplicidade terapêutica tríplice de procinéticos (mesmo mecanismo de ação): risco severo de reações extrapiramidais graves (distonia aguda, acatisia, parkinsonismo), sedação excessiva e arritmias por prolongamento do QT (domperidona). Conduta: manter apenas um agente em monoterapia e suspender os demais.'
+  },
+  {
+    match: ['bromoprida', 'metoclopramida'],
+    key: 'bromoprida_metoclopramida',
+    severity: 'critico' as const,
+    text: 'Duplicidade de benzamidas: Bromoprida e Metoclopramida compartilham o mesmo mecanismo antagonista D2. Duplicação do risco de reações extrapiramidais agudas (distonia, acatisia, parkinsonismo) e sedação sem ganho de eficácia. Conduta: desprescrever um dos fármacos.'
+  },
+  {
+    match: ['metoclopramida', 'domperidona'],
+    key: 'metoclopramida_domperidona',
+    severity: 'critico' as const,
+    text: 'Sobreposição de procinéticos: Metoclopramida (D2 central) e Domperidona (D2 periférico). Risco aditivo de hiperprolactinemia, arritmia por prolongamento de QT (domperidona) e sintomas extrapiramidais (metoclopramida). Conduta: manter monoterapia com agente único.'
+  },
+  {
+    match: ['bromoprida', 'domperidona'],
+    key: 'bromoprida_domperidona',
+    severity: 'critico' as const,
+    text: 'Sobreposição de procinéticos: Bromoprida e Domperidona. Risco aumentado de sintomas extrapiramidais (bromoprida) somado ao potencial arritmogênico por prolongamento do QT (domperidona). Conduta: desprescrever a sobreposição farmacológica.'
   }
 ];

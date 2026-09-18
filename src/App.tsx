@@ -11,7 +11,7 @@ import { auth, crivoFirestore } from './services/firebase';
 import { Header } from './components/Header';
 import { AuthModal } from './components/AuthModal';
 import { LandingPage } from './components/LandingPage';
-import { BiometricModal } from './components/BiometricModal';
+import { ReferencesModal } from './components/ReferencesModal';
 import { PatientContextForm } from './components/PatientContextForm';
 import { DrugSelector } from './components/DrugSelector';
 import { DrugDetailsList } from './components/DrugDetailsList';
@@ -52,7 +52,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('triagem');
   const [user, setUser] = useState<User | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isBiometricModalOpen, setIsBiometricModalOpen] = useState(false);
+  const [isReferencesModalOpen, setIsReferencesModalOpen] = useState(false);
   const [isCatalogModalOpen, setIsCatalogModalOpen] = useState(false);
   const [isLogoCustomizerOpen, setIsLogoCustomizerOpen] = useState(false);
 
@@ -314,7 +314,7 @@ export default function App() {
           showToast('Sessão encerrada.');
         }}
         onOpenCatalog={() => setIsCatalogModalOpen(true)}
-        onGoToLanding={() => setViewMode('landing')}
+        onOpenReferences={() => setIsReferencesModalOpen(true)}
         isSyncing={isSyncing}
       />
 
@@ -486,16 +486,11 @@ export default function App() {
           showToast('Login efetuado com sucesso.');
           refreshSetores();
         }}
-        onOpenBiometric={() => setIsBiometricModalOpen(true)}
       />
 
-      <BiometricModal
-        isOpen={isBiometricModalOpen}
-        onClose={() => setIsBiometricModalOpen(false)}
-        onSuccess={(email) => {
-          showToast(`Biometria validada (${email}).`);
-          refreshSetores();
-        }}
+      <ReferencesModal
+        isOpen={isReferencesModalOpen}
+        onClose={() => setIsReferencesModalOpen(false)}
       />
 
       <DrugCatalogModal
