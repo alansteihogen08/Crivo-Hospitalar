@@ -3,6 +3,8 @@ export interface DrugReferenceInfo {
   manufacturer: string; // Empresa detentora do registro / Laboratório farmacêutico
   referenceType: 'referencia' | 'generico_padrao'; // Medicamento de referência ou genérico padrão
   bulaSlug: string; // Slug para busca e link no bula.com.br
+  bulaUrl?: string; // URL direta personalizada para a bula oficial (ex: PCDT SUS, ANVISA)
+  bulaLabel?: string; // Rótulo do botão quando o link for específico (ex: 'Bula Oficial SUS', 'Guia Clínico MS')
   anvisaSearchQuery: string; // Termo de busca no portal oficial da ANVISA
   anvisaRegNumber?: string; // Registro ANVISA padrão
 }
@@ -12,7 +14,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Meronem®',
     manufacturer: 'Pfizer / AstraZeneca',
     referenceType: 'referencia',
-    bulaSlug: 'meronem',
+    bulaSlug: 'meropenem',
     anvisaSearchQuery: 'Meronem',
     anvisaRegNumber: '1.2110.0150'
   },
@@ -36,7 +38,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Vancocina®',
     manufacturer: 'Eli Lilly / Laboratório Teuto',
     referenceType: 'referencia',
-    bulaSlug: 'vancocina',
+    bulaSlug: 'cloridrato-de-vancomicina',
     anvisaSearchQuery: 'Vancocina',
     anvisaRegNumber: '1.0070.1118'
   },
@@ -44,7 +46,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Polixin® (Genérico Teuto / Eurofarma)',
     manufacturer: 'Eurofarma / Laboratório Teuto',
     referenceType: 'generico_padrao',
-    bulaSlug: 'polimixina-b',
+    bulaSlug: 'sulfato-de-polimixina-b',
     anvisaSearchQuery: 'Polimixina B',
     anvisaRegNumber: '1.0043.0766'
   },
@@ -52,7 +54,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Novamin® (Genérico Teuto)',
     manufacturer: 'Bristol-Myers Squibb / Laboratório Teuto',
     referenceType: 'referencia',
-    bulaSlug: 'novamin',
+    bulaSlug: 'sulfato-de-amicacina',
     anvisaSearchQuery: 'Novamin',
     anvisaRegNumber: '1.0370.0463'
   },
@@ -60,7 +62,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Hidantal® (Genérico Teuto)',
     manufacturer: 'Sanofi Medley / Laboratório Teuto',
     referenceType: 'referencia',
-    bulaSlug: 'hidantal',
+    bulaSlug: 'fenitoina',
     anvisaSearchQuery: 'Hidantal',
     anvisaRegNumber: '1.1300.0270'
   },
@@ -68,7 +70,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Dormonid®',
     manufacturer: 'Roche',
     referenceType: 'referencia',
-    bulaSlug: 'dormonid',
+    bulaSlug: 'maleato-de-midazolam',
     anvisaSearchQuery: 'Dormonid',
     anvisaRegNumber: '1.0100.0075'
   },
@@ -116,7 +118,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Fungizon®',
     manufacturer: 'Bristol-Myers Squibb',
     referenceType: 'referencia',
-    bulaSlug: 'fungizon',
+    bulaSlug: 'anfotericina-b',
     anvisaSearchQuery: 'Fungizon',
     anvisaRegNumber: '1.0180.0125'
   },
@@ -124,7 +126,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Fungizon® (Anfotericina B Cristália)',
     manufacturer: 'Bristol-Myers Squibb / Cristália',
     referenceType: 'referencia',
-    bulaSlug: 'fungizon',
+    bulaSlug: 'anfotericina-b',
     anvisaSearchQuery: 'Fungizon',
     anvisaRegNumber: '1.0298.0120'
   },
@@ -177,18 +179,20 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     anvisaRegNumber: '1.7759.0003'
   },
   flucitosina: {
-    brandName: 'Ancotil®',
-    manufacturer: 'Meda Pharma / Valeant',
+    brandName: 'Ancotil® / Flucitosina (SUS)',
+    manufacturer: 'Meda Pharma / Ministério da Saúde (SUS)',
     referenceType: 'referencia',
-    bulaSlug: 'ancotil',
-    anvisaSearchQuery: 'Ancotil',
-    anvisaRegNumber: '1.0573.0118'
+    bulaSlug: 'flucitosina',
+    bulaUrl: 'https://www.gov.br/conitec/pt-br/midias/relatorios/2021/20210604_relatorio_flucitosina_meningite_criptococica_614_final.pdf',
+    bulaLabel: 'Relatório Oficial SUS / MS',
+    anvisaSearchQuery: 'Flucitosina',
+    anvisaRegNumber: 'Portaria SCTIE/MS nº 21/2021'
   },
   gentamicina: {
     brandName: 'Garamicina®',
     manufacturer: 'Schering-Plough / Mantecorp',
     referenceType: 'referencia',
-    bulaSlug: 'garamicina',
+    bulaSlug: 'sulfato-de-gentamicina',
     anvisaSearchQuery: 'Garamicina',
     anvisaRegNumber: '1.0093.0033'
   },
@@ -204,7 +208,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Rocefin®',
     manufacturer: 'Roche',
     referenceType: 'referencia',
-    bulaSlug: 'rocefin',
+    bulaSlug: 'ceftriaxona',
     anvisaSearchQuery: 'Rocefin',
     anvisaRegNumber: '1.0100.0078'
   },
@@ -220,7 +224,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Zavicefta®',
     manufacturer: 'Pfizer',
     referenceType: 'referencia',
-    bulaSlug: 'zavicefta',
+    bulaSlug: 'ceftazidima',
     anvisaSearchQuery: 'Zavicefta',
     anvisaRegNumber: '1.2110.0468'
   },
@@ -349,6 +353,8 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     manufacturer: 'Fiocruz / Farmanguinhos',
     referenceType: 'generico_padrao',
     bulaSlug: 'etambutol',
+    bulaUrl: 'https://bulario.farmanguinhos.fiocruz.br/medicamentos/cloridrato-de-etambutol-400-mg/',
+    bulaLabel: 'Bula Oficial Farmanguinhos',
     anvisaSearchQuery: 'Etambutol',
     anvisaRegNumber: '1.1063.0032'
   },
@@ -863,5 +869,349 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     bulaSlug: 'ebix',
     anvisaSearchQuery: 'Ebix',
     anvisaRegNumber: '1.0475.0049'
+  },
+  losartana: {
+    brandName: 'Cozaar®',
+    manufacturer: 'Organon / Merck Sharp & Dohme',
+    referenceType: 'referencia',
+    bulaSlug: 'losartana',
+    anvisaSearchQuery: 'Cozaar',
+    anvisaRegNumber: '1.0029.0016'
+  },
+  olmesartana: {
+    brandName: 'Benicar®',
+    manufacturer: 'Daiichi Sankyo Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'benicar',
+    anvisaSearchQuery: 'Benicar',
+    anvisaRegNumber: '1.0454.0163'
+  },
+  valsartana: {
+    brandName: 'Diovan®',
+    manufacturer: 'Novartis Biociências',
+    referenceType: 'referencia',
+    bulaSlug: 'diovan',
+    anvisaSearchQuery: 'Diovan',
+    anvisaRegNumber: '1.0068.0175'
+  },
+  telmisartana: {
+    brandName: 'Micardis®',
+    manufacturer: 'Boehringer Ingelheim',
+    referenceType: 'referencia',
+    bulaSlug: 'micardis',
+    anvisaSearchQuery: 'Micardis',
+    anvisaRegNumber: '1.0367.0135'
+  },
+  candesartana: {
+    brandName: 'Atacand®',
+    manufacturer: 'AstraZeneca do Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'atacand',
+    anvisaSearchQuery: 'Atacand',
+    anvisaRegNumber: '1.1618.0084'
+  },
+  hidroclorotiazida: {
+    brandName: 'Clorana®',
+    manufacturer: 'Sanofi Medley / Teuto',
+    referenceType: 'referencia',
+    bulaSlug: 'clorana',
+    anvisaSearchQuery: 'Clorana',
+    anvisaRegNumber: '1.1300.0232'
+  },
+  indapamida: {
+    brandName: 'Natrilix SR®',
+    manufacturer: 'Laboratórios Servier',
+    referenceType: 'referencia',
+    bulaSlug: 'indapamida',
+    anvisaSearchQuery: 'Natrilix',
+    anvisaRegNumber: '1.1278.0003'
+  },
+  clortalidona: {
+    brandName: 'Higroton®',
+    manufacturer: 'Novartis Biociências',
+    referenceType: 'referencia',
+    bulaSlug: 'higroton',
+    anvisaSearchQuery: 'Higroton',
+    anvisaRegNumber: '1.0068.0039'
+  },
+  espironolactona: {
+    brandName: 'Aldactone®',
+    manufacturer: 'Pfizer Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'aldactone',
+    anvisaSearchQuery: 'Aldactone',
+    anvisaRegNumber: '1.0216.0020'
+  },
+  atenolol: {
+    brandName: 'Atenol®',
+    manufacturer: 'AstraZeneca do Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'atenol',
+    anvisaSearchQuery: 'Atenol',
+    anvisaRegNumber: '1.1618.0006'
+  },
+  bisoprolol: {
+    brandName: 'Concor®',
+    manufacturer: 'Merck S/A',
+    referenceType: 'referencia',
+    bulaSlug: 'concor',
+    anvisaSearchQuery: 'Concor',
+    anvisaRegNumber: '1.0089.0305'
+  },
+  nebivolol: {
+    brandName: 'Nebilet®',
+    manufacturer: 'Torrent do Brasil / Menarini',
+    referenceType: 'referencia',
+    bulaSlug: 'nebilet',
+    anvisaSearchQuery: 'Nebilet',
+    anvisaRegNumber: '1.0525.0044'
+  },
+  metoprolol: {
+    brandName: 'Selozok®',
+    manufacturer: 'AstraZeneca do Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'selozok',
+    anvisaSearchQuery: 'Selozok',
+    anvisaRegNumber: '1.1618.0055'
+  },
+  carvedilol: {
+    brandName: 'Coreg®',
+    manufacturer: 'Roche Farma / EMS',
+    referenceType: 'referencia',
+    bulaSlug: 'coreg',
+    anvisaSearchQuery: 'Coreg',
+    anvisaRegNumber: '1.0100.0538'
+  },
+  propranolol: {
+    brandName: 'Inderal®',
+    manufacturer: 'AstraZeneca do Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'inderal',
+    anvisaSearchQuery: 'Inderal',
+    anvisaRegNumber: '1.1618.0008'
+  },
+  captopril: {
+    brandName: 'Capoten®',
+    manufacturer: 'Bristol-Myers Squibb / Sanofi Medley',
+    referenceType: 'referencia',
+    bulaSlug: 'capoten',
+    anvisaSearchQuery: 'Capoten',
+    anvisaRegNumber: '1.0180.0044'
+  },
+  enalapril: {
+    brandName: 'Renitec®',
+    manufacturer: 'Organon / Merck Sharp & Dohme',
+    referenceType: 'referencia',
+    bulaSlug: 'renitec',
+    anvisaSearchQuery: 'Renitec',
+    anvisaRegNumber: '1.0029.0006'
+  },
+  lisinopril: {
+    brandName: 'Zestril®',
+    manufacturer: 'AstraZeneca do Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'zestril',
+    anvisaSearchQuery: 'Zestril',
+    anvisaRegNumber: '1.1618.0051'
+  },
+  ramipril: {
+    brandName: 'Triatec®',
+    manufacturer: 'Sanofi Medley Farmacêutica',
+    referenceType: 'referencia',
+    bulaSlug: 'triatec',
+    anvisaSearchQuery: 'Triatec',
+    anvisaRegNumber: '1.1300.0271'
+  },
+  anlodipino: {
+    brandName: 'Norvasc®',
+    manufacturer: 'Pfizer Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'norvasc',
+    anvisaSearchQuery: 'Norvasc',
+    anvisaRegNumber: '1.0216.0027'
+  },
+  nifedipino: {
+    brandName: 'Adalat OROS®',
+    manufacturer: 'Bayer S.A.',
+    referenceType: 'referencia',
+    bulaSlug: 'adalat-oros',
+    anvisaSearchQuery: 'Adalat',
+    anvisaRegNumber: '1.7056.0003'
+  },
+  verapamil: {
+    brandName: 'Dilacoron®',
+    manufacturer: 'Abbott Laboratórios do Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'dilacoron',
+    anvisaSearchQuery: 'Dilacoron',
+    anvisaRegNumber: '1.0553.0234'
+  },
+  diltiazem: {
+    brandName: 'Cardizem®',
+    manufacturer: 'Bausch Health / Sanofi Medley',
+    referenceType: 'referencia',
+    bulaSlug: 'cloridrato-de-diltiazem',
+    anvisaSearchQuery: 'Cardizem',
+    anvisaRegNumber: '1.0573.0125'
+  },
+  propafenona: {
+    brandName: 'Ritmonorm®',
+    manufacturer: 'Abbott Laboratórios do Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'ritmonorm',
+    anvisaSearchQuery: 'Ritmonorm',
+    anvisaRegNumber: '1.0553.0235'
+  },
+  sotalol: {
+    brandName: 'Sotacor®',
+    manufacturer: 'Bristol-Myers Squibb / Teuto',
+    referenceType: 'referencia',
+    bulaSlug: 'sotacor',
+    anvisaSearchQuery: 'Sotacor',
+    anvisaRegNumber: '1.0180.0076'
+  },
+  digoxina: {
+    brandName: 'Digoxina®',
+    manufacturer: 'GlaxoSmithKline / Aspen Pharma',
+    referenceType: 'referencia',
+    bulaSlug: 'digoxina',
+    anvisaSearchQuery: 'Digoxina',
+    anvisaRegNumber: '1.0107.0142'
+  },
+  rosuvastatina: {
+    brandName: 'Crestor®',
+    manufacturer: 'AstraZeneca do Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'crestor',
+    anvisaSearchQuery: 'Crestor',
+    anvisaRegNumber: '1.1618.0067'
+  },
+  sinvastatina: {
+    brandName: 'Zocor®',
+    manufacturer: 'Organon / Merck Sharp & Dohme',
+    referenceType: 'referencia',
+    bulaSlug: 'zocor',
+    anvisaSearchQuery: 'Zocor',
+    anvisaRegNumber: '1.0029.0011'
+  },
+  atorvastatina: {
+    brandName: 'Lipitor®',
+    manufacturer: 'Pfizer Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'lipitor',
+    anvisaSearchQuery: 'Lipitor',
+    anvisaRegNumber: '1.0216.0028'
+  },
+  ezetimiba: {
+    brandName: 'Zetia®',
+    manufacturer: 'Organon / Schering-Plough',
+    referenceType: 'referencia',
+    bulaSlug: 'zetia',
+    anvisaSearchQuery: 'Zetia',
+    anvisaRegNumber: '1.0029.0178'
+  },
+  fenofibrato: {
+    brandName: 'Lipidil®',
+    manufacturer: 'Abbott Laboratórios do Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'lipidil',
+    anvisaSearchQuery: 'Lipidil',
+    anvisaRegNumber: '1.0553.0298'
+  },
+  metformina: {
+    brandName: 'Glifage® / Glifage XR®',
+    manufacturer: 'Merck S/A',
+    referenceType: 'referencia',
+    bulaSlug: 'glifage',
+    anvisaSearchQuery: 'Glifage',
+    anvisaRegNumber: '1.0089.0267'
+  },
+  dapagliflozina: {
+    brandName: 'Forxiga®',
+    manufacturer: 'AstraZeneca do Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'forxiga',
+    anvisaSearchQuery: 'Forxiga',
+    anvisaRegNumber: '1.1618.0263'
+  },
+  empagliflozina: {
+    brandName: 'Jardiance®',
+    manufacturer: 'Boehringer Ingelheim',
+    referenceType: 'referencia',
+    bulaSlug: 'jardiance',
+    anvisaSearchQuery: 'Jardiance',
+    anvisaRegNumber: '1.0367.0169'
+  },
+  glibenclamida: {
+    brandName: 'Daonil®',
+    manufacturer: 'Sanofi Medley Farmacêutica',
+    referenceType: 'referencia',
+    bulaSlug: 'daonil',
+    anvisaSearchQuery: 'Daonil',
+    anvisaRegNumber: '1.1300.0035'
+  },
+  gliclazida: {
+    brandName: 'Diamicron MR®',
+    manufacturer: 'Laboratórios Servier',
+    referenceType: 'referencia',
+    bulaSlug: 'diamicron-mr',
+    anvisaSearchQuery: 'Diamicron',
+    anvisaRegNumber: '1.1278.0004'
+  },
+  sitagliptina: {
+    brandName: 'Januvia®',
+    manufacturer: 'Organon / Merck Sharp & Dohme',
+    referenceType: 'referencia',
+    bulaSlug: 'januvia',
+    anvisaSearchQuery: 'Januvia',
+    anvisaRegNumber: '1.0029.0188'
+  },
+  linagliptina: {
+    brandName: 'Trayenta®',
+    manufacturer: 'Boehringer Ingelheim',
+    referenceType: 'referencia',
+    bulaSlug: 'trayenta',
+    anvisaSearchQuery: 'Trayenta',
+    anvisaRegNumber: '1.0367.0163'
+  },
+  saxagliptina: {
+    brandName: 'Onglyza®',
+    manufacturer: 'AstraZeneca do Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'onglyza',
+    anvisaSearchQuery: 'Onglyza',
+    anvisaRegNumber: '1.1618.0229'
+  },
+  ivermectina: {
+    brandName: 'Revectina®',
+    manufacturer: 'Abbott Laboratórios do Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'revectina',
+    anvisaSearchQuery: 'Revectina',
+    anvisaRegNumber: '1.0553.0270'
+  },
+  nitazoxanida: {
+    brandName: 'Annita®',
+    manufacturer: 'Farmoquímica S/A (FQM)',
+    referenceType: 'referencia',
+    bulaSlug: 'annita',
+    anvisaSearchQuery: 'Annita',
+    anvisaRegNumber: '1.0390.0173'
+  },
+  lacosamida: {
+    brandName: 'Vimpat®',
+    manufacturer: 'UCB Biopharma',
+    referenceType: 'referencia',
+    bulaSlug: 'vimpat',
+    anvisaSearchQuery: 'Vimpat',
+    anvisaRegNumber: '1.2310.0062'
+  },
+  eritropoietina: {
+    brandName: 'Eprex® / Hemax®',
+    manufacturer: 'Janssen-Cilag / Cristália Produtos Químicos',
+    referenceType: 'referencia',
+    bulaSlug: 'alfaepoetina',
+    anvisaSearchQuery: 'Alfaepoetina',
+    anvisaRegNumber: '1.1236.3340'
   }
 };

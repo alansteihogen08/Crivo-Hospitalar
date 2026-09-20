@@ -161,9 +161,12 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({ isOpen, onClos
               const anvisaSearchUrl = `https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=${encodeURIComponent(
                 drug.anvisaRecord || drug.name
               )}`;
-              const bulaComBrUrl = drug.bulaSlug
+              const finalBulaUrl = drug.bulaUrl
+                ? drug.bulaUrl
+                : drug.bulaSlug
                 ? `https://bula.com.br/${drug.bulaSlug}`
                 : `https://bula.com.br/${encodeURIComponent(drug.name.toLowerCase().replace(/[^a-z0-9]/g, ''))}`;
+              const bulaButtonText = drug.bulaLabel || 'Bula.com.br';
               const isCopied = copiedDrug === drug.name;
 
               return (
@@ -235,13 +238,13 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({ isOpen, onClos
                     </button>
 
                     <a
-                      href={bulaComBrUrl}
+                      href={finalBulaUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-mono font-medium text-indigo-700 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100/80 border border-indigo-200 rounded-lg transition cursor-pointer"
-                      title={`Acessar bula online no portal Bula.com.br (${drug.brandName || drug.name})`}
+                      title={`Acessar bula online: ${bulaButtonText} (${drug.brandName || drug.name})`}
                     >
-                      <span>Bula.com.br</span>
+                      <span>{bulaButtonText}</span>
                       <ExternalLink className="w-3.5 h-3.5 shrink-0" />
                     </a>
                   </div>

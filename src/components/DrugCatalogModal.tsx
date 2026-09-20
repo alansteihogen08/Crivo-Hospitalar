@@ -21,9 +21,15 @@ export const DrugCatalogModal: React.FC<DrugCatalogModalProps> = ({
 
   const allTags = [
     { id: 'todos', label: 'Todas Classes' },
+    { id: 'cardiovascular', label: 'Cardiovascular' },
+    { id: 'anti-hipertensivo', label: 'Anti-hipertensivos' },
+    { id: 'diuretico', label: 'Diuréticos' },
+    { id: 'antidiabetico', label: 'Antidiabéticos' },
+    { id: 'hipolipemiante', label: 'Hipolipemiantes' },
     { id: 'antibiotico', label: 'Antibióticos' },
     { id: 'antifungico', label: 'Antifúngicos' },
     { id: 'anticonvulsivante', label: 'Anticonvulsivantes' },
+    { id: 'antiparasitario', label: 'Antiparasitários' },
     { id: 'sedativo', label: 'Sedativos' },
     { id: 'opioide', label: 'Opioides' },
     { id: 'antidepressivo', label: 'Antidepressivos' },

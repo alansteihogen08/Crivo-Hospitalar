@@ -1113,6 +1113,528 @@ const RAW_DRUGS: Record<string, Drug> = {
     ],
     effects: ['Tontura/cefaleia', 'Confusão (sinal de acúmulo em disfunção renal)', 'Constipação'],
     monitor: ['Função renal', 'Estado mental']
+  },
+  losartana: {
+    name: 'Losartana Potássica',
+    tags: ['anti-hipertensivo', 'bra', 'cardiovascular', 'risco_hipercalemia', 'renal_ajuste', 'teratogenico', 'substrato_cyp2c9'],
+    renal: [
+      { min: 30, max: 999, dose: '50mg a 100mg 1x/dia (dose padrão)' },
+      { min: 0, max: 29, dose: 'Iniciar com 25mg a 50mg 1x/dia; titular conforme resposta e tolerância clínica' },
+    ],
+    dialysis: 'Não dialisável por hemodiálise (alta ligação proteica >98%); dose suplementar pós-HD desnecessária.',
+    effects: ['Hipotensão postural/tontura', 'Hipercalemia (potencializada com espironolactona, IECA e suplementos de K)', 'Disfunção renal aguda transitória em estenose de artéria renal bilateral'],
+    monitor: ['Pressão arterial', 'Potássio sérico', 'Creatinina e ureia'],
+    maxDose: { value: '100mg/dia', note: 'doses superiores a 100mg não conferem ganho anti-hipertensivo adicional' }
+  },
+  olmesartana: {
+    name: 'Olmesartana Medoxomila',
+    tags: ['anti-hipertensivo', 'bra', 'cardiovascular', 'risco_hipercalemia', 'renal_ajuste', 'teratogenico'],
+    renal: [
+      { min: 30, max: 999, dose: '20mg a 40mg 1x/dia (dose padrão)' },
+      { min: 0, max: 29, dose: 'Iniciar com 10mg a 20mg 1x/dia; dose máxima de 20mg/dia se ClCr < 20 mL/min' },
+    ],
+    dialysis: 'Não dialisável de forma significativa.',
+    effects: ['Hipercalemia', 'Enteropatia sprue-like (diarreia crônica com atrofia de vilosidades intestinais)', 'Hipotensão'],
+    monitor: ['Potássio', 'Função renal', 'Sintomas gastrointestinais persistentes'],
+    maxDose: { value: '40mg/dia', note: 'máx 20mg/dia em ClCr < 20 mL/min' }
+  },
+  valsartana: {
+    name: 'Valsartana',
+    tags: ['anti-hipertensivo', 'bra', 'cardiovascular', 'risco_hipercalemia', 'renal_ajuste', 'teratogenico'],
+    renal: [
+      { min: 30, max: 999, dose: '80mg a 320mg 1x/dia (HAS) ou 40mg a 160mg 2x/dia (IC / pós-IAM)' },
+      { min: 0, max: 29, dose: 'Iniciar com 40mg 1x/dia na HAS ou 20-40mg 2x/dia na IC; titular com monitorização' },
+    ],
+    dialysis: 'Não dialisável (ligação proteica ~95%).',
+    effects: ['Hipercalemia', 'Hipotensão', 'Tontura', 'Piora de função renal em hipovolemia'],
+    monitor: ['Pressão arterial', 'Potássio sérico', 'Creatinina'],
+    maxDose: { value: '320mg/dia', note: '160mg 12/12h na IC ou 320mg 1x/dia na HAS' }
+  },
+  telmisartana: {
+    name: 'Telmisartana',
+    tags: ['anti-hipertensivo', 'bra', 'cardiovascular', 'risco_hipercalemia', 'renal_ajuste', 'teratogenico'],
+    renal: [
+      { min: 30, max: 999, dose: '40mg a 80mg 1x/dia (dose padrão — meia-vida prolongada de 24h)' },
+      { min: 0, max: 29, dose: 'Iniciar com 20mg a 40mg 1x/dia; eliminação quase totalmente biliar/fecal' },
+    ],
+    dialysis: 'Não dialisável (ligação proteica >99,5%); não requer dose suplementar pós-HD.',
+    effects: ['Hipotensão', 'Hipercalemia', 'Cefaleia/fadiga'],
+    monitor: ['Pressão arterial', 'Potássio', 'Função renal'],
+    maxDose: { value: '80mg/dia' }
+  },
+  candesartana: {
+    name: 'Candesartana Cilexetila',
+    tags: ['anti-hipertensivo', 'bra', 'cardiovascular', 'risco_hipercalemia', 'renal_ajuste', 'teratogenico'],
+    renal: [
+      { min: 30, max: 999, dose: '8mg a 32mg 1x/dia (iniciar com 4-8mg na IC)' },
+      { min: 0, max: 29, dose: 'Iniciar com 4mg 1x/dia; titular cautelosamente' },
+    ],
+    dialysis: 'Não dialisável.',
+    effects: ['Hipercalemia', 'Hipotensão postural', 'Tontura'],
+    monitor: ['Potássio sérico', 'Creatinina', 'Pressão arterial'],
+    maxDose: { value: '32mg/dia' }
+  },
+  hidroclorotiazida: {
+    name: 'Hidroclorotiazida',
+    tags: ['anti-hipertensivo', 'diuretico', 'diuretico_tiazidico', 'cardiovascular', 'risco_hipocalemia', 'risco_hiponatremia', 'renal_ajuste'],
+    renal: [
+      { min: 30, max: 999, dose: '12,5mg a 25mg 1x/dia (máx 50mg/dia)' },
+      { min: 0, max: 29, dose: 'Eficácia diurética isolada muito reduzida; preferir diuréticos de alça (furosemida) como monoterapia, mantendo tiazídico apenas em bloqueio tubular sequencial' },
+    ],
+    dialysis: 'Não dialisável; ineficaz como diurético isolado em diálise/anúria.',
+    effects: ['Hipocalemia e hipomagnesemia', 'Hiponatremia grave (idosos)', 'Hiperuricemia / crise de gota', 'Hiperglicemia / dislipidemia', 'Hipotensão ortostática'],
+    monitor: ['Potássio e sódio séricos', 'Ácido úrico', 'Glicemia de jejum', 'Função renal'],
+    maxDose: { value: '50mg/dia', note: 'em HAS, 25mg/dia já atinge o platô pressórico com menor toxicidade metabólica' }
+  },
+  indapamida: {
+    name: 'Indapamida',
+    tags: ['anti-hipertensivo', 'diuretico', 'diuretico_tiazidico_like', 'cardiovascular', 'risco_hipocalemia', 'risco_hiponatremia', 'renal_ajuste'],
+    renal: [
+      { min: 30, max: 999, dose: '1,5mg (liberação sustentada SR) ou 2,5mg 1x/dia pela manhã' },
+      { min: 0, max: 29, dose: 'Contraindicada em insuficiência renal grave (ClCr < 30 mL/min)' },
+    ],
+    dialysis: 'Contraindicada em insuficiência renal grave / anúria.',
+    effects: ['Hipocalemia', 'Hiponatremia', 'Hipotensão postural', 'Hiperuricemia', 'Fadiga'],
+    monitor: ['Potássio e sódio séricos', 'Ácido úrico', 'Função renal'],
+    maxDose: { value: '2,5mg/dia (ou 1,5mg SR)' }
+  },
+  clortalidona: {
+    name: 'Clortalidona',
+    tags: ['anti-hipertensivo', 'diuretico', 'diuretico_tiazidico_like', 'cardiovascular', 'risco_hipocalemia', 'risco_hiponatremia', 'renal_ajuste'],
+    renal: [
+      { min: 30, max: 999, dose: '12,5mg a 25mg 1x/dia pela manhã (meia-vida prolongada de 40-60h)' },
+      { min: 0, max: 29, dose: 'Eficácia reduzida e risco elevado de distúrbios hidroeletrolíticos e azotemia; monitorar estritamente' },
+    ],
+    dialysis: 'Não dialisável.',
+    effects: ['Hipocalemia severa e prolongada', 'Hiponatremia', 'Hiperuricemia / gota aguda', 'Hiperglicemia', 'Hipotensão'],
+    monitor: ['Potássio sérico (risco aumentado de hipocalemia vs HCTZ)', 'Sódio', 'Ácido úrico', 'Função renal'],
+    maxDose: { value: '50mg/dia', note: '12,5 a 25mg/dia é a faixa anti-hipertensiva ótima' }
+  },
+  espironolactona: {
+    name: 'Espironolactona',
+    tags: ['anti-hipertensivo', 'diuretico', 'poupador_potassio', 'antagonista_aldosterona', 'cardiovascular', 'risco_hipercalemia', 'renal_ajuste'],
+    renal: [
+      { min: 50, max: 999, dose: '12,5mg a 50mg 1x/dia (IC/HAS) ou até 100-200mg/dia na ascite hepática' },
+      { min: 30, max: 49, dose: '12,5mg a cada 24-48h; monitorar potássio em 1 e 4 semanas e periodicamente' },
+      { min: 0, max: 29, dose: 'Contraindicada / evitar pelo altíssimo risco de hipercalemia potencialmente fatal' },
+    ],
+    dialysis: 'Contraindicada em pacientes dialíticos ou com falência renal grave (anúria) pelo risco crítico de arritmias hipercalêmicas.',
+    effects: ['Hipercalemia grave (arritmias cardíacas, PCR)', 'Ginecomastia dolorosa e impotência (efeito antiandrogênico)', 'Disfunção renal aguda', 'Hipotensão'],
+    monitor: ['Potássio sérico (estrito: suspender se K > 5,5 mEq/L)', 'Creatinina sérica', 'Pressão arterial'],
+    maxDose: { value: '100mg/dia (HAS/IC)', note: 'até 400mg/dia em ascite cirrótica sob protocolo estrito' }
+  },
+  atenolol: {
+    name: 'Atenolol',
+    tags: ['anti-hipertensivo', 'betabloqueador', 'cardiovascular', 'bradicardizante', 'renal_ajuste', 'evitar_idoso'],
+    renal: [
+      { min: 50, max: 999, dose: '25mg a 100mg 1x/dia (dose padrão)' },
+      { min: 15, max: 49, dose: 'Dose máxima de 50mg/dia (ou 50mg a cada 48 horas)' },
+      { min: 0, max: 14, dose: 'Dose máxima de 25mg/dia ou 50mg a cada 48 horas' },
+    ],
+    dialysis: { hd: '25-50mg após cada sessão de hemodiálise (cerca de 50% é removido por HD).' },
+    effects: ['Bradicardia sinusal acentuada', 'Bloqueio atrioventricular (BAV)', 'Broncoespasmo', 'Fadiga e intolerância a exercícios', 'Mascaramento de sinais de hipoglicemia'],
+    monitor: ['Frequência cardíaca (alvo basal 50-60 bpm)', 'Pressão arterial', 'ECG (intervalo PR)'],
+    maxDose: { value: '100mg/dia', note: '50mg/dia se ClCr < 50; 25mg/dia se ClCr < 15 mL/min' }
+  },
+  bisoprolol: {
+    name: 'Fumarato de Bisoprolol',
+    tags: ['anti-hipertensivo', 'betabloqueador', 'cardiovascular', 'bradicardizante', 'renal_ajuste'],
+    renal: [
+      { min: 20, max: 999, dose: '2,5mg a 10mg 1x/dia (iniciar com 1,25mg na IC e titular a cada 2-4 semanas)' },
+      { min: 0, max: 19, dose: 'Iniciar com 1,25mg a 2,5mg 1x/dia; dose máxima de 10mg/dia' },
+    ],
+    dialysis: 'Pouco dialisável; não requer dose suplementar pós-diálise.',
+    effects: ['Bradicardia', 'Hipotensão', 'Fadiga e tontura', 'Extremidades frias', 'Piora transitória da congestão na titulação inicial de IC'],
+    monitor: ['FC', 'PA', 'Sinais de congestão/peso na titulação de IC'],
+    maxDose: { value: '10mg/dia (até 20mg/dia em casos excepcionais de HAS resistente)' }
+  },
+  nebivolol: {
+    name: 'Cloridrato de Nebivolol',
+    tags: ['anti-hipertensivo', 'betabloqueador', 'cardiovascular', 'bradicardizante', 'renal_ajuste'],
+    renal: [
+      { min: 30, max: 999, dose: '5mg 1x/dia (pode titular para 10mg após 2 semanas se necessário)' },
+      { min: 0, max: 29, dose: 'Iniciar com 2,5mg 1x/dia; contraindicado em insuficiência renal grave não dialisada' },
+    ],
+    dialysis: 'Uso não recomendado em diálise devido à falta de dados de segurança.',
+    effects: ['Bradicardia', 'Cefaleia', 'Tontura', 'Fadiga', 'Edema periférico leve (vasodilatação mediada por óxido nítrico)'],
+    monitor: ['Frequência cardíaca', 'Pressão arterial'],
+    maxDose: { value: '10mg/dia' }
+  },
+  metoprolol: {
+    name: 'Succinato de Metoprolol',
+    tags: ['anti-hipertensivo', 'betabloqueador', 'cardiovascular', 'bradicardizante', 'substrato_cyp2d6'],
+    renal: [
+      { min: 0, max: 999, dose: '25mg a 200mg 1x/dia (succinato) ou 50-100mg 12/12h (tartarato) — não requer ajuste de dose renal (metabolismo hepático extenso)' },
+    ],
+    dialysis: 'Não dialisável de forma significativa; não requer dose suplementar pós-HD.',
+    effects: ['Bradicardia', 'Hipotensão', 'Tontura', 'Fadiga e sonolência', 'Broncoespasmo em altas doses'],
+    monitor: ['FC', 'PA', 'ECG'],
+    maxDose: { value: '200mg/dia (succinato) ou 400mg/dia (tartarato)' }
+  },
+  carvedilol: {
+    name: 'Carvedilol',
+    tags: ['anti-hipertensivo', 'betabloqueador', 'cardiovascular', 'bradicardizante', 'substrato_cyp2d6', 'substrato_cyp2c9'],
+    renal: [
+      { min: 0, max: 999, dose: '3,125mg a 25mg a cada 12h (IC) ou até 50mg/dia (HAS) — não é necessário ajuste renal (metabolismo hepático >98%)' },
+    ],
+    dialysis: 'Não dialisável (alta ligação proteica >98%); dose de reforço pós-HD desnecessária.',
+    effects: ['Hipotensão postural/ortostática (bloqueio alfa-1)', 'Bradicardia e BAV', 'Tontura', 'Retenção hídrica inicial na IC', 'Broncoespasmo'],
+    monitor: ['PA sentada e em ortostatismo', 'FC', 'Peso corporal diário na fase de titulação de IC'],
+    maxDose: { value: '50mg/dia', note: '25mg 12/12h; ou 50mg 12/12h em pacientes com IC grave e peso > 85kg' }
+  },
+  propranolol: {
+    name: 'Cloridrato de Propranolol',
+    tags: ['anti-hipertensivo', 'betabloqueador', 'cardiovascular', 'bradicardizante', 'substrato_cyp2d6', 'substrato_cyp1a2'],
+    renal: [
+      { min: 0, max: 999, dose: '40mg a 240mg/dia divididos em 2 a 3 tomadas — eliminação primariamente hepática; não requer ajuste renal fixo, porém titular com cautela' },
+    ],
+    dialysis: 'Não dialisável (ligação proteica >90%).',
+    effects: ['Broncoespasmo grave (contraindicado formalmente em asma/DPOC hiper-reativa)', 'Bradicardia e bloqueio AV', 'Fadiga e depressão', 'Extremidades frias', 'Pesadelos'],
+    monitor: ['FC', 'PA', 'Ausculta pulmonar (sibilância)'],
+    maxDose: { value: '320mg/dia (até 640mg/dia em situações excepcionais de arritmia ou tireotoxicose)' }
+  },
+  captopril: {
+    name: 'Captopril',
+    tags: ['anti-hipertensivo', 'ieca', 'cardiovascular', 'risco_hipercalemia', 'renal_ajuste', 'teratogenico'],
+    renal: [
+      { min: 50, max: 999, dose: '25mg a 50mg 2 a 3x/dia (dose padrão)' },
+      { min: 10, max: 49, dose: '12,5mg a 25mg a cada 12-24 horas' },
+      { min: 0, max: 9, dose: '6,25mg a 12,5mg a cada 24 horas' },
+    ],
+    dialysis: { hd: 'Dialisável (25-50% removido por HD); administrar dose suplementar de 50% após a hemodiálise.' },
+    effects: ['Tosse seca irritativa intratável (acúmulo de bradicinina)', 'Angioedema (risco de via aérea)', 'Hipercalemia', 'Hipotensão de primeira dose', 'Disfunção renal aguda'],
+    monitor: ['Potássio sérico', 'Creatinina/ureia', 'Pressão arterial'],
+    maxDose: { value: '150mg/dia (em doses divididas)' }
+  },
+  enalapril: {
+    name: 'Maleato de Enalapril',
+    tags: ['anti-hipertensivo', 'ieca', 'cardiovascular', 'risco_hipercalemia', 'renal_ajuste', 'teratogenico'],
+    renal: [
+      { min: 30, max: 999, dose: '5mg a 40mg/dia (1 a 2 tomadas — dose padrão)' },
+      { min: 10, max: 29, dose: 'Iniciar com 2,5mg 1x/dia; titular até máx 20mg/dia' },
+      { min: 0, max: 9, dose: 'Iniciar com 2,5mg 1x/dia nos dias sem diálise' },
+    ],
+    dialysis: { hd: 'Dialisável (35-50% do enalaprilato é removido); administrar 2,5mg pós-sessão de HD.' },
+    effects: ['Tosse seca persistente', 'Hipercalemia', 'Angioedema', 'Hipotensão', 'Deterioração de função renal em estenose de artéria renal'],
+    monitor: ['Potássio sérico', 'Creatinina', 'PA'],
+    maxDose: { value: '40mg/dia' }
+  },
+  lisinopril: {
+    name: 'Lisinopril',
+    tags: ['anti-hipertensivo', 'ieca', 'cardiovascular', 'risco_hipercalemia', 'renal_ajuste', 'teratogenico'],
+    renal: [
+      { min: 30, max: 999, dose: '10mg a 40mg 1x/dia (dose padrão)' },
+      { min: 10, max: 29, dose: 'Iniciar com 2,5mg a 5mg 1x/dia; máx 20mg/dia' },
+      { min: 0, max: 9, dose: '2,5mg 1x/dia' },
+    ],
+    dialysis: { hd: 'Dialisável (~50% removido por HD); administrar dose complementar após a sessão.' },
+    effects: ['Tosse seca', 'Hipercalemia', 'Angioedema', 'Hipotensão'],
+    monitor: ['Potássio sérico', 'Creatinina', 'PA'],
+    maxDose: { value: '40mg/dia' }
+  },
+  ramipril: {
+    name: 'Ramipril',
+    tags: ['anti-hipertensivo', 'ieca', 'cardiovascular', 'risco_hipercalemia', 'renal_ajuste', 'teratogenico'],
+    renal: [
+      { min: 60, max: 999, dose: '2,5mg a 10mg 1x/dia (dose padrão)' },
+      { min: 30, max: 59, dose: 'Iniciar com 1,25mg a 2,5mg 1x/dia; máx 5mg/dia' },
+      { min: 0, max: 29, dose: 'Iniciar com 1,25mg 1x/dia; máx 2,5mg a 5mg/dia' },
+    ],
+    dialysis: 'Pouco dialisável (ramiprilato); titular com extremo cuidado.',
+    effects: ['Tosse seca', 'Hipercalemia', 'Hipotensão', 'Angioedema'],
+    monitor: ['Potássio', 'Função renal', 'Pressão arterial'],
+    maxDose: { value: '10mg/dia' }
+  },
+  anlodipino: {
+    name: 'Besilato de Anlodipino',
+    tags: ['anti-hipertensivo', 'bcc_dihidropiridinico', 'cardiovascular', 'substrato_cyp3a4'],
+    renal: [
+      { min: 0, max: 999, dose: '2,5mg a 10mg 1x/dia — não requer ajuste de dose renal (eliminação 90% hepática)' },
+    ],
+    dialysis: 'Não dialisável (alta ligação a proteínas >97%).',
+    effects: ['Edema maleolar/periférico dose-dependente', 'Cefaleia e rubor facial (flushing)', 'Tontura', 'Palpitações reflexas'],
+    monitor: ['Pressão arterial', 'Edema de membros inferiores'],
+    maxDose: { value: '10mg/dia' }
+  },
+  nifedipino: {
+    name: 'Nifedipino (Adalat OROS / Retard)',
+    tags: ['anti-hipertensivo', 'bcc_dihidropiridinico', 'cardiovascular', 'substrato_cyp3a4'],
+    renal: [
+      { min: 0, max: 999, dose: '20mg a 60mg 1x/dia (apresentação OROS/retard) — não requer ajuste em disfunção renal' },
+    ],
+    dialysis: 'Não dialisável.',
+    effects: ['Edema periférico', 'Cefaleia', 'Rubor facial', 'Taquicardia reflexa', 'Constipação'],
+    monitor: ['Pressão arterial', 'Edema', 'Sintomas vasomotores'],
+    maxDose: { value: '90mg/dia (apresentação OROS)' }
+  },
+  verapamil: {
+    name: 'Cloridrato de Verapamil',
+    tags: ['anti-hipertensivo', 'antiarritmico', 'bcc_nao_dihidropiridinico', 'cardiovascular', 'bradicardizante', 'inibidor_cyp3a4_potente', 'substrato_cyp3a4', 'renal_ajuste'],
+    renal: [
+      { min: 10, max: 999, dose: '120mg a 480mg/dia (fracionados em 2-3x ou 1x/dia na formulação retard)' },
+      { min: 0, max: 9, dose: 'Reduzir dose em 25-50% (risco de acúmulo e bradicardia/BAV grave)' },
+    ],
+    dialysis: 'Não dialisável (ligação proteica ~90%).',
+    effects: ['Constipação intestinal intensa', 'Bradicardia acentuada e BAV', 'Descompensação de insuficiência cardíaca (inótropo negativo potente)', 'Hipotensão'],
+    monitor: ['ECG (intervalo PR e ritmo sinusal)', 'FC', 'Hábito intestinal'],
+    maxDose: { value: '480mg/dia' }
+  },
+  diltiazem: {
+    name: 'Cloridrato de Diltiazem',
+    tags: ['anti-hipertensivo', 'antiarritmico', 'bcc_nao_dihidropiridinico', 'cardiovascular', 'bradicardizante', 'inibidor_cyp3a4_potente', 'substrato_cyp3a4'],
+    renal: [
+      { min: 0, max: 999, dose: '120mg a 360mg/dia (divididos em 3-4 tomadas ou formulação de liberação prolongada) — não requer ajuste renal fixo; titular com cautela' },
+    ],
+    dialysis: 'Não dialisável.',
+    effects: ['Bradicardia', 'Bloqueio AV', 'Edema maleolar', 'Hipotensão', 'Tontura'],
+    monitor: ['FC', 'PA', 'ECG (intervalo PR)'],
+    maxDose: { value: '360mg/dia' }
+  },
+  propafenona: {
+    name: 'Cloridrato de Propafenona',
+    tags: ['antiarritmico', 'classe_ic', 'cardiovascular', 'bradicardizante', 'proarritmico', 'substrato_cyp2d6', 'renal_ajuste'],
+    renal: [
+      { min: 30, max: 999, dose: '150mg a 300mg a cada 8 horas (dose padrão)' },
+      { min: 0, max: 29, dose: 'Reduzir a dose em 25-50% (risco de acúmulo e efeito pró-arritmogênico ventricular)' },
+    ],
+    dialysis: 'Não dialisável (ligação proteica >97%).',
+    effects: ['Alargamento de QRS e pró-arritmia ventricular', 'Gosto amargo/metálico característico', 'Efeito inotrópico negativo (contraindicada em cardiopatia estrutural/FE reduzida)', 'Tontura'],
+    monitor: ['ECG seriado (largura do QRS — suspender se aumento >25%)', 'FC', 'Função ventricular'],
+    maxDose: { value: '900mg/dia (300mg a cada 8h)' }
+  },
+  sotalol: {
+    name: 'Cloridrato de Sotalol',
+    tags: ['antiarritmico', 'classe_iii', 'betabloqueador', 'cardiovascular', 'qt', 'bradicardizante', 'renal_ajuste', 'janela_terapeutica_estreita'],
+    renal: [
+      { min: 60, max: 999, dose: '80mg a 160mg a cada 12 horas (dose padrão)' },
+      { min: 30, max: 59, dose: '80mg a 160mg a cada 24 horas' },
+      { min: 10, max: 29, dose: '80mg a cada 36-48 horas' },
+      { min: 0, max: 9, dose: 'Contraindicado ou usar exclusivamente com monitorização contínua de QTc e telemetria' },
+    ],
+    dialysis: { hd: 'Dialisável (~50% removido na sessão de HD); administrar 80mg após cada hemodiálise.' },
+    effects: ['Prolongamento extremo do intervalo QT e Torsades de Pointes (risco crítico na insuficiência renal)', 'Bradicardia severa e BAV', 'Broncoespasmo', 'Fadiga'],
+    monitor: ['ECG basal e a cada ajuste (manter QTc < 500ms; suspender se > 500ms ou delta > 60ms)', 'Potássio e magnésio séricos', 'Creatinina/ClCr'],
+    maxDose: { value: '320mg/dia', note: 'até 480mg/dia apenas em arritmias ventriculares refratárias com internação' }
+  },
+  digoxina: {
+    name: 'Digoxina',
+    tags: ['cardiovascular', 'inotropico', 'bradicardizante', 'janela_terapeutica_estreita', 'nivel_serico', 'renal_ajuste', 'evitar_idoso'],
+    renal: [
+      { min: 50, max: 999, dose: '0,125mg a 0,25mg 1x/dia' },
+      { min: 30, max: 49, dose: '0,125mg 1x/dia ou a cada 48 horas' },
+      { min: 10, max: 29, dose: '0,0625mg a 0,125mg a cada 48 horas' },
+      { min: 0, max: 9, dose: '0,0625mg a cada 48 a 72 horas (ajustar estritamente por digoxinemia sérica)' },
+    ],
+    dialysis: 'Não dialisável de forma significativa (grande volume de distribuição tecidual Vd ~5-7 L/kg); não requer reforço pós-HD.',
+    effects: ['Intoxicação digitálica (anorexia, náuseas, vômitos, xantopsia/visão amarelada)', 'Arritmias ventriculares fatais (extra-sístoles ventriculares bi-geminadas, taquicardia ventricular bidirecional)', 'BAV e bradicardia severa'],
+    monitor: ['Digoxinemia sérica (alvo estrito: 0,5 a 0,9 ng/mL na IC; até 1,2 ng/mL na FA)', 'Potássio sérico (hipocalemia amplifica drasticamente a toxicidade)', 'Magnésio e cálcio séricos', 'ECG e função renal'],
+    maxDose: { value: '0,25mg/dia', note: 'guiada por nível sérico terapêutico' }
+  },
+  rosuvastatina: {
+    name: 'Rosuvastatina Cálcica',
+    tags: ['estatina', 'hipolipemiante', 'cardiovascular', 'miopatia', 'renal_ajuste'],
+    renal: [
+      { min: 30, max: 999, dose: '10mg a 40mg 1x/dia (dose padrão)' },
+      { min: 0, max: 29, dose: 'Iniciar com 5mg 1x/dia; dose máxima de 10mg/dia (dose de 40mg é contraindicada em ClCr < 30)' },
+    ],
+    dialysis: 'Não dialisável.',
+    effects: ['Mialgia e fraqueza muscular proximal', 'Rabdomiólise (risco aumentado em DRC e com fibratos)', 'Elevação de transaminases hepáticas (ALT/AST)', 'Proteinúria tubular transitória em doses altas'],
+    monitor: ['CPK se mialgia/fraqueza', 'Função hepática (ALT)', 'Função renal'],
+    maxDose: { value: '40mg/dia', note: 'máx 10mg/dia em ClCr < 30 mL/min' }
+  },
+  sinvastatina: {
+    name: 'Sinvastatina',
+    tags: ['estatina', 'hipolipemiante', 'cardiovascular', 'miopatia', 'substrato_cyp3a4', 'renal_ajuste'],
+    renal: [
+      { min: 30, max: 999, dose: '10mg a 40mg 1x/dia à noite' },
+      { min: 0, max: 29, dose: 'Iniciar com 5mg a 10mg 1x/dia à noite; titular com cautela devido ao risco aumentado de miopatia' },
+    ],
+    dialysis: 'Não dialisável.',
+    effects: ['Mialgia e cãibras', 'Rabdomiólise com insuficiência renal aguda (risco crítico na associação com inibidores de CYP3A4)', 'Elevação de transaminases'],
+    monitor: ['CPK em caso de dor muscular', 'ALT/AST', 'Interações medicamentosas via CYP3A4'],
+    maxDose: { value: '40mg/dia', note: 'dose de 80mg/dia desaconselhada por risco excessivo de miopatia' }
+  },
+  atorvastatina: {
+    name: 'Atorvastatina Cálcica',
+    tags: ['estatina', 'hipolipemiante', 'cardiovascular', 'miopatia', 'substrato_cyp3a4'],
+    renal: [
+      { min: 0, max: 999, dose: '10mg a 80mg 1x/dia — não requer ajuste de dose renal (eliminação hepática/fecal >98%)' },
+    ],
+    dialysis: 'Não dialisável (alta ligação a proteínas plasmáticas >98%).',
+    effects: ['Mialgia', 'Elevação de transaminases', 'Rabdomiólise (rara em monoterapia)', 'Elevação leve de HbA1c/glicemia'],
+    monitor: ['Transaminases basais e se sintomas', 'CPK se queixas musculares', 'Perfil lipídico'],
+    maxDose: { value: '80mg/dia' }
+  },
+  ezetimiba: {
+    name: 'Ezetimiba',
+    tags: ['hipolipemiante', 'cardiovascular'],
+    renal: [
+      { min: 0, max: 999, dose: '10mg 1x/dia — não requer ajuste de dose em nenhum estágio de insuficiência renal ou diálise' },
+    ],
+    dialysis: 'Não dialisável; dose padrão de 10mg mantida.',
+    effects: ['Diarreia e desconforto abdominal leve', 'Cefaleia', 'Mialgia (quando associada a estatina)'],
+    monitor: ['Perfil lipídico', 'Transaminases quando combinada a estatinas'],
+    maxDose: { value: '10mg/dia' }
+  },
+  fenofibrato: {
+    name: 'Fenofibrato',
+    tags: ['fibrato', 'hipolipemiante', 'cardiovascular', 'miopatia', 'renal_ajuste'],
+    renal: [
+      { min: 60, max: 999, dose: '160mg a 200mg 1x/dia (formulação micronizada — dose padrão)' },
+      { min: 30, max: 59, dose: 'Iniciar com 54mg a 67mg 1x/dia; máx 100mg/dia' },
+      { min: 0, max: 29, dose: 'Contraindicado pelo alto risco de acúmulo grave e rabdomiólise' },
+    ],
+    dialysis: 'Contraindicado em pacientes em hemodiálise e insuficiência renal terminal.',
+    effects: ['Rabdomiólise grave (risco potencializado na coadministração com estatinas)', 'Elevação reversível da creatinina sérica por inibição competitiva da secreção tubular', 'Colelitíase', 'Elevação de transaminases'],
+    monitor: ['Creatinina sérica basal e no seguimento', 'CPK', 'Função hepática'],
+    maxDose: { value: '200mg/dia (micronizado)' }
+  },
+  metformina: {
+    name: 'Cloridrato de Metformina',
+    tags: ['antidiabetico', 'biguanida', 'renal_ajuste', 'acidose_lactica'],
+    renal: [
+      { min: 60, max: 999, dose: '1000mg a 2550mg/dia (convencional fracionada) ou até 2000mg 1x/dia (Glifage XR à noite)' },
+      { min: 45, max: 59, dose: 'Dose máxima de 1500mg/dia; monitorar função renal a cada 3 a 6 meses' },
+      { min: 30, max: 44, dose: 'Dose máxima de 1000mg/dia; não iniciar novos tratamentos; reavaliar relação risco/benefício' },
+      { min: 0, max: 29, dose: 'Contraindicada formalmente (risco severo de acidose láctica potencialmente fatal)' },
+    ],
+    dialysis: 'Contraindicada em pacientes sob hemodiálise (risco de acidose láctica letal).',
+    effects: ['Acidose láctica associada à metformina (MALA — alta letalidade)', 'Desconforto gastrointestinal dose-dependente (diarreia, náuseas, cólicas, dispepsia)', 'Deficiência de vitamina B12 em uso crônico', 'Gosto metálico'],
+    monitor: ['Taxa de filtração glomerular / ClCr a cada 3-6 meses', 'Gasometria e lactato se hipotensão, sepse ou hipoperfusão', 'Vitamina B12 anual'],
+    maxDose: { value: '2550mg/dia (convencional) ou 2000mg/dia (Glifage XR)' }
+  },
+  dapagliflozina: {
+    name: 'Dapagliflozina',
+    tags: ['antidiabetico', 'isglt2', 'cardiovascular', 'renal_ajuste', 'risco_cetoacidose'],
+    renal: [
+      { min: 25, max: 999, dose: '10mg 1x/dia (dose única indicada para DM2, IC com FE reduzida/preservada e DRC)' },
+      { min: 0, max: 24, dose: 'Não recomendado iniciar se ClCr < 25 mL/min; contraindicada formalmente em hemodiálise e insuficiência renal terminal' },
+    ],
+    dialysis: 'Contraindicada em hemodiálise e doença renal em estágio terminal.',
+    effects: ['Infecções micóticas genitais (candidíase vulvovaginal / balanopostite)', 'Cetoacidose diabética euglicêmica (glicemia < 250 mg/dL com acidose metabólica e cetonemia)', 'Hipotensão e depleção volêmica por diurese osmótica', 'Gangrena de Fournier (rara)'],
+    monitor: ['Status volêmico e pressão arterial', 'Glicemia e cetonemia se sintomas de mal-estar/acidose', 'Higiene genital'],
+    maxDose: { value: '10mg/dia' }
+  },
+  empagliflozina: {
+    name: 'Empagliflozina',
+    tags: ['antidiabetico', 'isglt2', 'cardiovascular', 'renal_ajuste', 'risco_cetoacidose'],
+    renal: [
+      { min: 30, max: 999, dose: '10mg a 25mg 1x/dia' },
+      { min: 20, max: 29, dose: '10mg 1x/dia (eficácia hipoglicemiante atenuada, mantido benefício cardioprotetor e nefroprotetor na IC e DRC)' },
+      { min: 0, max: 19, dose: 'Não recomendado o início; contraindicada em hemodiálise' },
+    ],
+    dialysis: 'Contraindicada em pacientes dependentes de diálise.',
+    effects: ['Infecções genitais micóticas', 'Cetoacidose euglicêmica', 'Hipotensão ortostática', 'Poliúria'],
+    monitor: ['Pressão arterial e hidratação', 'Glicemia e cetonas se náuseas/vômitos ou dispneia', 'Função renal'],
+    maxDose: { value: '25mg/dia (10mg/dia em IC e DRC)' }
+  },
+  glibenclamida: {
+    name: 'Glibenclamida',
+    tags: ['antidiabetico', 'sulfonilureia', 'risco_hipoglicemia', 'renal_ajuste', 'evitar_idoso'],
+    renal: [
+      { min: 60, max: 999, dose: '2,5mg a 15mg/dia (em 1 ou 2 tomadas antes das principais refeições)' },
+      { min: 30, max: 59, dose: 'Iniciar com 1,25mg a 2,5mg/dia; alto risco de acúmulo de metabólitos ativos' },
+      { min: 0, max: 29, dose: 'Contraindicada formalmente (risco severo de hipoglicemia prolongada e refratária)' },
+    ],
+    dialysis: 'Contraindicada em pacientes dialíticos e em idosos (Critérios de Beers).',
+    effects: ['Hipoglicemia severa, prolongada e recorrente (meia-vida biológica estendida)', 'Ganho de peso', 'Colestase hepática (rara)'],
+    monitor: ['Glicemia capilar seriada', 'Função renal', 'Sinais autonômicos e neuroglicopênicos de hipoglicemia'],
+    maxDose: { value: '20mg/dia (doses acima de 10mg raramente trazem melhora do controle glicêmico)' }
+  },
+  gliclazida: {
+    name: 'Gliclazida MR',
+    tags: ['antidiabetico', 'sulfonilureia', 'risco_hipoglicemia', 'renal_ajuste'],
+    renal: [
+      { min: 30, max: 999, dose: '30mg a 120mg 1x/dia no café da manhã (liberação modificada MR)' },
+      { min: 15, max: 29, dose: 'Usar com estrita cautela na dose inicial de 30mg/dia; monitorar glicemias rigorosamente' },
+      { min: 0, max: 14, dose: 'Contraindicada' },
+    ],
+    dialysis: 'Contraindicada em hemodiálise pelo risco de hipoglicemia.',
+    effects: ['Hipoglicemia (menor risco que glibenclamida, metabólitos inativos)', 'Ganho ponderal', 'Desconforto gástrico leve'],
+    monitor: ['Glicemia capilar', 'Função renal'],
+    maxDose: { value: '120mg/dia (formulação MR)' }
+  },
+  sitagliptina: {
+    name: 'Fosfato de Sitagliptina',
+    tags: ['antidiabetico', 'idpp4', 'renal_ajuste'],
+    renal: [
+      { min: 50, max: 999, dose: '100mg 1x/dia (dose padrão)' },
+      { min: 30, max: 49, dose: '50mg 1x/dia' },
+      { min: 0, max: 29, dose: '25mg 1x/dia (inclusive sob hemodiálise)' },
+    ],
+    dialysis: { hd: '25mg 1x/dia (pode ser administrada independentemente do horário da sessão de HD).' },
+    effects: ['Pancreatite aguda (rara)', 'Artralgia intensa e incapacitante', 'Nasofaringite e cefaleia', 'Reações de hipersensibilidade'],
+    monitor: ['Função renal (ClCr)', 'Sintomas gastrointestinais / dor abdominal irradiada para o dorso (pancreatite)', 'Glicemia'],
+    maxDose: { value: '100mg/dia (50mg se ClCr 30-49; 25mg se ClCr < 30)' }
+  },
+  linagliptina: {
+    name: 'Linagliptina',
+    tags: ['antidiabetico', 'idpp4'],
+    renal: [
+      { min: 0, max: 999, dose: '5mg 1x/dia — NÃO é necessário qualquer ajuste de dose por função renal (eliminação 95% biliar/fecal)' },
+    ],
+    dialysis: '5mg 1x/dia (não requer ajuste nem dose de reforço pós-diálise).',
+    effects: ['Nasofaringite', 'Pancreatite (rara)', 'Urticária/angioedema'],
+    monitor: ['Glicemia', 'Sintomas abdominais'],
+    maxDose: { value: '5mg/dia' }
+  },
+  saxagliptina: {
+    name: 'Cloridrato de Saxagliptina',
+    tags: ['antidiabetico', 'idpp4', 'renal_ajuste', 'substrato_cyp3a4'],
+    renal: [
+      { min: 50, max: 999, dose: '5mg 1x/dia (dose padrão)' },
+      { min: 0, max: 49, dose: '2,5mg 1x/dia' },
+    ],
+    dialysis: { hd: '2,5mg 1x/dia (administrar preferencialmente após a sessão de hemodiálise).' },
+    effects: ['Aumento do risco de hospitalização por insuficiência cardíaca (evitar em pacientes com histórico de IC)', 'Pancreatite', 'Artralgia'],
+    monitor: ['Sinais e sintomas de insuficiência cardíaca (dispneia, edema, turgência jugular)', 'Função renal'],
+    maxDose: { value: '5mg/dia (2,5mg/dia se ClCr < 50 mL/min)' }
+  },
+  ivermectina: {
+    name: 'Ivermectina',
+    tags: ['antiparasitario', 'substrato_cyp3a4'],
+    renal: [
+      { min: 0, max: 999, dose: '200 mcg/kg em dose única via oral (administrar com água em jejum) — não é necessário ajuste renal (eliminação <1% urinária)' },
+    ],
+    dialysis: 'Não dialisável (alta ligação proteica ~93%).',
+    effects: ['Reação de Mazzotti por lise parasitária (prurido, exantema, febre, mialgia)', 'Tontura e sonolência', 'Diarreia e dor abdominal', 'Hipotensão transitória'],
+    monitor: ['Sintomas neuropsiquiátricos', 'Resposta parasitológica e avaliação para segunda dose após 14 dias'],
+    maxDose: { value: '200 mcg/kg (em filariose sob protocolo até 400 mcg/kg)' }
+  },
+  nitazoxanida: {
+    name: 'Nitazoxanida',
+    tags: ['antiparasitario'],
+    renal: [
+      { min: 0, max: 999, dose: '500mg a cada 12 horas por 3 dias consecutivos (administrar com alimento) — não requer ajuste renal prévio' },
+    ],
+    dialysis: 'Metabólito ativo tizoxanida possui ligação proteica >99%, não sendo removido por hemodiálise.',
+    effects: ['Coloração amarela/esverdeada fluorescente da urina e esperma (benigno e reversível)', 'Dor abdominal epigástrica e diarreia', 'Náuseas e vômitos', 'Cefaleia'],
+    monitor: ['Sintomas gastrointestinais', 'Coloração de excretas corpóreas'],
+    maxDose: { value: '1000mg/dia (500mg a cada 12h por 3 dias)' }
+  },
+  lacosamida: {
+    name: 'Lacosamida',
+    tags: ['anticonvulsivante', 'renal_ajuste'],
+    renal: [
+      { min: 50, max: 999, dose: '100mg a 400mg/dia divididos em 2 tomadas (iniciar com 50mg 12/12h e titular)' },
+      { min: 30, max: 49, dose: 'Dose máxima recomendada de 300mg/dia' },
+      { min: 0, max: 29, dose: 'Dose máxima recomendada de 250mg a 300mg/dia; titular cautelosamente' },
+    ],
+    dialysis: { hd: 'Dialisável (cerca de 50% é removido após 4h de HD); administrar dose suplementar de até 50% após a sessão de hemodiálise.' },
+    effects: ['Prolongamento do intervalo PR / risco de bloqueio atrioventricular de primeiro grau ou síncope', 'Tontura e ataxia', 'Diplopia e nistagmo', 'Náuseas e cefaleia'],
+    monitor: ['ECG basal e pós-titulação em cardiopatas ou uso de outros fármacos que prolongam o PR', 'Controle de crises convulsivas'],
+    maxDose: { value: '400mg/dia (300mg/dia em ClCr < 30 mL/min)' }
+  },
+  eritropoietina: {
+    name: 'Alfaepoetina (Eritropoetina Humana Recombinante)',
+    tags: ['fator_estimulador_eritropoiese', 'antianemico', 'cardiovascular', 'risco_trombose'],
+    renal: [
+      { min: 0, max: 999, dose: '50 a 100 UI/kg IV ou SC 3x por semana (ou 20-30 UI/kg em pré-diálise). Ajustar dose para manter hemoglobina alvo estrita entre 10 e 11,5 g/dL (evitar Hb > 12 g/dL)' },
+    ],
+    dialysis: '50-100 UI/kg IV no circuito de retorno após cada sessão de hemodiálise (via IV preferencial em pacientes em HD).',
+    effects: ['Hipertensão arterial severa / descontrole pressórico agudo', 'Trombose vascular (trombose da fístula arteriovenosa de diálise, AVC, IAM, TVP)', 'Aplasia pura de células vermelhas mediada por anticorpos anti-EPO (rara)', 'Sintomas gripais na fase inicial'],
+    monitor: ['Hemoglobina quinzenal ou mensal (alvo: 10,0 a 11,5 g/dL; suspender ou reduzir dose se Hb > 11,5-12,0 g/dL)', 'Pressão arterial antes e durante cada administração/sessão de HD', 'Cinética do ferro (manter saturação de transferrina ≥20% e ferritina ≥200 ng/mL para eficácia da EPO)', 'Patência da fístula arteriovenosa'],
+    maxDose: { value: '300 UI/kg/semana', note: 'ajustes escalonados de 25% conforme delta da hemoglobina' }
   }
 };
 
@@ -1127,7 +1649,10 @@ export const DRUGS: Record<string, Drug> = Object.fromEntries(
         manufacturer: ref?.manufacturer,
         referenceType: ref?.referenceType,
         bulaSlug: ref?.bulaSlug,
+        bulaUrl: ref?.bulaUrl,
+        bulaLabel: ref?.bulaLabel,
         anvisaRecord: ref?.anvisaRegNumber,
+        anvisaSearchQuery: ref?.anvisaSearchQuery,
       }
     ];
   })
@@ -1342,5 +1867,155 @@ export const SPECIFIC_RULES = [
     key: 'bromoprida_domperidona',
     severity: 'critico' as const,
     text: 'Sobreposição de procinéticos: Bromoprida e Domperidona. Risco aumentado de sintomas extrapiramidais (bromoprida) somado ao potencial arritmogênico por prolongamento do QT (domperidona). Conduta: desprescrever a sobreposição farmacológica.'
+  },
+  {
+    match: ['sinvastatina', 'claritromicina'],
+    key: 'sinvastatina_claritromicina',
+    severity: 'critico' as const,
+    text: 'Inibição potente do CYP3A4 pela Claritromicina eleva em até 10-12 vezes os níveis séricos da Sinvastatina, disparando o risco de rabdomiólise fatal e insuficiência renal aguda. Associação formalmente contraindicada; suspender a sinvastatina durante o curso do antimicrobiano.'
+  },
+  {
+    match: ['sinvastatina', 'cetoconazol'],
+    key: 'sinvastatina_cetoconazol',
+    severity: 'critico' as const,
+    text: 'Cetoconazol inibe potentemente o CYP3A4, provocando elevação maciça das concentrações de Sinvastatina com risco iminente de miopatia necrosante e rabdomiólise. Combinação contraindicada.'
+  },
+  {
+    match: ['sinvastatina', 'voriconazol'],
+    key: 'sinvastatina_voriconazol',
+    severity: 'critico' as const,
+    text: 'Voriconazol inibe intensamente o metabolismo da Sinvastatina via CYP3A4. Risco crítico de rabdomiólise grave. Suspender a sinvastatina durante o tratamento antifúngico.'
+  },
+  {
+    match: ['sinvastatina', 'diltiazem'],
+    key: 'sinvastatina_diltiazem',
+    severity: 'atencao' as const,
+    text: 'Diltiazem inibe o CYP3A4 e aumenta em 3 a 5x a exposição à Sinvastatina (risco aumentado de miopatia e rabdomiólise). Limitar a dose de sinvastatina ao máximo de 10mg/dia se mantida a coadministração.'
+  },
+  {
+    match: ['sinvastatina', 'verapamil'],
+    key: 'sinvastatina_verapamil',
+    severity: 'atencao' as const,
+    text: 'Verapamil eleva os níveis séricos de Sinvastatina por inibição do CYP3A4. Dose máxima de sinvastatina recomendada é de 10mg a 20mg/dia para prevenir lesão muscular.'
+  },
+  {
+    match: ['sinvastatina', 'anlodipino'],
+    key: 'sinvastatina_anlodipino',
+    severity: 'atencao' as const,
+    text: 'Anlodipino aumenta as concentrações plasmáticas de Sinvastatina. Recomenda-se dose máxima de 20mg/dia de sinvastatina para prevenir mialgia e miopatia.'
+  },
+  {
+    match: ['atorvastatina', 'claritromicina'],
+    key: 'atorvastatina_claritromicina',
+    severity: 'atencao' as const,
+    text: 'Claritromicina eleva as concentrações séricas de Atorvastatina via CYP3A4. Limitar a dose de atorvastatina a no máximo 20mg/dia e monitorar queixas de mialgia ou fraqueza muscular.'
+  },
+  {
+    match: ['sinvastatina', 'fenofibrato'],
+    key: 'sinvastatina_fenofibrato',
+    severity: 'atencao' as const,
+    text: 'Associação de Sinvastatina com Fenofibrato: risco sinérgico de miopatia grave e rabdomiólise. Monitorar CPK basal e orientar paciente a relatar imediatamente dores musculares inexplicadas ou urina escura.'
+  },
+  {
+    match: ['rosuvastatina', 'fenofibrato'],
+    key: 'rosuvastatina_fenofibrato',
+    severity: 'atencao' as const,
+    text: 'Associação de Rosuvastatina com Fenofibrato: risco aumentado de miosite e rabdomiólise, especialmente em insuficiência renal. Evitar dose de rosuvastatina superior a 10mg/dia nesta combinação.'
+  },
+  {
+    match: ['atorvastatina', 'fenofibrato'],
+    key: 'atorvastatina_fenofibrato',
+    severity: 'atencao' as const,
+    text: 'Associação de Atorvastatina com Fenofibrato: potencialização do risco de toxicidade muscular e elevação de CPK. Monitorar função hepática, renal e sintomas osteomusculares.'
+  },
+  {
+    match: ['digoxina', 'amiodarona'],
+    key: 'digoxina_amiodarona',
+    severity: 'critico' as const,
+    text: 'Amiodarona inibe a depuração renal e biliar da Digoxina e sua eliminação via glicoproteína-P, dobrando (100%) os níveis séricos de digoxina, além de deprimir aditivamente os nós sinusal e AV. Conduta: reduzir a dose da digoxina em 50% de imediato e monitorar ECG e digoxinemia sérica.'
+  },
+  {
+    match: ['digoxina', 'verapamil'],
+    key: 'digoxina_verapamil',
+    severity: 'critico' as const,
+    text: 'Verapamil inibe a glicoproteína-P e depuração tubular da Digoxina, elevando a concentração sérica em 50% a 75%, somado a potente depressão da condução atrioventricular (risco de BAV total e toxicidade digitálica). Conduta: reduzir a dose de digoxina pela metade e monitorar ECG.'
+  },
+  {
+    match: ['digoxina', 'diltiazem'],
+    key: 'digoxina_diltiazem',
+    severity: 'atencao' as const,
+    text: 'Diltiazem aumenta os níveis séricos de Digoxina (~20-40%) e soma efeito inotrópico e dromotrópico negativo. Risco de bradicardia sintomática e BAV. Monitorar frequência cardíaca e níveis séricos de digoxina.'
+  },
+  {
+    match: ['digoxina', 'propafenona'],
+    key: 'digoxina_propafenona',
+    severity: 'atencao' as const,
+    text: 'Propafenona aumenta a concentração de Digoxina em 30% a 60% por deslocamento e inibição de depuração, associada à depressão nodal AV. Reduzir a dose de digoxina e monitorar intervalo PR e digoxinemia.'
+  },
+  {
+    match: ['digoxina', 'furosemida'],
+    key: 'digoxina_furosemida',
+    severity: 'atencao' as const,
+    text: 'Diurético de alça indutor de hipocalemia e hipomagnesemia: a redução do potássio sérico sensibiliza criticamente o miocárdio aos efeitos tóxicos da Digoxina, deflagrando arritmias ventriculares potencialmente fatais mesmo em níveis terapêuticos. Manter K > 4,0 mEq/L e Mg > 2,0 mg/dL.'
+  },
+  {
+    match: ['digoxina', 'hidroclorotiazida'],
+    key: 'digoxina_hidroclorotiazida',
+    severity: 'atencao' as const,
+    text: 'Hidroclorotiazida promove depleção de potássio e magnésio, aumentando expressivamente o risco de intoxicação digitálica e arritmias cardíacas graves. Monitorar e suplementar eletrólitos conforme necessário.'
+  },
+  {
+    match: ['digoxina', 'clortalidona'],
+    key: 'digoxina_clortalidona',
+    severity: 'atencao' as const,
+    text: 'Clortalidona provoca hipocalemia pronunciada e prolongada, facilitando arritmias ventriculares graves por digoxina. Monitoramento estrito do potássio sérico mandatório.'
+  },
+  {
+    match: ['digoxina', 'indapamida'],
+    key: 'digoxina_indapamida',
+    severity: 'atencao' as const,
+    text: 'Indapamida induz perda urinária de potássio, potencializando a toxicidade cardíaca da Digoxina. Monitorar eletrólitos séricos com frequência regular.'
+  },
+  {
+    match: ['glibenclamida', 'fluconazol'],
+    key: 'glibenclamida_fluconazol',
+    severity: 'atencao' as const,
+    text: 'Fluconazol inibe potentemente o CYP2C9, bloqueando a depuração hepática da Glibenclamida. Risco elevado de hipoglicemia severa, refratária e prolongada. Reduzir dose da glibenclamida e monitorar glicemias capilares seriadas.'
+  },
+  {
+    match: ['gliclazida', 'fluconazol'],
+    key: 'gliclazida_fluconazol',
+    severity: 'atencao' as const,
+    text: 'Fluconazol inibe o CYP2C9 e reduz o metabolismo da Gliclazida, prolongando seu efeito hipoglicemiante. Ajustar dose e reforçar monitorização glicêmica.'
+  },
+  {
+    match: ['sotalol', 'amiodarona'],
+    key: 'sotalol_amiodarona',
+    severity: 'critico' as const,
+    text: 'Associação de Sotalol com Amiodarona (dois antiarrítmicos de classe III prolongadores de QT com ação betabloqueadora): risco extremo de prolongamento maciço de QTc, Torsades de Pointes, bradicardia extrema e PCR. Combinação formalmente contraindicada.'
+  },
+  {
+    match: ['sotalol', 'claritromicina'],
+    key: 'sotalol_claritromicina',
+    severity: 'critico' as const,
+    text: 'Sotalol associado a Claritromicina: prolongamento sinérgico severo do intervalo QT com risco iminente de Torsades de Pointes e parada cardiorrespiratória. Associação contraindicada; utilizar antibiótico alternativo sem efeito no QT.'
+  },
+  {
+    match: ['sotalol', 'azitromicina'],
+    key: 'sotalol_azitromicina',
+    severity: 'critico' as const,
+    text: 'Sotalol associado a Azitromicina: soma de efeitos arritmogênicos sobre o intervalo QT. Risco crítico de arritmias ventriculares polimórficas. Evitar a associação.'
+  },
+  {
+    match: ['sotalol', 'levofloxacino'],
+    key: 'sotalol_levofloxacino',
+    severity: 'critico' as const,
+    text: 'Quinolona (Levofloxacino) associada a Sotalol: prolongamento aditivo de QT com alto risco de Torsades de Pointes. Associação contraindicada.'
+  },
+  {
+    match: ['sotalol', 'haloperidol'],
+    key: 'sotalol_haloperidol',
+    severity: 'critico' as const,
+    text: 'Haloperidol associado a Sotalol: alto risco de arritmias ventriculares malignas por prolongamento acentuado de repolarização ventricular e torsades de pointes. Combinação contraindicada.'
   }
 ];

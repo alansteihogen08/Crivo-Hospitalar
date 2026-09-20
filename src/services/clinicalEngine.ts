@@ -244,6 +244,98 @@ export function runGenericRules(selectedIds: string[], ctx: PatientContext): Cli
     });
   }
 
+  // 14. Duplo bloqueio do SRAA (IECA + BRA)
+  const iecas = drugsWithTag(selectedIds, 'ieca');
+  const bras = drugsWithTag(selectedIds, 'bra');
+  if (iecas.length && bras.length) {
+    findings.push({
+      key: 'duplo_bloqueio_sraa',
+      severity: 'critico',
+      drugs: [...new Set(iecas)].join(' + ') + ' × ' + [...new Set(bras)].join(' + '),
+      text: 'Duplo bloqueio do Sistema Renina-Angiotensina-Aldosterona (IECA + BRA): formalmente desaconselhado/contraindicado por diretrizes cardiológicas. Ausência de benefício clínico incremental somada à duplicação do risco de insuficiência renal aguda, hipercalemia severa e hipotensão sintomática com síncope. Desprescrever um dos agentes.'
+    });
+  }
+
+  // 15. Duplicidade terapêutica de Betabloqueadores
+  const betabloqs = drugsWithTag(selectedIds, 'betabloqueador');
+  if (betabloqs.length >= 2) {
+    findings.push({
+      key: 'duplicidade_betabloqueador',
+      severity: 'critico',
+      drugs: betabloqs.join(' + '),
+      text: 'Duplicidade terapêutica de betabloqueadores: risco severo de bradicardia acentuada, bloqueio atrioventricular de alto grau, hipotensão refratária e choque cardiogênico. Manter apenas um agente e titular a dose conforme resposta clínica.'
+    });
+  }
+
+  // 16. Betabloqueador + Bloqueador de Canais de Cálcio Não Di-hidropiridínico (Verapamil / Diltiazem)
+  const bccNaoDihidro = drugsWithTag(selectedIds, 'bcc_nao_dihidropiridinico');
+  if (betabloqs.length && bccNaoDihidro.length) {
+    findings.push({
+      key: 'betabloq_bcc_nao_dihidro',
+      severity: 'critico',
+      drugs: [...new Set(betabloqs)].join(' + ') + ' × ' + [...new Set(bccNaoDihidro)].join(' + '),
+      text: 'Associação de Betabloqueador com Bloqueador de Canal de Cálcio não di-hidropiridínico (Verapamil / Diltiazem): efeito inotrópico, cronotrópico e dromotrópico negativo sinérgico severo. Alto risco de bradicardia extrema, BAV total e descompensação aguda de insuficiência cardíaca.'
+    });
+  }
+
+  // 17. Associação de risco de hipercalemia (Espironolactona + IECA / BRA)
+  const poupadoresK = drugsWithTag(selectedIds, 'poupador_potassio');
+  const bloqueadoresSraa = drugsWithTag(selectedIds, 'ieca').concat(drugsWithTag(selectedIds, 'bra'));
+  if (poupadoresK.length && bloqueadoresSraa.length) {
+    findings.push({
+      key: 'espironolactona_bloqueador_sraa',
+      severity: 'atencao',
+      drugs: [...new Set(poupadoresK)].join(' + ') + ' × ' + [...new Set(bloqueadoresSraa)].join(' + '),
+      text: 'Espironolactona associada a IECA ou BRA: risco elevado de hipercalemia grave (K > 5,5 mEq/L) e piora da função renal, especialmente em nefropatia prévia ou idosos. Monitorar potássio sérico e creatinina em 1, 4 e 12 semanas e após qualquer aumento posológico.'
+    });
+  }
+
+  // 18. Duplicidade terapêutica de Estatinas
+  const estatinas = drugsWithTag(selectedIds, 'estatina');
+  if (estatinas.length >= 2) {
+    findings.push({
+      key: 'duplicidade_estatina',
+      severity: 'critico',
+      drugs: estatinas.join(' + '),
+      text: 'Duplicidade de inibidores da HMG-CoA redutase (estatinas): duplicação do risco de miopatia, miosite, elevação de transaminases e rabdomiólise sem benefício lipídico justificado. Prescrever apenas uma estatina na potência indicada.'
+    });
+  }
+
+  // 19. Duplicidade terapêutica de Sulfonilureias
+  const sulfonilureias = drugsWithTag(selectedIds, 'sulfonilureia');
+  if (sulfonilureias.length >= 2) {
+    findings.push({
+      key: 'duplicidade_sulfonilureia',
+      severity: 'critico',
+      drugs: sulfonilureias.join(' + '),
+      text: 'Duplicidade de sulfonilureias (mesmo sítio de ação no canal K-ATP da célula beta pancreática): risco crítico de hipoglicemia severa e prolongada. Suspender a redundância posológica imediatamente.'
+    });
+  }
+
+  // 20. Sinergismo diurético iSGLT2 + Diuréticos de alça / tiazídicos
+  const isglt2 = drugsWithTag(selectedIds, 'isglt2');
+  const diureticos = drugsWithTag(selectedIds, 'diuretico');
+  if (isglt2.length && diureticos.length) {
+    findings.push({
+      key: 'isglt2_diuretico_deplecao',
+      severity: 'atencao',
+      drugs: [...new Set(isglt2)].join(' + ') + ' × ' + [...new Set(diureticos)].join(' + '),
+      text: 'Inibidor de SGLT2 associado a diurético: efeito diurético osmótico aditivo com risco aumentado de hipotensão ortostática, depleção volêmica e azotemia pré-renal (especialmente em idosos). Avaliar redução preventiva da dose do diurético.'
+    });
+  }
+
+  // 21. Lacosamida associada a múltiplos depressores da condução atrioventricular
+  const lacosamida = drugsWithTag(selectedIds, 'anticonvulsivante').filter(n => n.toLowerCase().includes('lacosamida'));
+  const depressoresAv = drugsWithTag(selectedIds, 'bradicardizante');
+  if (lacosamida.length && depressoresAv.length) {
+    findings.push({
+      key: 'lacosamida_conducao_av',
+      severity: 'atencao',
+      drugs: lacosamida.join(' + ') + ' × ' + [...new Set(depressoresAv)].join(' + '),
+      text: 'Lacosamida prolonga o intervalo PR de forma dose-dependente. Coadministração com outros depressores do nó AV (betabloqueadores, verapamil, diltiazem, digoxina) eleva o risco de BAV de 1º/2º grau e síncope. Realizar ECG de controle.'
+    });
+  }
+
   return findings;
 }
 
@@ -261,9 +353,9 @@ export function runSpecificRules(selectedIds: string[]): ClinicalFinding[] {
 
 export function applyContextModifiers(
   findings: ClinicalFinding[],
-  indications: string[]
+  indications?: string[]
 ): ClinicalFinding[] {
-  if (!indications.length) return findings;
+  if (!indications || !indications.length) return findings;
   const indSet = new Set(indications);
 
   return findings.map(f => {

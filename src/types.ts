@@ -26,7 +26,10 @@ export interface Drug {
   manufacturer?: string; // Empresa / Laboratório detentor (ex: "GlaxoSmithKline", "Pfizer", "Sanofi", "Teuto")
   referenceType?: 'referencia' | 'generico_padrao'; // Medicamento de referência ou genérico de referência técnica
   bulaSlug?: string; // Slug para busca e link direto no bula.com.br (ex: "ziagenavir")
+  bulaUrl?: string; // URL direta personalizada para a bula oficial ou portal oficial (quando diferente de bula.com.br)
+  bulaLabel?: string; // Rótulo do botão de bula (ex: 'Bula Oficial SUS', 'Bula.com.br')
   anvisaRecord?: string; // Número do registro ou referência de consulta ANVISA
+  anvisaSearchQuery?: string; // Termo de busca no portal ANVISA
   tags: string[];
   renal?: RenalRange[];
   requiresRenalAdjustment?: boolean;
