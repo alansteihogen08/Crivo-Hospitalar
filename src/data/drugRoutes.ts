@@ -373,7 +373,7 @@ export const DRUG_ROUTE_REGISTRY: Record<string, DrugRouteConfig> = {
     availableRoutes: ['VO', 'SNE'],
     defaultRoute: 'VO',
     routeNotes: {
-      VO: 'Tomar com alimentos. Comprimidos de liberação controlada (CR) não devem ser mastigados nem macerados.',
+      VO: 'Tomar com alimentos. Evitar suco de toranja (grapefruit) por inibição do CYP3A4 com risco de toxicidade. Comprimidos de liberação controlada (CR) não devem ser mastigados nem macerados.',
       SNE: 'Utilizar suspensão oral diluída em partes iguais com água antes de instilar na sonda para evitar aderência ao PVC.'
     }
   },
@@ -692,7 +692,7 @@ export const DRUG_ROUTE_REGISTRY: Record<string, DrugRouteConfig> = {
     defaultRoute: 'IV',
     routeNotes: {
       IV: 'DILUIÇÃO EXCLUSIVA EM SG 5%: soluções salinas (SF 0,9%) causam precipitação física. Infusões contínuas > 1 hora requerem acesso venoso central (CVC) devido ao alto risco de flebite química severa periférica.',
-      VO: 'Tomar com alimentos para minimizar náuseas e otimizar absorção.',
+      VO: 'Tomar com alimentos para minimizar náuseas e otimizar absorção. Evitar suco de toranja (grapefruit).',
       SNE: 'Triturar comprimido e diluir em água.'
     }
   },

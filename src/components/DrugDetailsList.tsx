@@ -272,21 +272,7 @@ export const DrugDetailsList: React.FC<DrugDetailsListProps> = ({
                   </div>
                 )}
 
-                {/* 3. Interação Fármaco-Alimento / Nutrição Enteral */}
-                {drug.food && drug.food.length > 0 && (
-                  <div>
-                    <h4 className="font-mono text-[11px] font-bold uppercase tracking-[1px] text-[#0A7EA4] mb-1">
-                      INTERAÇÃO FÁRMACO-ALIMENTO / NUTRIÇÃO ENTERAL
-                    </h4>
-                    <ul className="text-xs text-[#1A202C] leading-relaxed list-none space-y-1">
-                      {drug.food.map((f, i) => (
-                        <li key={i}>• {f}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* 4. Efeitos Adversos Relevantes */}
+                {/* 3. Efeitos Adversos Relevantes */}
                 {drug.effects && drug.effects.length > 0 && (
                   <div>
                     <h4 className="font-mono text-[11px] font-bold uppercase tracking-[1px] text-[#0A7EA4] mb-1">
