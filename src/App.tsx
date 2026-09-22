@@ -22,7 +22,7 @@ import { SectorAuditView } from './components/SectorAuditView';
 import { SectorManagerView } from './components/SectorManagerView';
 import { DrugCatalogModal } from './components/DrugCatalogModal';
 import { LogoCustomizerModal } from './components/LogoCustomizerModal';
-import { PatientContext, SetorHospital, EvolucaoEntry, ClinicalFinding, ClinicalUser } from './types';
+import { PatientContext, SetorHospital, EvolucaoEntry, ClinicalFinding, ClinicalUser, AdminRoute } from './types';
 import { clinicalAuth } from './services/clinicalAuth';
 import { computeFindings } from './services/clinicalEngine';
 import { DRUGS } from './data/drugs';
@@ -60,6 +60,7 @@ export default function App() {
   const [setores, setSetores] = useState<SetorHospital[]>([]);
   const [patientCtx, setPatientCtx] = useState<PatientContext>(initialPatientCtx);
   const [selectedDrugIds, setSelectedDrugIds] = useState<string[]>([]);
+  const [drugRoutes, setDrugRoutes] = useState<Record<string, AdminRoute>>({});
   const [evolutionEntries, setEvolutionEntries] = useState<EvolucaoEntry[]>([]);
 
   // UI state
@@ -131,8 +132,36 @@ export default function App() {
 
   // Real-time clinical findings computation
   const currentFindings = useMemo<ClinicalFinding[]>(() => {
-    return computeFindings(selectedDrugIds, patientCtx);
-  }, [selectedDrugIds, patientCtx]);
+    return computeFindings(selectedDrugIds, patientCtx, drugRoutes);
+  }, [selectedDrugIds, patientCtx, drugRoutes]);
+
+  const handleAddDrug = (id: string) => {
+    if (!selectedDrugIds.includes(id)) {
+      setSelectedDrugIds((prev) => [...prev, id]);
+      const defaultR = DRUGS[id]?.defaultRoute || 'VO';
+      setDrugRoutes((prev) => ({ ...prev, [id]: defaultR }));
+    }
+  };
+
+  const handleRemoveDrug = (id: string) => {
+    setSelectedDrugIds((prev) => prev.filter((d) => d !== id));
+    setDrugRoutes((prev) => {
+      const copy = { ...prev };
+      delete copy[id];
+      return copy;
+    });
+  };
+
+  const handleClearAllDrugs = () => {
+    setSelectedDrugIds([]);
+    setDrugRoutes({});
+  };
+
+  const handleRouteChange = (id: string, newRoute: AdminRoute) => {
+    setDrugRoutes((prev) => ({ ...prev, [id]: newRoute }));
+    const drugName = DRUGS[id]?.name || id;
+    showToast(`${drugName}: via alterada para ${newRoute}`);
+  };
 
   // Load evolution history when sector or bed changes
   useEffect(() => {
@@ -230,6 +259,7 @@ export default function App() {
     }
     setPatientCtx(initialPatientCtx);
     setSelectedDrugIds([]);
+    setDrugRoutes({});
     setEvolutionEntries([]);
     showToast('Formulário de triagem reiniciado.');
   };
@@ -271,12 +301,7 @@ export default function App() {
           isOpen={isCatalogModalOpen}
           onClose={() => setIsCatalogModalOpen(false)}
           selectedDrugIds={selectedDrugIds}
-          onAddDrug={(id) => {
-            if (!selectedDrugIds.includes(id)) {
-              setSelectedDrugIds((prev) => [...prev, id]);
-              showToast(`${DRUGS[id]?.name} adicionado.`);
-            }
-          }}
+          onAddDrug={handleAddDrug}
         />
 
         <LogoCustomizerModal
@@ -381,23 +406,21 @@ export default function App() {
             {/* Card 2: Medicamentos da Prescrição */}
             <DrugSelector
               selectedDrugIds={selectedDrugIds}
+              drugRoutes={drugRoutes}
               currentFindings={currentFindings}
               patientCtx={patientCtx}
-              onAddDrug={(id) => {
-                if (!selectedDrugIds.includes(id)) {
-                  setSelectedDrugIds((prev) => [...prev, id]);
-                }
-              }}
-              onRemoveDrug={(id) => {
-                setSelectedDrugIds((prev) => prev.filter((d) => d !== id));
-              }}
-              onClearAll={() => setSelectedDrugIds([])}
+              onAddDrug={handleAddDrug}
+              onRemoveDrug={handleRemoveDrug}
+              onClearAll={handleClearAllDrugs}
+              onRouteChange={handleRouteChange}
             />
 
             {/* Cards dos Medicamentos com Ajuste Renal / Posologias */}
             <DrugDetailsList
               selectedDrugIds={selectedDrugIds}
+              drugRoutes={drugRoutes}
               patientCtx={patientCtx}
+              onRouteChange={handleRouteChange}
             />
 
             {/* Alertas de Segurança & Interações (Após os cards dos medicamentos) */}
@@ -498,12 +521,7 @@ export default function App() {
         isOpen={isCatalogModalOpen}
         onClose={() => setIsCatalogModalOpen(false)}
         selectedDrugIds={selectedDrugIds}
-        onAddDrug={(id) => {
-          if (!selectedDrugIds.includes(id)) {
-            setSelectedDrugIds((prev) => [...prev, id]);
-            showToast(`${DRUGS[id]?.name} adicionado à prescrição.`);
-          }
-        }}
+        onAddDrug={handleAddDrug}
       />
 
       <LogoCustomizerModal

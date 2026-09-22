@@ -1,5 +1,6 @@
 import { Drug } from '../types';
 import { DRUG_REFERENCES } from './drugReferences';
+import { DRUG_ROUTE_REGISTRY } from './drugRoutes';
 
 const RAW_DRUGS: Record<string, Drug> = {
   meropenem: {
@@ -1635,12 +1636,185 @@ const RAW_DRUGS: Record<string, Drug> = {
     effects: ['Hipertensão arterial severa / descontrole pressórico agudo', 'Trombose vascular (trombose da fístula arteriovenosa de diálise, AVC, IAM, TVP)', 'Aplasia pura de células vermelhas mediada por anticorpos anti-EPO (rara)', 'Sintomas gripais na fase inicial'],
     monitor: ['Hemoglobina quinzenal ou mensal (alvo: 10,0 a 11,5 g/dL; suspender ou reduzir dose se Hb > 11,5-12,0 g/dL)', 'Pressão arterial antes e durante cada administração/sessão de HD', 'Cinética do ferro (manter saturação de transferrina ≥20% e ferritina ≥200 ng/mL para eficácia da EPO)', 'Patência da fístula arteriovenosa'],
     maxDose: { value: '300 UI/kg/semana', note: 'ajustes escalonados de 25% conforme delta da hemoglobina' }
+  },
+  etomidato: {
+    name: 'Etomidato',
+    tags: ['sedativo', 'hipnotico', 'anestesico_geral', 'cns_depressor'],
+    renal: [
+      { min: 0, max: 999, dose: '0,2 a 0,3 mg/kg IV em bolus lento (indução anestésica ou intubação em sequência rápida). Não requer ajuste na insuficiência renal.' }
+    ],
+    dialysis: 'Não dialisável por hemodiálise (alta ligação proteica ~75% e rápida depuração plasmática por esterases). Não requer dose pós-HD.',
+    effects: ['Supressão adrenocortical transitória (inibição dose-dependente da 11-beta-hidroxilase com redução de cortisol e aldosterona por 6-8h)', 'Mioclonias involuntárias na indução (atenuadas por pré-tratamento com opioide)', 'Dor e queimação no sítio de injeção venosa periférica', 'Náuseas e vômitos pós-operatórios frequentes', 'Estabilidade hemodinâmica preservada comparada a propofol/tiopental'],
+    monitor: ['Sinais clínicos de insuficiência adrenal aguda em pacientes sépticos ou em choque distributivo', 'Profundidade da sedação e parâmetros ventilatórios durante indução'],
+    maxDose: { value: '0,3 mg/kg por dose de indução', note: 'infusão contínua formalmente contraindicada pela supressão adrenal prolongada' }
+  },
+  tiopental: {
+    name: 'Tiopental Sódico',
+    tags: ['sedativo', 'barbiturico', 'anestesico_geral', 'cns_depressor', 'anticonvulsivante', 'evitar_idoso', 'renal_ajuste'],
+    renal: [
+      { min: 50, max: 999, dose: 'Indução: 3 a 5 mg/kg IV; Hipertensão intracraniana refratária: 1,5 a 5 mg/kg/h sob monitorização hemodinâmica e EEG contínuos' },
+      { min: 10, max: 49, dose: 'Reduzir dose inicial em 25% a 50% devido à menor ligação proteica (fração livre aumentada) e eliminação diminuída' },
+      { min: 0, max: 9, dose: 'Reduzir dose em 50% ou priorizar anestésico alternativo com menor meia-vida e sem acúmulo' }
+    ],
+    dialysis: 'Não dialisável por hemodiálise (alta ligação proteica 75-85% e grande lipofilicidade tecidual). Não requer dose suplementar pós-HD.',
+    effects: ['Hipotensão arterial severa e colapso circulatório por vasodilatação periférica e depressão miocárdica direta', 'Depressão respiratória grave e apneia imediata pós-injeção', 'Broncoespasmo e laringoespasmo por liberação de histamina', 'Necrose tecidual grave por extravasamento perivenoso ou gangrena por injeção intra-arterial acidental (pH alcalino 10-11)', 'Acúmulo com despertar prolongado por dias em infusão contínua ("coma barbitúrico")'],
+    monitor: ['Pressão arterial invasiva (PAI) e suporte com vasopressores/inotrópicos', 'ECG e saturação de oxigênio contínuos', 'EEG contínuo / padrão de surto-supressão em neuroproteção', 'Segurança estrita do acesso venoso (evitar veias finas periféricas; nunca punção arterial)'],
+    maxDose: { value: '5 mg/kg/dose (indução) / 5 mg/kg/h (infusão sob EEG)' }
+  },
+  flumazenil: {
+    name: 'Flumazenil',
+    tags: ['antidoto', 'reversor_benzodiazepinico', 'risco_convulsao'],
+    renal: [
+      { min: 0, max: 999, dose: '0,2 mg IV em 15 segundos. Se nível de consciência desejado não for atingido em 60s, administrar 0,1 a 0,2 mg a cada 60s até dose total de 1 mg (ou máx 2 mg em intoxicação). Não requer ajuste renal.' }
+    ],
+    dialysis: 'Não requer dose suplementar (alta depuração hepática rápida).',
+    effects: ['Precipitação de crises convulsivas graves e estado de mal epiléptico refratário (especialmente em usuários crônicos de benzodiazepínicos ou cointoxicação com antidepressivos tricíclicos)', 'Ressedaçâo e ressonolência de rebote (meia-vida de eliminação do flumazenil de ~40-60 min é menor que a maioria dos benzodiazepínicos)', 'Taquicardia, palpitações e elevação da pressão arterial', 'Agitação psicomotora, ansiedade aguda e náuseas/vômitos'],
+    monitor: ['Nível de consciência e retorno da sedação por pelo menos 2 a 4 horas pós-administração', 'Monitorização de sinais clínicos de crise convulsiva', 'Histórico prévio de epilepsia ou uso crônico de benzo antes da administração'],
+    maxDose: { value: '1 mg/episódio (reversão anestésica) a 2 mg (intoxicação benzodiazepínica)' }
+  },
+  naloxona: {
+    name: 'Cloridrato de Naloxona',
+    tags: ['antidoto', 'antagonista_opioide', 'reversor'],
+    renal: [
+      { min: 0, max: 999, dose: '0,04 mg a 0,4 mg IV/IM/SC a cada 2-3 minutos até reversão da depressão respiratória (em PCR ou apneia grave: 0,4 a 2 mg). Não requer ajuste renal.' }
+    ],
+    dialysis: 'Não requer dose de reforço pós-diálise (rápida metabolização hepática por glicuronidação).',
+    effects: ['Síndrome de abstinência opioide aguda severa precipitada (dor intensa, agitação psicomotora, diaforese, vômitos, piloereção)', 'Descarga adrenérgica intensa: hipertensão severa, taquicardia ventricular, fibrilação ventricular e edema agudo de pulmão neurogênico', 'Renarcotização de rebote (meia-vida da naloxona é de 30-90 min, menor que a maioria dos opioides como morfina, metadona e fentanil)'],
+    monitor: ['Frequência respiratória, oximetria e drive ventilatório contínuos por no mínimo 2 a 4 horas pós-reversão', 'Pressão arterial e traçado eletrocardiográfico', 'Sinais de abstinência precipitada em pacientes tolerantes ou dependentes crônicos de opioides'],
+    maxDose: { value: '10 mg em intoxicação aguda por opioides', note: 'se sem resposta com 10mg, questionar fortemente diagnóstico' }
+  },
+  eszopiclona: {
+    name: 'Eszopiclona',
+    tags: ['hipnotico', 'agonista_gaba', 'cns_depressor', 'evitar_idoso', 'renal_ajuste'],
+    renal: [
+      { min: 30, max: 999, dose: '1mg a 3mg 1x/dia VO imediatamente antes de deitar (iniciar com 1mg a 2mg em idosos)' },
+      { min: 0, max: 29, dose: 'Dose máxima recomendada de 2mg/dia imediatamente antes de deitar; titular cautelosamente' }
+    ],
+    dialysis: 'Menos de 10% é excretado inalterado na urina; não requer dose de reforço pós-hemodiálise.',
+    effects: ['Gosto amargo desagradável na boca (disgeusia característica em até 25-30% dos pacientes)', 'Sonolência residual diurna, tontura e cefaleia matinal', 'Comportamentos complexos do sono (sonambulismo, dirigir dormindo, ingestão alimentar inconsciente com amnésia do episódio)', 'Risco de dependência psíquica, tolerância e quedas/fraturas em idosos'],
+    monitor: ['Tempo total de sono e estado de vigília diurno', 'Relato de familiares quanto a comportamentos automáticos durante o sono', 'Função cognitiva e risco de quedas em idosos'],
+    maxDose: { value: '3mg/dia (2mg/dia em idosos ou ClCr < 30 mL/min)' }
+  },
+  zolpidem: {
+    name: 'Hemitartarato de Zolpidem',
+    tags: ['hipnotico', 'agonista_gaba', 'cns_depressor', 'evitar_idoso'],
+    renal: [
+      { min: 0, max: 999, dose: '5mg a 10mg VO 1x/dia imediatamente antes de deitar (dose padrão de 5mg para mulheres e idosos). Não requer ajuste posológico na insuficiência renal.' }
+    ],
+    dialysis: 'Não dialisável por hemodiálise (alta ligação proteica ~92% e biotransformação hepática extensiva via CYP3A4).',
+    effects: ['Comportamentos complexos do sono potencialmente perigosos (sonambulismo, dirigir adormecido, compras noturnas e amnésia anterógrada total)', 'Alucinações hipnagógicas, delírios e pesadelos', 'Quedas, vertigem e alto risco de fratura de fêmur em idosos (Critérios de Beers)', 'Tolerância, dependência e insônia rebote intensa na suspensão abrupta'],
+    monitor: ['Sintomas neuropsiquiátricos e episódios de amnésia', 'Tempo total de uso (recomenda-se tratamento curto de no máximo 2 a 4 semanas)', 'Coordenação motora e nível de vigília matinal'],
+    maxDose: { value: '10mg/dia (5mg/dia em mulheres, idosos ou insuficiência hepática)' }
+  },
+  difenidramina: {
+    name: 'Cloridrato de Difenidramina',
+    tags: ['anti-histaminico', 'anticolinergico', 'cns_depressor', 'evitar_idoso', 'qt', 'renal_ajuste'],
+    renal: [
+      { min: 50, max: 999, dose: '25mg a 50mg a cada 6 a 8 horas IV, IM ou VO' },
+      { min: 10, max: 49, dose: '25mg a 50mg a cada 8 a 12 horas' },
+      { min: 0, max: 9, dose: '25mg a 50mg a cada 12 a 18 horas' }
+    ],
+    dialysis: 'Não dialisável por hemodiálise (amplo volume de distribuição tecidual e ligação proteica). Não requer dose pós-HD.',
+    effects: ['Sedação pronunciada, sonolência profunda e lentificação psicomotora acentuada', 'Efeitos anticolinérgicos clássicos: xerostomia (boca seca), retenção urinária aguda (especialmente em homens com HPB), visão turva, midríase, constipação severa e taquicardia sinusal', 'Delirium e confusão mental aguda em idosos (Critérios de Beers)', 'Prolongamento do intervalo QT em superdosagem ou uso crônico acumulado'],
+    monitor: ['Débito urinário e palpação de globo vesical', 'Estado mental e nível de consciência em idosos', 'Pressão intraocular em pacientes com suspeita de glaucoma de ângulo fechado'],
+    maxDose: { value: '400mg/dia (100mg por dose IV/VO)' }
+  },
+  dexclorfeniramina: {
+    name: 'Maleato de Dexclorfeniramina',
+    tags: ['anti-histaminico', 'anticolinergico', 'cns_depressor', 'evitar_idoso'],
+    renal: [
+      { min: 0, max: 999, dose: '2mg VO a cada 4 a 6 horas (ou 6mg formulação de liberação prolongada a cada 12h). Não requer ajuste na insuficiência renal.' }
+    ],
+    dialysis: 'Não dialisável de forma significativa; não requer suplementação pós-hemodiálise.',
+    effects: ['Sonolência diurna e lentificação do reflexo motor', 'Efeitos anticolinérgicos leves a moderados: secura de boca e vias aéreas, retenção urinária em idosos, obstipação intestinal', 'Tontura, cefaleia e fadiga', 'Excitação paradoxal em crianças e idosos com insônia e agitação'],
+    monitor: ['Nível de sedação e coordenação motora para evitar quedas em idosos', 'Sintomas urinários obstrutivos'],
+    maxDose: { value: '12mg/dia' }
+  },
+  dimenidrinato: {
+    name: 'Dimenidrinato',
+    tags: ['antiemetico', 'anti-histaminico', 'anticolinergico', 'cns_depressor', 'evitar_idoso'],
+    renal: [
+      { min: 0, max: 999, dose: '50mg a 100mg VO a cada 4 a 6 horas (ou 25mg a 50mg IV diluído infundido lentamente em no mínimo 2 minutos). Não requer ajuste renal.' }
+    ],
+    dialysis: 'Não dialisável de forma relevante; não requer dose suplementar pós-HD.',
+    effects: ['Sedação e sonolência proeminentes (efeito potencializado com álcool e outros sedativos)', 'Efeitos anticolinérgicos: boca seca, retenção urinária aguda, constipação intestinal, taquicardia sinusal e turvação visual', 'Piora de delirium e desorientação têmpora-espacial em idosos hospitalizados (Critérios de Beers)', 'Irritação endotelial e dor se administrado em bolus IV rápido não diluído'],
+    monitor: ['Alívio de náuseas, vômitos e cinetose', 'Nível de alerta e retenção urinária vesical', 'Frequência cardíaca (taquicardia anticolinérgica)'],
+    maxDose: { value: '400mg/dia (100mg por dose)' }
+  },
+  prometazina: {
+    name: 'Cloridrato de Prometazina',
+    tags: ['anti-histaminico', 'fenotiazina', 'anticolinergico', 'cns_depressor', 'evitar_idoso', 'risco_extrapiramidal', 'qt'],
+    renal: [
+      { min: 0, max: 999, dose: '25mg a 50mg IM profunda (ou VO) a cada 6 a 8 horas. Se via IV imprescindível, diluir em 25-50 mL de SF 0,9% e infundir em veia calibrosa a no máximo 25 mg/min. Não requer ajuste renal.' }
+    ],
+    dialysis: 'Não dialisável por hemodiálise (alta ligação proteica ~93% e extenso metabolismo hepático).',
+    effects: ['Sedação profunda e rebaixamento do sensório', 'Risco severo de lesão tecidual necrosante e gangrena (Alerta de Caixa Preta ANVISA/FDA) se injeção intra-arterial acidental ou extravasamento perivenoso — via IM profunda é a via parenteral preferencial', 'Sintomas extrapiramidais (acatisia, distonias agudas e parkinsonismo) por bloqueio de receptores dopaminérgicos D2 fenotiazínicos', 'Efeitos anticolinérgicos intensos (boca seca, retenção urinária, íleo adinâmico, visão turva)', 'Hipotensão ortostática por bloqueio alfa-1 adrenérgico', 'Prolongamento do intervalo QT'],
+    monitor: ['Sítio de punção vascular (se via IV inevitável, verificar refluxo de sangue; interromper imediatamente se dor ou queimação)', 'Pressão arterial e frequência cardíaca', 'Reações extrapiramidais agudas e escala de sedação'],
+    maxDose: { value: '100mg/dia' }
+  },
+  succinilcolina: {
+    name: 'Cloreto de Suxametônio (Succinilcolina)',
+    tags: ['bloqueador_neuromuscular', 'bnm_despolarizante', 'risco_hipercalemia', 'risco_hipertermia_maligna'],
+    renal: [
+      { min: 0, max: 999, dose: '1,0 a 1,5 mg/kg IV em bolus para intubação em sequência rápida (ISR). Não requer ajuste renal per se, mas formalmente contraindicada em hipercalemia prévia ou insuficiência renal anúrica com potássio desconhecido/elevado.' }
+    ],
+    dialysis: 'Metabolização plasmática ultrarrápida (meia-vida de 1-2 minutos) por pseudocolinesterases. Não dialisável e não requer reposição.',
+    effects: ['Elevação aguda e obrigatória do potássio sérico em 0,5 a 1,0 mEq/L (em queimados > 24h, politrauma, desinervação motora por AVE/lesão medular, sepse prolongada ou uremia, pode provocar hipercalemia maciça > 7-9 mEq/L com fibrilação ventricular e PCR imediata)', 'Gatilho clássico de Hipertermia Maligna com rigidez muscular sustentada, hipertermia extrema, rabdomiólise e hipercapnia grave', 'Fasciculações musculares pré-paralisia e mialgia difusa pós-operatória', 'Bradicardia profunda e assistolia (especialmente em crianças ou segunda dose rápida)', 'Aumento transitório da pressão intracraniana, intraocular e intragástrica'],
+    monitor: ['Potássio sérico basal prévio mandatório (contraindicada se K > 5,0-5,5 mEq/L)', 'ECG contínuo e saturação de O2 (suporte de via aérea avançada obrigatório)', 'Capnografia (EtCO2 para detecção precoce de hipertermia maligna)', 'Tempo de retorno ventilatório (se bloqueio prolongado por horas, pesquisar deficiência genética de pseudocolinesterase)'],
+    maxDose: { value: '1,5 mg/kg por dose de intubação' }
+  },
+  rocuronio: {
+    name: 'Brometo de Rocurônio',
+    tags: ['bloqueador_neuromuscular', 'bnm_nao_despolarizante', 'renal_ajuste'],
+    renal: [
+      { min: 50, max: 999, dose: 'Intubação: 0,6 mg/kg IV (ou 1,0 a 1,2 mg/kg para ISR); Manutenção: 0,15 mg/kg em bolus ou infusão contínua de 0,3 a 0,6 mg/kg/h' },
+      { min: 0, max: 49, dose: 'Dose de intubação mantida (0,6 a 1,0 mg/kg), porém esperar duração de ação e tempo de recuperação neuromuscular substancialmente prolongados (~30% de eliminação renal); reduzir doses e velocidade de manutenção, guiando estritamente por TOF' }
+    ],
+    dialysis: 'Minimamente dialisável por hemodiálise (alta ligação e eliminação hepatobiliar e renal). Reversor específico disponível: Sugamadex.',
+    effects: ['Paralisia muscular esquelética completa e apneia (obrigatório suporte ventilatório mecânico invasivo e sedação profunda prévia comprovada)', 'Bloqueio neuromuscular residual pós-operatório (curarização residual com risco de insuficiência respiratória pós-extubação)', 'Reações anafiláticas ou anafilactoides mediadas por IgE', 'Prolongamento acentuado da paralisia em insuficiência renal crônica ou disfunção hepática grave'],
+    monitor: ['Monitorização da transmissão neuromuscular por trem-de-quatro (TOF / Train-of-Four) no nervo ulnar', 'Ventilação mecânica controlada e oximetria/capnografia contínuas', 'Garantia absoluta de sedação profunda e hipnose concomitantes (BNMs não têm efeito hipnótico nem analgésico)'],
+    maxDose: { value: '1,2 mg/kg (indução ISR); titular manutenção por TOF' }
+  },
+  vecuronio: {
+    name: 'Brometo de Vecurônio',
+    tags: ['bloqueador_neuromuscular', 'bnm_nao_despolarizante', 'renal_ajuste'],
+    renal: [
+      { min: 50, max: 999, dose: 'Intubação: 0,08 a 0,1 mg/kg IV; Manutenção: 0,02 a 0,03 mg/kg IV a cada 25-40 min ou infusão contínua de 0,8 a 1,2 mcg/kg/min' },
+      { min: 0, max: 49, dose: 'Dose de indução inalterada; reduzir doses de manutenção e espaçar intervalos (eliminação renal de ~30-40% com acúmulo do metabólito ativo 3-desacetil-vecurônio); guiar estritamente por TOF' }
+    ],
+    dialysis: 'Minimamente dialisável. Duração do bloqueio aumentada em pacientes anúricos/renais crônicos. Reversão por Sugamadex ou Neostigmina + Atropina.',
+    effects: ['Apneia e paralisia muscular flácida total', 'Curarização residual e fraqueza da musculatura faríngea/respiratória pós-extubação', 'Acúmulo do metabólito ativo 3-desacetil-vecurônio com paralisia prolongada por dias em UTI (especialmente se disfunção renal associada a corticosteroides / miopatia de UTI)'],
+    monitor: ['Monitorização neuromuscular quantitativa (TOF)', 'Garantia absoluta de sedação e hipnose concomitantes', 'Recuperação neuromuscular (TOF ratio > 0,9) antes da extubação traqueal'],
+    maxDose: { value: '0,1 mg/kg por bolus; titular infusão por TOF' }
+  },
+  atracurio: {
+    name: 'Besilato de Atracúrio',
+    tags: ['bloqueador_neuromuscular', 'bnm_nao_despolarizante', 'eliminacao_hofmann'],
+    renal: [
+      { min: 0, max: 999, dose: 'Intubação: 0,4 a 0,5 mg/kg IV; Manutenção: 0,08 a 0,10 mg/kg a cada 20-45 min ou infusão 5 a 10 mcg/kg/min. Não requer ajuste na insuficiência renal (eliminação independente por degradação espontânea de Hofmann e hidrólise éster plasmática).' }
+    ],
+    dialysis: 'Degradação independente dos rins e fígado (via de Hofmann). Não dialisável e não requer suplementação pós-hemodiálise. Droga de escolha clássica em insuficiência renal terminal ou falência hepática.',
+    effects: ['Paralisia muscular e apneia respiratória completa', 'Liberação de histamina dose-dependente em bolus rápido: rubor facial, hipotensão transitória, taquicardia e broncoespasmo (administrar em injeção lenta > 60s)', 'Laudanosina: metabólito terciário da via de Hofmann com potencial pró-convulsivante em infusões de altíssima dose ou muito prolongadas em UTI', 'Ausência de hipnose/analgesia (risco de paralisia consciente se sedação falhar)'],
+    monitor: ['TOF para titulação e monitorização de bloqueio', 'Ventilação mecânica e pressão arterial durante injeção', 'Nível de sedação profunda'],
+    maxDose: { value: '0,5 mg/kg bolus; 10 mcg/kg/min em infusão' }
+  },
+  cisatracurio: {
+    name: 'Besilato de Cisatracúrio',
+    tags: ['bloqueador_neuromuscular', 'bnm_nao_despolarizante', 'eliminacao_hofmann'],
+    renal: [
+      { min: 0, max: 999, dose: 'Intubação: 0,15 a 0,2 mg/kg IV; Manutenção: 0,03 mg/kg a cada 40-60 min ou infusão 1 a 3 mcg/kg/min (titular por TOF). Não requer ajuste posológico na insuficiência renal (eliminação independente por degradação química de Hofmann).' }
+    ],
+    dialysis: 'Eliminação organo-independente por degradação espontânea de Hofmann em pH e temperatura fisiológicos. Não requer ajuste ou suplementação em hemodiálise ou métodos contínuos (CVVH/CVVHD). Bloqueador neuromuscular de escolha em SARA e disfunção renal.',
+    effects: ['Paralisia neuromuscular completa e apneia', 'Isento de liberação clinicamente relevante de histamina (estabilidade hemodinâmica sem broncoespasmo nem hipotensão, ao contrário do atracúrio)', 'Gera 3 a 5 vezes menos laudanosina que o atracúrio', 'Fraqueza da musculatura respiratória em infusão prolongada (>48-72h) com corticosteroides na UTI (miopatia do doente crítico)'],
+    monitor: ['Monitorização contínua com TOF (alvo habitual de 1 a 2 respostas em 4 estímulos durante bloqueio contínuo em SARA)', 'Sedação profunda mandatória (escala RASS -5) com opioide + hipnótico antes de iniciar o BNM', 'Temperatura e pH corporal (a eliminação de Hofmann é acelerada em febre/alcalose e lentificada em hipotermia/acidose)'],
+    maxDose: { value: '0,2 mg/kg bolus inicial; titular infusão estritamente por TOF' }
   }
 };
 
 export const DRUGS: Record<string, Drug> = Object.fromEntries(
   Object.entries(RAW_DRUGS).map(([id, drug]) => {
     const ref = DRUG_REFERENCES[id];
+    const routeConfig = DRUG_ROUTE_REGISTRY[id];
     return [
       id,
       {
@@ -1653,6 +1827,10 @@ export const DRUGS: Record<string, Drug> = Object.fromEntries(
         bulaLabel: ref?.bulaLabel,
         anvisaRecord: ref?.anvisaRegNumber,
         anvisaSearchQuery: ref?.anvisaSearchQuery,
+        availableRoutes: routeConfig?.availableRoutes || ['VO'],
+        defaultRoute: routeConfig?.defaultRoute || 'VO',
+        routeNotes: routeConfig?.routeNotes,
+        nptIncompatibility: routeConfig?.nptIncompatibility,
       }
     ];
   })
@@ -2017,5 +2195,47 @@ export const SPECIFIC_RULES = [
     key: 'sotalol_haloperidol',
     severity: 'critico' as const,
     text: 'Haloperidol associado a Sotalol: alto risco de arritmias ventriculares malignas por prolongamento acentuado de repolarização ventricular e torsades de pointes. Combinação contraindicada.'
+  },
+  {
+    match: ['flumazenil', 'amitriptilina'],
+    key: 'flumazenil_triciclico',
+    severity: 'critico' as const,
+    text: 'Flumazenil administrado em paciente em uso ou intoxicação mista por Antidepressivos Tricíclicos (Amitriptilina): remove a proteção anticonvulsivante dos benzodiazepínicos e desmascara a atividade pró-convulsivante e cardiotóxica grave do tricíclico, precipitando crises convulsivas refratárias e arritmias ventriculares fatais. Combinação contraindicada.'
+  },
+  {
+    match: ['flumazenil', 'nortriptilina'],
+    key: 'flumazenil_triciclico',
+    severity: 'critico' as const,
+    text: 'Flumazenil administrado em paciente em uso ou intoxicação por Tricíclicos (Nortriptilina): desmascara a epileptogenicidade e cardiotoxicidade do antidepressivo, com alto risco de estado de mal epiléptico. Combinação formalmente contraindicada.'
+  },
+  {
+    match: ['succinilcolina', 'digoxina'],
+    key: 'succinilcolina_digoxina',
+    severity: 'critico' as const,
+    text: 'Succinilcolina associada a Digoxina: a despolarização muscular súbita com efluxo agudo de potássio somada à estimulação autonômica sensibiliza criticamente o miocárdio digitalizado, disparando risco extremo de fibrilação ventricular e PCR imediata. Utilizar preferencialmente bloqueador neuromuscular não-despolarizante (ex: Rocurônio).'
+  },
+  {
+    match: ['prometazina', 'metoclopramida'],
+    key: 'prometazina_metoclopramida',
+    severity: 'critico' as const,
+    text: 'Duplo bloqueio dopaminérgico D2 fenotiazínico e benzamídico (Prometazina + Metoclopramida): soma do risco de reações extrapiramidais agudas severas (distonia cervical aguda, crise oculogírica, trismo, acatisia motora) e depressão respiratória/SNC sem ganho antiemético incremental. Desprescrever a sobreposição.'
+  },
+  {
+    match: ['prometazina', 'bromoprida'],
+    key: 'prometazina_bromoprida',
+    severity: 'critico' as const,
+    text: 'Sobreposição de antagonistas dopaminérgicos D2 (Prometazina + Bromoprida): risco acentuado de reações distônicas agudas e sedação excessiva. Manter apenas um agente antiemético.'
+  },
+  {
+    match: ['prometazina', 'haloperidol'],
+    key: 'prometazina_haloperidol',
+    severity: 'critico' as const,
+    text: 'Prometazina associada a Haloperidol: efeito sinérgico pró-arritmogênico com prolongamento do intervalo QT (risco de Torsades de Pointes), sonolência profunda e duplicação do risco de parkinsonismo induzido por drogas e síndrome neuroléptica maligna.'
+  },
+  {
+    match: ['zolpidem', 'eszopiclona'],
+    key: 'duplicidade_hipnotico_z',
+    severity: 'critico' as const,
+    text: 'Duplicidade de hipnóticos Z (Zolpidem + Eszopiclona): mesmo mecanismo modulador do sítio GABA-A. Risco duplicado de comportamentos complexos do sono potencialmente perigosos (sonambulismo, amnésia anterógrada total), sedação residual diurna e depressão respiratória.'
   }
 ];

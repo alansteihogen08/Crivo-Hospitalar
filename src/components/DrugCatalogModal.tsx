@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { X, Search, BookOpen, Plus, Check, Gauge, ShieldAlert, AlertTriangle } from 'lucide-react';
 import { DRUGS } from '../data/drugs';
+import { getAvailableRoutesForDrug, ROUTE_METADATA } from '../data/drugRoutes';
 
 interface DrugCatalogModalProps {
   isOpen: boolean;
@@ -30,6 +31,8 @@ export const DrugCatalogModal: React.FC<DrugCatalogModalProps> = ({
     { id: 'antifungico', label: 'Antifúngicos' },
     { id: 'anticonvulsivante', label: 'Anticonvulsivantes' },
     { id: 'antiparasitario', label: 'Antiparasitários' },
+    { id: 'bloqueador_neuromuscular', label: 'Bloqueadores Neuromusculares' },
+    { id: 'anti-histaminico', label: 'Anti-histamínicos' },
     { id: 'sedativo', label: 'Sedativos' },
     { id: 'opioide', label: 'Opioides' },
     { id: 'antidepressivo', label: 'Antidepressivos' },
@@ -226,6 +229,21 @@ export const DrugCatalogModal: React.FC<DrugCatalogModalProps> = ({
                             className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200"
                           >
                             {t}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Vias de Administração */}
+                      <div className="flex items-center gap-1 pt-1">
+                        <span className="text-[10px] font-mono text-slate-400">Vias:</span>
+                        {getAvailableRoutesForDrug(drug.id).map((r) => (
+                          <span
+                            key={r}
+                            className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ${
+                              ROUTE_METADATA[r]?.badgeColor || 'bg-slate-100 text-slate-700'
+                            }`}
+                          >
+                            {r}
                           </span>
                         ))}
                       </div>

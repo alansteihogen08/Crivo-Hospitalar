@@ -1,5 +1,7 @@
 export type SeverityLevel = 'critico' | 'atencao' | 'informativo';
 
+export type AdminRoute = 'IV' | 'VO' | 'SNE' | 'SC' | 'IM' | 'INAL';
+
 export interface RenalRange {
   min: number;
   max: number;
@@ -38,6 +40,10 @@ export interface Drug {
   monitor?: string[];
   food?: string[];
   maxDose?: MaxDose;
+  availableRoutes?: AdminRoute[];
+  defaultRoute?: AdminRoute;
+  routeNotes?: Partial<Record<AdminRoute, string>>;
+  nptIncompatibility?: { incompatible: boolean; reason: string };
 }
 
 export interface ClinicalFinding {
@@ -47,6 +53,8 @@ export interface ClinicalFinding {
   text: string;
   ctxNote?: string;
   ctxIndication?: string;
+  route?: AdminRoute;
+  findingCategory?: 'interacao' | 'renal' | 'dialise' | 'idade' | 'via' | 'npt' | 'monitorizacao';
 }
 
 export interface PatientContext {
@@ -60,6 +68,8 @@ export interface PatientContext {
   clcr: number | null;
   clcrManual: boolean;
   emVM: boolean;
+  ventilacaoMecanica?: boolean;
+  emNPT?: boolean;
   gestacaoLactacao: '' | 'gestante' | 'lactante';
   dialise: '' | 'hd' | 'cvvh' | 'cvvhd' | 'cvvhdf';
   ctxNota: string;

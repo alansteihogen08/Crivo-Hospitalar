@@ -108,13 +108,23 @@ export const TriageFindings: React.FC<TriageFindingsProps> = ({ findings, hasDru
 
                 <div className="p-4 flex-1 space-y-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span
                         className={`text-[10px] font-mono uppercase tracking-wider font-bold px-2 py-0.5 rounded border flex items-center gap-1 ${badgeStyle}`}
                       >
                         <Icon className="w-3 h-3" />
                         <span>{f.severity === 'critico' ? 'Risco Crítico' : f.severity === 'atencao' ? 'Alerta de Atenção' : 'Informativo'}</span>
                       </span>
+                      {f.findingCategory === 'npt' && (
+                        <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-purple-100 text-purple-900 border border-purple-300">
+                          Incompatibilidade NPT
+                        </span>
+                      )}
+                      {f.route && f.findingCategory !== 'npt' && (
+                        <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-blue-100 text-blue-900 border border-blue-300">
+                          Via {f.route}
+                        </span>
+                      )}
                       <span className="font-mono font-bold text-sm text-slate-900">
                         {f.drugs}
                       </span>

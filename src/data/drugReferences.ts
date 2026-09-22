@@ -1213,5 +1213,125 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     bulaSlug: 'alfaepoetina',
     anvisaSearchQuery: 'Alfaepoetina',
     anvisaRegNumber: '1.1236.3340'
+  },
+  etomidato: {
+    brandName: 'Hypnomidate®',
+    manufacturer: 'Janssen-Cilag Farmacêutica',
+    referenceType: 'referencia',
+    bulaSlug: 'hypnomidate',
+    anvisaSearchQuery: 'Hypnomidate',
+    anvisaRegNumber: '1.1236.3312'
+  },
+  tiopental: {
+    brandName: 'Tiopentax® / Tiopental Cristália',
+    manufacturer: 'Cristália Produtos Químicos Farmacêuticos',
+    referenceType: 'referencia',
+    bulaSlug: 'tiopental',
+    anvisaSearchQuery: 'Tiopental Sodico',
+    anvisaRegNumber: '1.0298.0123'
+  },
+  flumazenil: {
+    brandName: 'Lanexat®',
+    manufacturer: 'Produtos Roche Químicos e Farmacêuticos',
+    referenceType: 'referencia',
+    bulaSlug: 'lanexat',
+    anvisaSearchQuery: 'Lanexat',
+    anvisaRegNumber: '1.0100.0528'
+  },
+  naloxona: {
+    brandName: 'Narcan®',
+    manufacturer: 'Cristália / Adapt Pharma',
+    referenceType: 'referencia',
+    bulaSlug: 'narcan',
+    anvisaSearchQuery: 'Narcan',
+    anvisaRegNumber: '1.0298.0134'
+  },
+  eszopiclona: {
+    brandName: 'Prysma®',
+    manufacturer: 'Eurofarma Laboratórios',
+    referenceType: 'referencia',
+    bulaSlug: 'prysma',
+    anvisaSearchQuery: 'Prysma',
+    anvisaRegNumber: '1.0043.1098'
+  },
+  zolpidem: {
+    brandName: 'Stilnox®',
+    manufacturer: 'Sanofi-Aventis Farmacêutica',
+    referenceType: 'referencia',
+    bulaSlug: 'stilnox',
+    anvisaSearchQuery: 'Stilnox',
+    anvisaRegNumber: '1.8326.0125'
+  },
+  difenidramina: {
+    brandName: 'Difenidrin®',
+    manufacturer: 'Cristália Produtos Químicos Farmacêuticos',
+    referenceType: 'referencia',
+    bulaSlug: 'difenidrin',
+    anvisaSearchQuery: 'Difenidrin',
+    anvisaRegNumber: '1.0298.0051'
+  },
+  dexclorfeniramina: {
+    brandName: 'Polaramine®',
+    manufacturer: 'Cosmed / Hypera Pharma',
+    referenceType: 'referencia',
+    bulaSlug: 'polaramine',
+    anvisaSearchQuery: 'Polaramine',
+    anvisaRegNumber: '1.7817.0792'
+  },
+  dimenidrinato: {
+    brandName: 'Dramin®',
+    manufacturer: 'Takeda Pharma / Cosmed',
+    referenceType: 'referencia',
+    bulaSlug: 'dramin',
+    anvisaSearchQuery: 'Dramin',
+    anvisaRegNumber: '1.0639.0116'
+  },
+  prometazina: {
+    brandName: 'Fenergan®',
+    manufacturer: 'Sanofi-Aventis Farmacêutica',
+    referenceType: 'referencia',
+    bulaSlug: 'prometazina',
+    anvisaSearchQuery: 'Fenergan',
+    anvisaRegNumber: '1.8326.0142'
+  },
+  succinilcolina: {
+    brandName: 'Succitrat® / Quelicin®',
+    manufacturer: 'União Química Farmacêutica Nacional',
+    referenceType: 'referencia',
+    bulaSlug: 'succitrat',
+    anvisaSearchQuery: 'Succitrat',
+    anvisaRegNumber: '1.0497.0267'
+  },
+  rocuronio: {
+    brandName: 'Esmeron®',
+    manufacturer: 'Organon / MSD Farmacêutica',
+    referenceType: 'referencia',
+    bulaSlug: 'esmeron',
+    anvisaSearchQuery: 'Esmeron',
+    anvisaRegNumber: '1.0170.0163'
+  },
+  vecuronio: {
+    brandName: 'Norcuron® / Vecron®',
+    manufacturer: 'Organon / Cristália',
+    referenceType: 'referencia',
+    bulaSlug: 'brometo-de-vecuronio',
+    anvisaSearchQuery: 'Norcuron',
+    anvisaRegNumber: '1.0170.0152'
+  },
+  atracurio: {
+    brandName: 'Tracrium®',
+    manufacturer: 'GlaxoSmithKline (GSK)',
+    referenceType: 'referencia',
+    bulaSlug: 'tracrium',
+    anvisaSearchQuery: 'Tracrium',
+    anvisaRegNumber: '1.0107.0135'
+  },
+  cisatracurio: {
+    brandName: 'Nimbex®',
+    manufacturer: 'AbbVie Farmacêutica / GSK',
+    referenceType: 'referencia',
+    bulaSlug: 'besilato-de-cisatracurio',
+    anvisaSearchQuery: 'Nimbex',
+    anvisaRegNumber: '1.9860.0011'
   }
 };

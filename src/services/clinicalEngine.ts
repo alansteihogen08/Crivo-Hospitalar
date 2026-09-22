@@ -1,5 +1,5 @@
 import { DRUGS, SPECIFIC_RULES, CONTEXT_MODIFIERS, INDICATIONS } from '../data/drugs';
-import { ClinicalFinding, Drug, PatientContext, SeverityLevel } from '../types';
+import { AdminRoute, ClinicalFinding, Drug, PatientContext, SeverityLevel } from '../types';
 
 export function calcCockcroftGault(
   idade: number | null,
@@ -336,6 +336,38 @@ export function runGenericRules(selectedIds: string[], ctx: PatientContext): Cli
     });
   }
 
+  // 22. Bloqueador neuromuscular + Aminoglicosídeo
+  const bnms = drugsWithTag(selectedIds, 'bloqueador_neuromuscular');
+  const aminoglicosideos = drugsWithTag(selectedIds, 'aminoglicosideo');
+  if (bnms.length && aminoglicosideos.length) {
+    findings.push({
+      key: 'bnm_aminoglicosideo',
+      severity: 'critico',
+      drugs: [...new Set(bnms)].join(' + ') + ' × ' + [...new Set(aminoglicosideos)].join(' + '),
+      text: 'Bloqueador neuromuscular associado a aminoglicosídeo (Amicacina / Gentamicina): aminoglicosídeos inibem a liberação pré-sináptica de acetilcolina e quelam cálcio na placa motora, causando sinergismo bloqueador neuromuscular profundo. Risco de paralisia prolongada, curarização residual e apneia pós-operatória de reversão dificultada. Monitoração obrigatória com TOF e suporte ventilatório mecânico.'
+    });
+  }
+
+  // 23. Duplicidade terapêutica de Bloqueadores Neuromusculares
+  if (bnms.length >= 2) {
+    findings.push({
+      key: 'duplicidade_bnm',
+      severity: 'critico',
+      drugs: bnms.join(' + '),
+      text: 'Duplicidade terapêutica de bloqueadores neuromusculares: uso concomitante de múltiplos agentes curarizantes. Risco de bloqueio neuromuscular imprevisível, dessincronia ventilatória e curarização residual com risco de apneia.'
+    });
+  }
+
+  // 24. Carga anticolinérgica cumulativa
+  if (anticolinergicos.length >= 2) {
+    findings.push({
+      key: 'carga_anticolinergica_stack',
+      severity: 'atencao',
+      drugs: anticolinergicos.join(' + '),
+      text: 'Carga anticolinérgica cumulativa (múltiplos fármacos anticolinérgicos associados): risco aumentado de delirium e confusão mental aguda em idosos, retenção urinária aguda, obstipação/íleo paralítico, taquicardia sinusal e hipertermia. Reavaliar a necessidade de politerapia anticolinérgica.'
+    });
+  }
+
   return findings;
 }
 
@@ -370,6 +402,121 @@ export function applyContextModifiers(
   });
 }
 
+function runRouteAndDietRules(
+  selectedIds: string[],
+  drugRoutes: Record<string, AdminRoute>
+): ClinicalFinding[] {
+  const findings: ClinicalFinding[] = [];
+
+  for (const id of selectedIds) {
+    const route = drugRoutes[id] || DRUGS[id]?.defaultRoute || 'VO';
+    const drugName = DRUGS[id]?.name || id;
+
+    // Regra: Fenitoína via SNE
+    if (id === 'fenitoina' && route === 'SNE') {
+      findings.push({
+        key: 'fenitoina_sne_dieta',
+        severity: 'critico',
+        route: 'SNE',
+        findingCategory: 'via',
+        drugs: `${drugName} (SNE)`,
+        text: 'Fenitoína administrada via Sonda Enteral (SNE/SNG): os componentes proteicos e minerais da fórmula enteral contínua quelam a fenitoína e adsorvem na parede da sonda, diminuindo drasticamente sua absorção em até 50-70% com alto risco de descontrole e crises convulsivas. Conduta: pausar a infusão da nutrição enteral por 1 a 2 horas antes e 1 a 2 horas após a administração da dose, irrigar a sonda com 20 a 30 mL de água filtrada/destilada antes e depois, ou considerar transição para via intravenosa (IV).'
+      });
+    }
+
+    // Regra: Quinolonas (Ciprofloxacino / Levofloxacino) via SNE
+    if ((id === 'ciprofloxacino' || id === 'levofloxacino') && route === 'SNE') {
+      findings.push({
+        key: `${id}_sne_dieta`,
+        severity: 'atencao',
+        route: 'SNE',
+        findingCategory: 'via',
+        drugs: `${drugName} (SNE)`,
+        text: `${drugName} via Sonda Enteral: cátions polivalentes (cálcio, magnésio, ferro, alumínio) presentes nas dietas enterais formam quelatos insolúveis com a fluoroquinolona, reduzindo substancialmente sua biodisponibilidade. Conduta: pausar a dieta enteral por pelo menos 1 a 2 horas antes e 1 a 2 horas após a administração, ou preferir a via IV em infecções graves/sepse.`
+      });
+    }
+
+    // Regra: Inibidores de Bomba de Prótons (Omeprazol / Pantoprazol) via SNE
+    if ((id === 'omeprazol' || id === 'pantoprazol') && route === 'SNE') {
+      findings.push({
+        key: `${id}_sne_trituracao`,
+        severity: 'atencao',
+        route: 'SNE',
+        findingCategory: 'via',
+        drugs: `${drugName} (SNE)`,
+        text: `${drugName} via Sonda Enteral: formas farmacêuticas orais contêm microgrânulos com revestimento gastrorresistente que NUNCA devem ser triturados ou macerados. A trituração expõe o fármaco ao ácido gástrico inativando-o precocemente e os grânulos triturados causam obstrução mecânica frequente da sonda. Conduta: para pacientes com sonda enteral em ambiente hospitalar, preferir a formulação IV ou utilizar formulação líquida com veículo tamponado/bicarbonato conforme protocolo farmacêutico.`
+      });
+    }
+
+    // Regra: Varfarina via SNE
+    if (id === 'varfarina' && route === 'SNE') {
+      findings.push({
+        key: 'varfarina_sne_dieta',
+        severity: 'atencao',
+        route: 'SNE',
+        findingCategory: 'via',
+        drugs: `${drugName} (SNE)`,
+        text: 'Varfarina via Sonda Enteral: a vitamina K presente na dieta enteral contínua neutraliza o efeito anticoagulante, somada à perda de fração ativa por adsorção na parede plástica da sonda. Conduta: monitorar o RNI com maior frequência e atentar que pausas ou reinícios de dieta enteral exigirão ajustes imediatos da dose.'
+      });
+    }
+
+    // Regra: Prometazina via IV (Alerta de Caixa Preta)
+    if (id === 'prometazina' && route === 'IV') {
+      findings.push({
+        key: 'prometazina_risco_iv',
+        severity: 'critico',
+        route: 'IV',
+        findingCategory: 'via',
+        drugs: `${drugName} (IV)`,
+        text: 'Alerta de Caixa Preta (ANVISA/FDA) para Prometazina por via IV: altíssimo risco de lesão tecidual severa, tromboflebite química, necrose tecidual e gangrena por extravasamento perivenoso ou injeção intra-arterial acidental. Conduta: a via intramuscular profunda (IM) é a via de escolha recomendada. Se o uso IV for inevitável, diluir em 25 a 50 mL de SF 0,9%, certificar-se de retorno venoso livre em cateter calibroso e infundir lentamente a no máximo 25 mg/min.'
+      });
+    }
+
+    // Regra: Diazepam via IM (Absorção errática)
+    if (id === 'diazepam' && route === 'IM') {
+      findings.push({
+        key: 'diazepam_im_erratica',
+        severity: 'atencao',
+        route: 'IM',
+        findingCategory: 'via',
+        drugs: `${drugName} (IM)`,
+        text: 'Diazepam por via Intramuscular (IM): absorção lenta, errática e dolorosa devido à lipofilicidade e precipitação no tecido muscular, com níveis plasmáticos imprevisíveis. Conduta: preferir a via IV lenta para sedação ou emergência de convulsão, ou via oral se disponível. Se via IM for imprescindível, preferir Midazolam IM.'
+      });
+    }
+  }
+
+  return findings;
+}
+
+function runNptIncompatibilityRules(
+  selectedIds: string[],
+  ctx: PatientContext,
+  drugRoutes: Record<string, AdminRoute>
+): ClinicalFinding[] {
+  const findings: ClinicalFinding[] = [];
+  if (!ctx.emNPT) return findings;
+
+  for (const id of selectedIds) {
+    const route = drugRoutes[id] || DRUGS[id]?.defaultRoute || 'VO';
+    // Incompatibilidade de NPT se aplica aos medicamentos infundidos por via IV
+    if (route === 'IV') {
+      const drug = DRUGS[id];
+      if (drug?.nptIncompatibility?.incompatible) {
+        findings.push({
+          key: `npt_${id}`,
+          severity: 'critico',
+          route: 'IV',
+          findingCategory: 'npt',
+          drugs: `${drug.name} (IV) × NPT`,
+          text: `Incompatibilidade com Nutrição Parenteral (NPT): ${drug.nptIncompatibility.reason} Conduta: reservar lúmen EXCLUSIVO do cateter venoso central (CVC) para a infusão da NPT. Jamais coinfundir em Y. Se houver acesso único emergencial, interromper temporariamente a NPT e realizar flushing vigoroso com solução compatível antes e após a administração do fármaco.`
+        });
+      }
+    }
+  }
+
+  return findings;
+}
+
 const SEV_ORDER: Record<SeverityLevel, number> = {
   critico: 0,
   atencao: 1,
@@ -378,8 +525,10 @@ const SEV_ORDER: Record<SeverityLevel, number> = {
 
 export function computeFindings(
   selectedIds: string[],
-  ctx: PatientContext
+  ctx: PatientContext,
+  drugRoutes?: Record<string, AdminRoute>
 ): ClinicalFinding[] {
+  const resolvedRoutes = drugRoutes || {};
   let specific = runSpecificRules(selectedIds);
 
   // Se a regra tríplice de procinéticos estiver ativa, suprimir os pares individuais de procinéticos para não poluir visualmente a interface
@@ -394,13 +543,16 @@ export function computeFindings(
   }
 
   const generic = runGenericRules(selectedIds, ctx);
-  let findings = [...specific, ...generic];
+  const routeFindings = runRouteAndDietRules(selectedIds, resolvedRoutes);
+  const nptFindings = runNptIncompatibilityRules(selectedIds, ctx, resolvedRoutes);
+
+  let findings = [...specific, ...generic, ...routeFindings, ...nptFindings];
   findings = applyContextModifiers(findings, ctx.indications);
 
-  // Deduplicação de segurança: caso surjam alertas idênticos para os mesmos fármacos e mesma severidade
+  // Deduplicação de segurança: caso surjam alertas idênticos para a mesma regra e mesmos fármacos
   const seen = new Set<string>();
   findings = findings.filter(f => {
-    const sig = `${f.severity}:${f.drugs}`;
+    const sig = `${f.key}:${f.severity}:${f.drugs}`;
     if (seen.has(sig)) return false;
     seen.add(sig);
     return true;

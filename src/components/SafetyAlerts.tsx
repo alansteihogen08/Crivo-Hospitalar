@@ -101,6 +101,16 @@ export const SafetyAlerts: React.FC<SafetyAlertsProps> = ({ findings, hasDrugs }
                     >
                       {isCritico ? 'Crítico' : isAtencao ? 'Atenção' : 'Informativo'}
                     </span>
+                    {f.findingCategory === 'npt' && (
+                      <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-purple-100 text-purple-900 border border-purple-300">
+                        Incompatibilidade NPT
+                      </span>
+                    )}
+                    {f.route && f.findingCategory !== 'npt' && (
+                      <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-blue-100 text-blue-900 border border-blue-300">
+                        Via {f.route}
+                      </span>
+                    )}
                     {f.ctxIndication && (
                       <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
                         Contexto: {f.ctxIndication}

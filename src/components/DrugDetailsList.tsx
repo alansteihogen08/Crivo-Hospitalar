@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, ShieldAlert, Lock, Zap } from 'lucide-react';
 import { DRUGS } from '../data/drugs';
-import { PatientContext } from '../types';
+import { AdminRoute, PatientContext } from '../types';
 import { getRenalAdjustmentForDrug } from '../services/clinicalEngine';
+import { getAvailableRoutesForDrug, ROUTE_METADATA, getRouteNote } from '../data/drugRoutes';
 
 interface DrugDetailsListProps {
   selectedDrugIds: string[];
+  drugRoutes?: Record<string, AdminRoute>;
   patientCtx: PatientContext;
+  onRouteChange?: (id: string, route: AdminRoute) => void;
 }
 
 export const DrugDetailsList: React.FC<DrugDetailsListProps> = ({
   selectedDrugIds,
+  drugRoutes = {},
   patientCtx,
+  onRouteChange,
 }) => {
   // Default: first drug or all open, or toggle individually
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
@@ -28,26 +33,52 @@ export const DrugDetailsList: React.FC<DrugDetailsListProps> = ({
         const drug = DRUGS[id];
         if (!drug) return null;
 
-        // Default open for the drugs to look like screenshot 2
         const isCollapsed = collapsed[id] === true;
         const renalInfo = getRenalAdjustmentForDrug(drug, patientCtx.clcr, patientCtx.dialise);
         const isNefrotoxico =
           drug.tags.includes('nefrotoxico') || drug.tags.includes('nefrotoxico_alto');
 
+        const availableRoutes = getAvailableRoutesForDrug(id);
+        const currentRoute = drugRoutes[id] || drug.defaultRoute || availableRoutes[0] || 'VO';
+        const isSingleRoute = availableRoutes.length === 1;
+        const routeNote = getRouteNote(id, currentRoute);
+
+        const isNptRisk =
+          Boolean(patientCtx.emNPT) &&
+          currentRoute === 'IV' &&
+          Boolean(drug.nptIncompatibility?.incompatible);
+
         return (
           <div
             key={id}
-            className="bg-white rounded-xl border border-[#D9E2EC] p-4 shadow-xs transition"
+            className={`bg-white rounded-xl border p-4 shadow-xs transition ${
+              isNptRisk ? 'border-amber-400 ring-1 ring-amber-300' : 'border-[#D9E2EC]'
+            }`}
           >
-            {/* Header: Drug Name + Badges + Chevron (from Screenshot 2) */}
-            <button
-              type="button"
-              onClick={() => toggleCollapse(id)}
-              className="w-full flex items-center justify-between text-left cursor-pointer focus:outline-none"
-            >
-              <div className="flex flex-wrap items-center gap-2">
+            {/* Header: Drug Name + Badges + Chevron */}
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => toggleCollapse(id)}
+                className="flex flex-wrap items-center gap-2 text-left cursor-pointer focus:outline-none flex-1 min-w-[200px]"
+              >
                 <span className="font-['Syne',sans-serif] font-bold text-base text-[#1A202C]">
                   {drug.name}
+                </span>
+
+                {drug.brandName && (
+                  <span className="text-xs text-slate-500 font-medium">
+                    ({drug.brandName})
+                  </span>
+                )}
+
+                {/* Badge de Via Ativa */}
+                <span
+                  className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded border ${
+                    ROUTE_METADATA[currentRoute]?.badgeColor || 'bg-slate-100 text-slate-800'
+                  }`}
+                >
+                  Via {currentRoute}
                 </span>
 
                 {renalInfo.hasRenalSchedule ? (
@@ -71,16 +102,89 @@ export const DrugDetailsList: React.FC<DrugDetailsListProps> = ({
                     Nefrotóxico
                   </span>
                 )}
-              </div>
 
-              <span className="text-[#0A7EA4] text-xs font-bold shrink-0 ml-2">
-                {isCollapsed ? '▸' : '▾'}
-              </span>
-            </button>
+                {isNptRisk && (
+                  <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-900 border border-purple-300 animate-pulse">
+                    Alerta NPT
+                  </span>
+                )}
+              </button>
 
-            {/* Expanded Body (from Screenshot 2) */}
+              <button
+                type="button"
+                onClick={() => toggleCollapse(id)}
+                className="text-[#0A7EA4] text-xs font-bold shrink-0 ml-2 p-1 cursor-pointer"
+              >
+                {isCollapsed ? '▸ Expandir' : '▾ Recolher'}
+              </button>
+            </div>
+
+            {/* Expanded Body */}
             {!isCollapsed && (
               <div className="mt-4 pt-3 border-t border-[#D9E2EC] space-y-4">
+                {/* 0. Seletor & Cuidados da Via de Administração */}
+                <div className="bg-slate-50 border border-slate-200/90 rounded-lg p-3 space-y-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-mono text-[11px] font-bold uppercase tracking-[1px] text-[#0A7EA4]">
+                        VIA DE ADMINISTRAÇÃO ATIVA:
+                      </span>
+                      {isSingleRoute ? (
+                        <span className="inline-flex items-center gap-1 text-xs font-mono font-bold text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-300">
+                          <Lock className="w-3 h-3 text-slate-500" />
+                          <span>{currentRoute} (Apresentação Exclusiva ANVISA)</span>
+                        </span>
+                      ) : (
+                        <div className="inline-flex items-center gap-1">
+                          {availableRoutes.map((r) => {
+                            const isSelected = currentRoute === r;
+                            const meta = ROUTE_METADATA[r];
+                            return (
+                              <button
+                                key={r}
+                                type="button"
+                                onClick={() => onRouteChange?.(id, r)}
+                                className={`px-2 py-0.5 rounded text-xs font-mono font-bold transition cursor-pointer border ${
+                                  isSelected
+                                    ? `${meta?.activeColor || 'bg-slate-800 text-white'} border-transparent shadow-xs`
+                                    : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
+                                }`}
+                              >
+                                {r}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="text-[11px] text-slate-500 font-mono">
+                      Disponível em: <span className="font-semibold">{availableRoutes.join(', ')}</span>
+                    </div>
+                  </div>
+
+                  {/* Alerta de Incompatibilidade de NPT quando ativo */}
+                  {isNptRisk && (
+                    <div className="p-2.5 bg-purple-50 border border-purple-200 rounded-md text-xs text-purple-900 flex items-start gap-2">
+                      <ShieldAlert className="w-4 h-4 text-purple-700 shrink-0 mt-0.5" />
+                      <div>
+                        <strong>Incompatibilidade em Y com Nutrição Parenteral Total (NPT):</strong>{' '}
+                        {drug.nptIncompatibility?.reason}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Nota específica da via */}
+                  {routeNote && (
+                    <div className="p-2.5 bg-amber-50/80 border border-amber-200 rounded-md text-xs text-amber-900 flex items-start gap-2">
+                      <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                      <div>
+                        <strong>Orientações da via {currentRoute}:</strong> {routeNote}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* 1. Ajuste de Dose por Clearance ou Mensagem Sem Ajuste */}
                 {renalInfo.hasRenalSchedule ? (
                   <div>
@@ -88,7 +192,7 @@ export const DrugDetailsList: React.FC<DrugDetailsListProps> = ({
                       AJUSTE DE DOSE POR CLEARANCE DE CREATININA (CLCR)
                     </h4>
 
-                    {/* 2-Column Table matching Screenshot 2 */}
+                    {/* 2-Column Table */}
                     <div className="border border-[#D9E2EC] rounded-lg overflow-hidden text-xs">
                       {/* Table Header */}
                       <div className="bg-[#F0F4F8] border-b border-[#D9E2EC] grid grid-cols-12 px-3 py-2 text-[#0A7EA4] font-mono font-bold">
@@ -104,7 +208,6 @@ export const DrugDetailsList: React.FC<DrugDetailsListProps> = ({
                             patientCtx.clcr >= range.min &&
                             patientCtx.clcr <= range.max;
 
-                          // Format range display anatomically without ever showing < 1000
                           let rangeLabel = '';
                           if (range.min >= 50 && range.max >= 900) {
                             rangeLabel = `≥ ${range.min}`;
@@ -119,32 +222,20 @@ export const DrugDetailsList: React.FC<DrugDetailsListProps> = ({
                           return (
                             <div
                               key={idx}
-                              className={`grid grid-cols-12 px-3 py-2.5 transition ${
+                              className={`grid grid-cols-12 px-3 py-2.5 items-center transition ${
                                 isMatched
-                                  ? 'bg-[#FEF3C7] text-[#1A202C]'
-                                  : 'bg-white text-slate-800'
+                                  ? 'bg-[#FEF3C7] border-l-4 border-l-[#F59E0B] font-semibold text-[#92400E]'
+                                  : 'hover:bg-slate-50 text-[#1A202C]'
                               }`}
                             >
-                              <div className="col-span-4 sm:col-span-3 font-mono font-semibold self-center">
+                              <div className="col-span-4 sm:col-span-3 font-mono">
                                 {rangeLabel}
                               </div>
-                              <div
-                                className={`col-span-8 sm:col-span-9 ${
-                                  isMatched
-                                    ? "font-['Syne',sans-serif] font-bold text-[#1A202C] leading-snug"
-                                    : 'font-sans text-xs leading-relaxed text-slate-700'
-                                }`}
-                              >
-                                {isMatched ? (
-                                  <span>
-                                    👉 {range.dose} (faixa atual do paciente)
-                                  </span>
-                                ) : (
-                                  range.dose
-                                )}
-                                {range.note && (
-                                  <span className="block text-[11px] text-slate-500 italic mt-0.5 font-normal">
-                                    Nota: {range.note}
+                              <div className="col-span-8 sm:col-span-9 flex items-center gap-1.5">
+                                <span>{range.dose}</span>
+                                {isMatched && (
+                                  <span className="text-[10px] font-mono uppercase bg-[#F59E0B] text-white px-1.5 py-0.2 rounded shrink-0">
+                                    Faixa do Paciente
                                   </span>
                                 )}
                               </div>
@@ -155,27 +246,23 @@ export const DrugDetailsList: React.FC<DrugDetailsListProps> = ({
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-[#F0FDF4] border border-[#BBF7D0] rounded-lg p-3 text-xs text-[#14532D] flex items-start gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-[#16A34A] shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="font-semibold text-[#15803D] font-mono text-[11px] uppercase tracking-wider">
-                        Função Renal & Posologia
-                      </h4>
-                      <p className="mt-0.5 leading-relaxed text-[#14532D]">
-                        {renalInfo.noAdjustmentMessage ||
-                          'Não é necessário ajuste de dose pela função renal — eliminação predominantemente hepática/biliar ou dose padrão mantida.'}
-                      </p>
-                    </div>
+                  <div>
+                    <h4 className="font-mono text-[11px] font-bold uppercase tracking-[1px] text-[#627D98] mb-1">
+                      AJUSTE DE DOSE POR CLEARANCE DE CREATININA (CLCR)
+                    </h4>
+                    <p className="text-xs text-[#1A202C] leading-relaxed">
+                      Não requer ajuste de dose para função renal. Eliminação predominantemente hepática ou não renal.
+                    </p>
                   </div>
                 )}
 
-                {/* 2. Conduta em Diálise / TRS */}
+                {/* 2. Diálise */}
                 {drug.dialysis && (
                   <div>
                     <h4 className="font-mono text-[11px] font-bold uppercase tracking-[1px] text-[#0A7EA4] mb-1">
-                      CONDUTA EM DIÁLISE / TRS
+                      CONDUTA NA DIÁLISE / TERAPIA RENAL SUBSTITUTIVA
                     </h4>
-                    <p className="text-xs text-[#1A202C] leading-relaxed">
+                    <p className="text-xs text-[#1A202C] leading-relaxed bg-[#F0F4F8] p-2.5 rounded-lg border border-[#D9E2EC]">
                       {typeof drug.dialysis === 'string'
                         ? drug.dialysis
                         : Object.entries(drug.dialysis)

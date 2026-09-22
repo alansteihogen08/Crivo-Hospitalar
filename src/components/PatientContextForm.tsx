@@ -234,9 +234,9 @@ export const PatientContextForm: React.FC<PatientContextFormProps> = ({
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => onChange({ ventilacaoMecanica: false })}
+            onClick={() => onChange({ ventilacaoMecanica: false, emVM: false })}
             className={`px-4 py-1.5 rounded-full text-xs font-medium border transition cursor-pointer ${
-              !ctx.ventilacaoMecanica
+              !ctx.ventilacaoMecanica && !ctx.emVM
                 ? 'bg-[#0B1F3A] text-white border-[#0B1F3A]'
                 : 'bg-white text-slate-700 border-[#D9E2EC] hover:bg-slate-50'
             }`}
@@ -245,9 +245,9 @@ export const PatientContextForm: React.FC<PatientContextFormProps> = ({
           </button>
           <button
             type="button"
-            onClick={() => onChange({ ventilacaoMecanica: true })}
+            onClick={() => onChange({ ventilacaoMecanica: true, emVM: true })}
             className={`px-4 py-1.5 rounded-full text-xs font-medium border transition cursor-pointer ${
-              ctx.ventilacaoMecanica
+              ctx.ventilacaoMecanica || ctx.emVM
                 ? 'bg-[#0B1F3A] text-white border-[#0B1F3A]'
                 : 'bg-white text-slate-700 border-[#D9E2EC] hover:bg-slate-50'
             }`}
@@ -274,7 +274,7 @@ export const PatientContextForm: React.FC<PatientContextFormProps> = ({
               <button
                 key={mode.id}
                 type="button"
-                onClick={() => onChange({ dialise: mode.id })}
+                onClick={() => onChange({ dialise: mode.id as any })}
                 className={`px-4 py-1.5 rounded-full text-xs font-medium border transition cursor-pointer ${
                   isSelected
                     ? 'bg-[#0B1F3A] text-white border-[#0B1F3A]'
@@ -285,6 +285,44 @@ export const PatientContextForm: React.FC<PatientContextFormProps> = ({
               </button>
             );
           })}
+        </div>
+      </div>
+
+      {/* Row 7: Nutrição Parenteral Total (NPT) */}
+      <div>
+        <div className="flex items-center justify-between mb-1.5">
+          <label className="block text-xs font-semibold text-slate-700">
+            Nutrição Parenteral Total (NPT)
+          </label>
+          {ctx.emNPT && (
+            <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300">
+              Vigilância de Incompatibilidade em Y Ativa
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onChange({ emNPT: false })}
+            className={`px-4 py-1.5 rounded-full text-xs font-medium border transition cursor-pointer ${
+              !ctx.emNPT
+                ? 'bg-[#0B1F3A] text-white border-[#0B1F3A]'
+                : 'bg-white text-slate-700 border-[#D9E2EC] hover:bg-slate-50'
+            }`}
+          >
+            Sem NPT
+          </button>
+          <button
+            type="button"
+            onClick={() => onChange({ emNPT: true })}
+            className={`px-4 py-1.5 rounded-full text-xs font-medium border transition cursor-pointer ${
+              ctx.emNPT
+                ? 'bg-amber-600 text-white border-amber-600 shadow-sm'
+                : 'bg-white text-slate-700 border-[#D9E2EC] hover:bg-slate-50'
+            }`}
+          >
+            Em NPT (Parenteral)
+          </button>
         </div>
       </div>
 
