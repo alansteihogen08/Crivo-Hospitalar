@@ -16,7 +16,7 @@ export const DRUG_ROUTE_REGISTRY: Record<string, DrugRouteConfig> = {
     availableRoutes: ['IV'],
     defaultRoute: 'IV',
     routeNotes: {
-      IV: 'Infundir preferencialmente em infusão estendida (3 a 4 horas) para otimizar tempo acima da MIC (T > MIC).'
+      IV: 'Infusão convencional (30-60 min) para MIC baixo. A infusão estendida (3-4h) depende do MIC e é indicada em patógenos com sensibilidade limítrofe (ex.: Pseudomonas/Acinetobacter) ou sepse para otimizar T > MIC.'
     },
     nptIncompatibility: {
       incompatible: false,
@@ -868,7 +868,7 @@ export const DRUG_ROUTE_REGISTRY: Record<string, DrugRouteConfig> = {
     defaultRoute: 'VO',
     routeNotes: {
       VO: 'Tomar sempre junto a uma refeição para desacelerar a taxa de absorção e reduzir risco de hipotensão postural.',
-      SNE: 'Triturar comprimido e administrar pela sonda.'
+      SNE: 'Triturar comprimido e diluir em meio ácido (ex.: suco de maçã/água acidificada) conforme manual do InCor/EMTN para otimizar dissolução e lavar a sonda.'
     }
   },
   propranolol: {

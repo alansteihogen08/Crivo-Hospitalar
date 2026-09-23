@@ -508,7 +508,7 @@ function runNptIncompatibilityRules(
           route: 'IV',
           findingCategory: 'npt',
           drugs: `${drug.name} (IV) × NPT`,
-          text: `Incompatibilidade com Nutrição Parenteral (NPT): ${drug.nptIncompatibility.reason} Conduta: reservar lúmen EXCLUSIVO do cateter venoso central (CVC) para a infusão da NPT. Jamais coinfundir em Y. Se houver acesso único emergencial, interromper temporariamente a NPT e realizar flushing vigoroso com solução compatível antes e após a administração do fármaco.`
+          text: `Incompatibilidade com Nutrição Parenteral (NPT): ${drug.nptIncompatibility.reason} Conduta recomendada pelas boas práticas clínicas e EMTN: manter via/lúmen dedicado para a infusão da Nutrição Parenteral, evitando coinfusão em Y sem validação documentada de estabilidade físico-química. Em caso de acesso venoso único estritamente necessário, pausar a NPT e lavar o cateter com solução compatível antes e após a administração do fármaco.`
         });
       }
     }

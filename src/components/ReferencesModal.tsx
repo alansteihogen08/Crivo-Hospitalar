@@ -248,17 +248,6 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({ isOpen, onClos
               </button>
               <button
                 type="button"
-                onClick={() => setSelectedCategory('nutricao_parenteral')}
-                className={`px-2.5 py-1 rounded-lg transition shrink-0 cursor-pointer font-medium ${
-                  selectedCategory === 'nutricao_parenteral'
-                    ? 'bg-purple-700 text-white font-bold'
-                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
-                }`}
-              >
-                Nutrição Parenteral (NPT)
-              </button>
-              <button
-                type="button"
                 onClick={() => setSelectedCategory('nutricao_enteral')}
                 className={`px-2.5 py-1 rounded-lg transition shrink-0 cursor-pointer font-medium ${
                   selectedCategory === 'nutricao_enteral'
@@ -270,6 +259,17 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({ isOpen, onClos
               </button>
               <button
                 type="button"
+                onClick={() => setSelectedCategory('nutricao_parenteral')}
+                className={`px-2.5 py-1 rounded-lg transition shrink-0 cursor-pointer font-medium ${
+                  selectedCategory === 'nutricao_parenteral'
+                    ? 'bg-purple-700 text-white font-bold'
+                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+                }`}
+              >
+                Nutrição Parenteral (NPT)
+              </button>
+              <button
+                type="button"
                 onClick={() => setSelectedCategory('seguranca_medicamentos')}
                 className={`px-2.5 py-1 rounded-lg transition shrink-0 cursor-pointer font-medium ${
                   selectedCategory === 'seguranca_medicamentos'
@@ -277,18 +277,7 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({ isOpen, onClos
                     : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                 }`}
               >
-                Segurança / Não Macerar
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedCategory('diluicao_injetaveis')}
-                className={`px-2.5 py-1 rounded-lg transition shrink-0 cursor-pointer font-medium ${
-                  selectedCategory === 'diluicao_injetaveis'
-                    ? 'bg-blue-700 text-white font-bold'
-                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
-                }`}
-              >
-                Injetáveis / Estabilidade
+                Segurança Farmacêutica
               </button>
             </div>
           )}
@@ -423,10 +412,9 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({ isOpen, onClos
                 filteredGuidelines.map((g) => {
                   const isCopied = copiedGuideline === g.id;
                   const catBadges: Record<string, { label: string; color: string }> = {
-                    nutricao_parenteral: { label: 'Nutrição Parenteral (NPT)', color: 'bg-purple-100 text-purple-900 border-purple-300' },
                     nutricao_enteral: { label: 'Nutrição Enteral (SNE)', color: 'bg-amber-100 text-amber-900 border-amber-300' },
-                    seguranca_medicamentos: { label: 'Segurança / Não Macerar', color: 'bg-rose-100 text-rose-900 border-rose-300' },
-                    diluicao_injetaveis: { label: 'Injetáveis & Estabilidade', color: 'bg-blue-100 text-blue-900 border-blue-300' },
+                    nutricao_parenteral: { label: 'Nutrição Parenteral (NPT)', color: 'bg-purple-100 text-purple-900 border-purple-300' },
+                    seguranca_medicamentos: { label: 'Segurança Farmacêutica', color: 'bg-rose-100 text-rose-900 border-rose-300' },
                   };
 
                   return (
