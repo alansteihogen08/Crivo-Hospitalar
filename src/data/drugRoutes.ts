@@ -1461,6 +1461,271 @@ export const DRUG_ROUTE_REGISTRY: Record<string, DrugRouteConfig> = {
       SC: 'VIA PREFERENCIAL EM PRÉ-DIÁLISE E DIÁLISE PERITONEAL: maior biodisponibilidade e requer doses até 30% menores que a via IV.',
       IV: 'VIA PREFERENCIAL EM HEMODIÁLISE: administrada diretamente na linha venosa do circuito extracorpóreo de hemodiálise ao final da sessão.'
     }
+  },
+
+  // --- NOVOS MEDICAMENTOS CADASTRADOS ---
+  ampicilina: {
+    availableRoutes: ['IV', 'VO', 'SNE', 'IM'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'Reconstituir com Água para Injetáveis e diluir preferencialmente em SF 0,9%. Instável em SG 5% (perda de estabilidade por glicose ácida). Infundir em 30 a 60 minutos.',
+      VO: 'Tomar com estômago vazio (1h antes ou 2h após as refeições) para maximizar a absorção gástrica.',
+      SNE: 'Comprimidos podem ser triturados e dispersos em 20 mL de água filtrada. Realizar pausa da dieta enteral de 1h antes e 1h depois devido à redução de biodisponibilidade por alimentos.',
+      IM: 'Injeção intramuscular profunda em grande massa muscular. Reconstituir com diluente estéril.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Risco de degradação rápida do anel beta-lactâmico e precipitação com aminoácidos/cálcio da NPT. Usar via exclusiva.'
+    }
+  },
+  deslanosideo: {
+    availableRoutes: ['IV', 'IM'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'Administrar lentamente, puro ou diluído em 10 mL de SF 0,9% ou SG 5%, em no mínimo 3 a 5 minutos. Infusão rápida pode desencadear vasoconstrição e arritmias graves.',
+      IM: 'Uso IM excepcional quando não houver acesso venoso. Injeção profunda.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Risco de instabilidade físico-química e toxicidade digitálica errática. Linha venosa exclusiva.'
+    }
+  },
+  ganciclovir: {
+    availableRoutes: ['IV'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'Apresentação Cymevir®: bolsa pronta para infusão intravenosa (solução pronta para uso 1 mg/mL em sistema fechado estéril de 100 mL, 250 mL ou 500 mL). NÃO necessita reconstituição ou manipulação em bancada, eliminando risco ocupacional de exposição a aerossóis de citotóxico e erro de diluição. Administrar o volume correspondente à dose calculada em BOMBA DE INFUSÃO em no mínimo 60 min (NUNCA em bolus rápido — risco agudo de nefrotoxicidade e mielossupressão). Caso utilizada apresentação em pó (Cymevene®): reconstituir com 10 mL de AD (50 mg/mL) em capela com EPI para quimioterápicos e diluir para conc. <= 10 mg/mL (SF ou SG 5%). Linha venosa dedicada (pH ~11; risco de flebite e necrose tecidual se extravasamento).'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Solução alcalina (pH ~11); precipita aminoácidos, cálcio e lipídios da NPT. Linha venosa dedicada.'
+    }
+  },
+  simeticona: {
+    availableRoutes: ['VO', 'SNE'],
+    defaultRoute: 'VO',
+    routeNotes: {
+      VO: 'Administrar após as refeições e ao deitar. Agitar bem o frasco antes de dosar.',
+      SNE: 'Preferir a apresentação em emulsão gotas (75 mg/mL). Diluir a dose em 10 a 15 mL de água filtrada e realizar flush pré e pós com 15 a 30 mL de água.'
+    }
+  },
+  piridoxina: {
+    availableRoutes: ['VO', 'SNE', 'IV', 'IM'],
+    defaultRoute: 'VO',
+    routeNotes: {
+      VO: 'Administrar preferencialmente junto às refeições para atenuar desconforto gástrico.',
+      SNE: 'Comprimidos podem ser triturados e diluídos em 15 a 20 mL de água filtrada.',
+      IV: 'Uso IV reservado para intoxicação aguda por isoniazida ou convulsões refratárias. Administrar em infusão lenta.',
+      IM: 'Injeção intramuscular profunda quando a via oral for inviável.'
+    }
+  },
+  alteplase: {
+    availableRoutes: ['IV'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'Reconstituir exclusivamente com a Água para Injetáveis estéril que acompanha o frasco com movimentos rotacionais suaves (sem agitar). NUNCA usar SG 5% na reconstituição. Linha venosa ESTREITAMENTE EXCLUSIVA.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Proteína recombinante sensível; incompatível em Y com NPT e qualquer outra droga. Linha venosa exclusiva.'
+    }
+  },
+  metilergometrina: {
+    availableRoutes: ['IM', 'VO', 'IV'],
+    defaultRoute: 'IM',
+    routeNotes: {
+      IM: 'Via de escolha para hemorragia pós-parto e atonia uterina. Início de ação em 2 a 5 minutos.',
+      VO: 'Administrar com ou sem alimentos para involução uterina tardia no puerpério.',
+      IV: 'Uso IV estritamente de emergência extrema pelo ALTO RISCO de pico hipertensivo grave e vasoespasmo. Infundir lentamente em >60 segundos sob monitorização contínua.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Alcaloides do ergot de uso emergencial; incompatível com NPT. Usar via venosa exclusiva.'
+    }
+  },
+  mesna: {
+    availableRoutes: ['IV', 'VO'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'Diluir em SF 0,9% ou SG 5% para concentração de 1 a 20 mg/mL. Infundir em 15 a 30 min ou em infusão contínua 24h junto à ifosfamida/ciclofosfamida.',
+      VO: 'A ampola injetável pode ser administrada por via oral diluída em suco ou refrigerante (sabor desagradável). A dose oral deve ser o dobro (200%) da dose IV.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Grupos tióis livres oxidam e reagem com componentes da NPT. Usar via exclusiva.'
+    }
+  },
+  milrinona: {
+    availableRoutes: ['IV'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'Diluir em SF 0,9% ou SG 5% para concentração de 200 mcg/mL. Administrar SEMPRE em bomba de infusão contínua em acesso exclusivo. Bolus de ataque omitido rotineiramente na UTI pelo alto risco de hipotensão súbita.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Inodilatador vasoativo de titulação crítica contínua; incompatível em Y com NPT. Via exclusiva.'
+    }
+  },
+  neostigmina: {
+    availableRoutes: ['IV', 'IM', 'SC'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'Administrar lentamente em 1 a 2 min. OBRIGATÓRIO associar atropina (0,5 a 1 mg) concomitante para prevenção de bradicardia severa, assistolia e broncoespasmo colinérgico.',
+      IM: 'Uso para manutenção de força em miastenia gravis.',
+      SC: 'Uso subcutâneo para miastenia gravis ou atonia vesical pós-operatória.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Agente parassimpaticomimético de ação aguda reversora; administrar em linha separada.'
+    }
+  },
+  desmopressina: {
+    availableRoutes: ['IV', 'SC', 'VO', 'SNE', 'INAL'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'Para hemostasia (0,3 mcg/kg), diluir em 50 mL de SF 0,9% e infundir em 20 a 30 minutos. Para diabetes insipidus, pode ser administrado em injeção lenta em 1 minuto.',
+      SC: 'Injeção subcutânea direta para diabetes insipidus com boa biodisponibilidade.',
+      VO: 'Comprimidos convencionais ou sublinguais (Melt). Restringir ingestão de líquidos para prevenir hiponatremia dilucional.',
+      SNE: 'Comprimidos podem ser triturados e administrados com pequeno volume de água (10 a 15 mL).'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Peptídeo de alta potência instável; risco de inativação e adsorção. Usar via venosa exclusiva.'
+    }
+  },
+  efedrina: {
+    availableRoutes: ['IV', 'IM', 'SC'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'SEMPRE DILUIR antes da administração: aspirar 1 ampola (50 mg/mL) e completar para 10 mL de SF 0,9% (5 mg/mL). Administrar em bolus lento de 1 a 2 mL (5 a 10 mg) sob monitorização de PA.',
+      IM: 'Injeção intramuscular de 25 a 50 mg; início de ação em 10 a 20 minutos.',
+      SC: 'Alternativa parenteral para prevenção ou manejo de hipotensão leve.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Vasopressor simpatomimético de uso agudo em bolus; administrar em acesso dedicado.'
+    }
+  },
+  esmolol: {
+    availableRoutes: ['IV'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'Administrar exclusivamente em bomba de infusão. Concentração máxima permitida de 10 mg/mL (ampolas concentradas devem ser diluídas em SF 0,9% ou SG 5%). Meia-vida ultracurta (~9 min).'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Betabloqueador de infusão contínua com titulação minuto a minuto; incompatível com NPT.'
+    }
+  },
+  fitomenadiona: {
+    availableRoutes: ['IV', 'VO', 'SC', 'IM'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'Infundir MUITO LENTAMENTE em no mínimo 20 a 30 minutos diluído em 50 mL de SG 5% ou SF 0,9%. A injeção rápida IV tem alto risco de reações anafilactoides graves e choque. Proteger da luz.',
+      VO: 'A própria ampola (Kanakion MM) pode ser administrada por via oral ou via SNE com água para reversão gradual e segura.',
+      SC: 'Absorção lenta e errática; evitar em sangramentos ativos.',
+      IM: 'Contraindicada em pacientes com coagulopatia grave ou RNI muito elevado (risco de hematoma intramuscular extenso).'
+    }
+  },
+  monoetanolamina: {
+    availableRoutes: ['IV'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'USO ESTRITAMENTE LOCAL ENDOSCÓPICO (esclerose intravaricosa de esôfago). NUNCA administrar em infusão intravenosa sistêmica convencional. Provoca trombose obliterativa inflamatória intencional da variz.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Agente esclerosante endotelial de uso endoscópico tópico; incompatível com NPT e soluções intravenosas sistêmicas.'
+    }
+  },
+  vasopressina: {
+    availableRoutes: ['IV'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'Diluir 20 UI em 100 mL de SF 0,9% ou SG 5% (0,2 UI/mL). Infundir SEMPRE em bomba de infusão contínua em CVC. No choque séptico, manter DOSE FIXA (habitualmente 0,03 UI/min) sem titulação oscilatória.',
+      IM: 'Não aplicável para vasopressina sintética em choque.',
+      SC: 'Risco de isquemia cutânea local e necrose dérmica.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Vasopressor potente de infusão contínua central; incompatível em Y com NPT. Linha venosa exclusiva.'
+    }
+  },
+  terlipressina: {
+    availableRoutes: ['IV'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'Reconstituir com o diluente do frasco e administrar em injeção lenta de 1 a 2 minutos (ou diluído em 100 mL de SG 5% em infusão contínua na Síndrome Hepatorrenal). Monitorar SpO2 e ECG.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Vasopressor esplâncnico peptídico potente; incompatível em Y com NPT. Linha venosa exclusiva.'
+    }
+  },
+  protamina: {
+    availableRoutes: ['IV'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'Infundir MUITO LENTAMENTE em no mínimo 10 minutos (não exceder 5 mg/min). Injeção rápida causa liberação maciça de histamina, colapso circulatório e hipertensão pulmonar aguda com falência de VD.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Proteína policatiônica fortemente básica; precipita imediatamente em contato com NPT e soluções complexas.'
+    }
+  },
+  polidocanol: {
+    availableRoutes: ['IV'],
+    defaultRoute: 'IV',
+    routeNotes: {
+      IV: 'APLICAÇÃO ESTRITAMENTE ENDOVASCULAR LOCAL / FLEBOLÓGICA. NUNCA administrar em infusão sistêmica contínua. Em técnica de microespuma (Tessari), misturar 1 parte de polidocanol para 4 partes de ar estéril.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Tensoativo esclerosante vascular endotelial; incompatível com qualquer infusão parenteral sistêmica.'
+    }
+  },
+  biperideno: {
+    availableRoutes: ['VO', 'SNE', 'IV', 'IM'],
+    defaultRoute: 'VO',
+    routeNotes: {
+      VO: 'Comprimidos simples de 2 mg podem ser tomados com água durante ou após as refeições para diminuir irritação gástrica.',
+      SNE: 'Comprimidos de 2 mg podem ser triturados e suspensos em 15 a 20 mL de água. ATENÇÃO: a apresentação Retard de 4 mg NÃO PODE SER TRITURADA (risco de dose dumping e toxicidade anticolinérgica).',
+      IV: 'Injeção intravenosa LENTA (no mínimo 2 a 3 minutos) para crise distônica aguda por neurolépticos.',
+      IM: 'Opção de escolha em agitação com distonia aguda na emergência psiquiátrica.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Uso em bolus agudo; risco de precipitação alcalina com NPT. Usar via exclusiva.'
+    }
+  },
+  clorpromazina: {
+    availableRoutes: ['VO', 'SNE', 'IM', 'IV'],
+    defaultRoute: 'VO',
+    routeNotes: {
+      VO: 'Pode ser administrado com água ou junto às refeições. Disponível também em gotas orais (40 mg/mL - 1 gota = 1 mg).',
+      SNE: 'Preferir a solução oral em gotas (40 mg/mL). Se comprimidos forem triturados, suspender em 20 mL de água e realizar flush imediato. Evitar contato direto com a pele (risco de dermatite de contato).',
+      IM: 'Injeção intramuscular PROFUNDA em glúteo. Manter o paciente em repouso dorsal por 30 minutos pós-aplicação pelo alto risco de hipotensão postural acentuada.',
+      IV: 'Uso IV excepcional e restrito a soluço intratável. NUNCA fazer em bolus direto. Diluir em 500 mL de SF 0,9% e infundir lentamente com paciente deitado e monitorização de PA.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'pH ácido com risco de quebra da emulsão lipídica da NPT e precipitação de sais. Linha venosa separada.'
+    }
+  },
+  codeina: {
+    availableRoutes: ['VO', 'SNE', 'SC', 'IM'],
+    defaultRoute: 'VO',
+    routeNotes: {
+      VO: 'Administrar com ou sem alimentos. Comprimidos ou solução oral.',
+      SNE: 'Preferir a solução oral. Comprimidos convencionais podem ser triturados e dissolvidos em 15 a 20 mL de água filtrada. Realizar flush com 15 a 30 mL de água.',
+      SC: 'Injeção subcutânea em dor aguda se via oral indisponível.',
+      IM: 'Injeção intramuscular profunda como alternativa à via subcutânea.',
+      IV: 'VIA IV CONTRAINDICADA: injeção intravenosa de codeína desencadeia liberação descontrolada e maciça de histamina, com choque anafilactoide, colapso cardiovascular e parada respiratória.'
+    },
+    nptIncompatibility: {
+      incompatible: true,
+      reason: 'Via intravenosa é contraindicada para codeína. Não infundir em acessos venosos ou NPT.'
+    }
   }
 };
 

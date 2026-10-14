@@ -1,6 +1,7 @@
 import { Drug } from '../types';
 import { DRUG_REFERENCES } from './drugReferences';
 import { DRUG_ROUTE_REGISTRY } from './drugRoutes';
+import { DRUG_MECHANISMS } from './drugMechanisms';
 
 const RAW_DRUGS: Record<string, Drug> = {
   meropenem: {
@@ -1808,6 +1809,278 @@ const RAW_DRUGS: Record<string, Drug> = {
     effects: ['Paralisia neuromuscular completa e apneia', 'Isento de liberação clinicamente relevante de histamina (estabilidade hemodinâmica sem broncoespasmo nem hipotensão, ao contrário do atracúrio)', 'Gera 3 a 5 vezes menos laudanosina que o atracúrio', 'Fraqueza da musculatura respiratória em infusão prolongada (>48-72h) com corticosteroides na UTI (miopatia do doente crítico)'],
     monitor: ['Monitorização contínua com TOF (alvo habitual de 1 a 2 respostas em 4 estímulos durante bloqueio contínuo em SARA)', 'Sedação profunda mandatória (escala RASS -5) com opioide + hipnótico antes de iniciar o BNM', 'Temperatura e pH corporal (a eliminação de Hofmann é acelerada em febre/alcalose e lentificada em hipotermia/acidose)'],
     maxDose: { value: '0,2 mg/kg bolus inicial; titular infusão estritamente por TOF' }
+  },
+
+  // --- NOVOS MEDICAMENTOS CADASTRADOS ---
+  ampicilina: {
+    name: 'Ampicilina',
+    tags: ['antimicrobiano', 'beta_lactamico', 'penicilina'],
+    renal: [
+      { min: 50, max: 999, dose: '500 mg a 2 g IV a cada 4 a 6 horas (ou 500 mg VO a cada 6h). Em meningite por Listeria ou endocardite: até 2 g IV a cada 4 horas (12 g/dia).' },
+      { min: 10, max: 49, dose: '500 mg a 1 g IV a cada 6 a 8 horas (ou estender intervalo para cada 8 horas).' },
+      { min: 0, max: 9, dose: '500 mg a 1 g IV a cada 12 horas.' }
+    ],
+    dialysis: 'Hemodiálise: Moderadamente removida (~30% a 50% por sessão); administrar dose de reforço suplementar de 500 mg a 1 g imediatamente após a sessão de HD. Diálise peritoneal: 500 mg a cada 12h. CVVH/CVVHD: 1 a 2 g a cada 8 a 12h.',
+    effects: ['Reações de hipersensibilidade e anafilaxia (rash cutâneo maculopapular, prurido, urticária)', 'Diarreia e colite pseudomembranosa por Clostridioides difficile', 'Nefrite intersticial aguda', 'Neurotoxicidade e convulsões em altas doses com insuficiência renal acumulada'],
+    monitor: ['Função renal e débito urinário', 'Sinais de anafilaxia ou farmacodermia', 'Hemograma e eletrólitos'],
+    food: ['Alimentos reduzem a absorção oral em 50%. Administrar 1h antes ou 2h após as refeições. Por sonda enteral, pausar dieta 1h antes e 1h depois.'],
+    maxDose: { value: '12 g/dia (em meningite ou endocardite enterocócica)' }
+  },
+  deslanosideo: {
+    name: 'Deslanosídeo',
+    tags: ['cardiologia', 'antiarritmico', 'inotropico', 'glicosideo_digitalico', 'janela_estreita'],
+    renal: [
+      { min: 50, max: 999, dose: 'Ataque: 0,4 a 0,8 mg IV lento; Manutenção: 0,2 a 0,4 mg IV a cada 24 horas.' },
+      { min: 10, max: 49, dose: 'Manutenção: reduzir dose em 30% a 50% (0,1 a 0,2 mg IV a cada 24 a 36 horas).' },
+      { min: 0, max: 9, dose: 'Manutenção: 0,1 mg a cada 48 horas ou preferir alternativas não digitálicas pelo elevado risco de intoxicação cumulativa fatal.' }
+    ],
+    dialysis: 'Hemodiálise: Não dialisável (grande volume de distribuição tecidual; <3% removido). Não administrar dose suplementar pós-HD. Alto risco de toxicidade potencializada por variações rápidas de potássio no banho de diálise. CVVH/CVVHD: reduzir manutenção em 50% sob estrito controle eletrolítico e ECG.',
+    effects: ['Intoxicação digitálica (náuseas, vômitos incoercíveis, anorexia, dor abdominal)', 'Arritmias cardíacas graves (extrassístoles ventriculares frequentes, bigeminismo, BAV de alto grau, TV, fibrilação ventricular)', 'Alterações neurovisuais (visão amarelada/verde com halos, escotomas)', 'Confusão mental, cefaleia e letargia'],
+    monitor: ['ECG contínuo durante digitalização (prolongamento de PR, inversão de onda T "em colher", arritmias)', 'Potássio e magnésio séricos (hipocalemia e hipomagnesemia deflagram arritmias digitálicas fatais)', 'Função renal e calcemia'],
+    maxDose: { value: '1,2 mg em 24 horas (dose cumulativa de digitalização rápida)' }
+  },
+  ganciclovir: {
+    name: 'Ganciclovir (Cymevir® Bolsa Pronta / Cymevene®)',
+    tags: ['antiviral', 'anti_cmv', 'mielotoxico', 'bolsa_pronta_rtu'],
+    renal: [
+      { min: 70, max: 999, dose: 'Indução: 5 mg/kg IV a cada 12 horas por 14-21 dias; Manutenção: 5 mg/kg IV a cada 24 horas.' },
+      { min: 50, max: 69, dose: 'Indução: 2,5 mg/kg IV a cada 12 horas; Manutenção: 2,5 mg/kg IV a cada 24 horas.' },
+      { min: 25, max: 49, dose: 'Indução: 2,5 mg/kg IV a cada 24 horas; Manutenção: 1,25 mg/kg IV a cada 24 horas.' },
+      { min: 10, max: 24, dose: 'Indução: 1,25 mg/kg IV a cada 24 horas; Manutenção: 0,625 mg/kg IV a cada 24 horas.' },
+      { min: 0, max: 9, dose: 'Indução: 1,25 mg/kg IV 3 vezes por semana pós-HD; Manutenção: 0,625 mg/kg IV 3 vezes por semana pós-HD.' }
+    ],
+    dialysis: 'Hemodiálise: Altamente dialisável (~50% removido por sessão de 4h). Administrar a dose ajustada imediatamente após a sessão de hemodiálise. CVVHD: 2,5 mg/kg a cada 24h. CVVHDF: 2,5 mg/kg a cada 12 a 24h com monitorização de neutrófilos.',
+    effects: ['Mielossupressão grave (neutropenia profunda < 500/mm³, trombocitopenia, anemia aplástica)', 'Nefrotoxicidade com elevação de creatinina', 'Neurotoxicidade (cefaleia, tremores, psicose, convulsões)', 'Potencial mutagênico, teratogênico e carcinogênico'],
+    monitor: ['Hemograma completo com contagem de neutrófilos e plaquetas 2 a 3 vezes por semana (suspender se neutrófilos < 500/mm³ ou plaquetas < 25.000/mm³)', 'Creatinina sérica e clearance a cada 48h', 'Bolsa pronta Cymevir® (1 mg/mL): infundir em bomba contínua em no mínimo 60 min; linha dedicada (pH alcalino ~11)'],
+    maxDose: { value: '10 mg/kg/dia IV na indução (fracionado a cada 12h)', note: 'Cymevir® solução injetável pronta 1 mg/mL (100, 250 e 500 mL) — sistema fechado RTU' }
+  },
+  simeticona: {
+    name: 'Simeticona',
+    tags: ['gastrointestinal', 'antiflatulento'],
+    renal: [
+      { min: 0, max: 999, dose: '40 a 125 mg VO/SNE a cada 6 a 8 horas (ou 20 a 40 gotas 3 a 4 vezes ao dia). Não requer ajuste na disfunção renal (ação puramente intraluminal sem absorção sistêmica).' }
+    ],
+    dialysis: 'Sem necessidade de ajuste ou suplementação em hemodiálise ou métodos contínuos.',
+    effects: ['Efeitos gastrointestinais leves (fezes amolecidas, eructações)', 'Reações alérgicas raras (urticária)'],
+    monitor: ['Distensão abdominal, eliminação de flatos e alívio do desconforto'],
+    food: ['Pode ser administrado após refeições e dietas enterais.'],
+    maxDose: { value: '500 mg/dia' }
+  },
+  piridoxina: {
+    name: 'Piridoxina (Vitamina B6)',
+    tags: ['vitamina', 'neurologia', 'antidoto'],
+    renal: [
+      { min: 0, max: 999, dose: 'Deficiência/Suplementação: 25 a 100 mg/dia VO/SNE. Profilaxia de neuropatia por isoniazida: 25 a 50 mg/dia. Intoxicação aguda por Isoniazida: dose equivalente grama por grama à isoniazida ingerida (ou 5 g IV lento).' }
+    ],
+    dialysis: 'Hemodiálise: Molécula hidrossolúvel de baixo peso facilmente depurada; suplementar 10 a 50 mg/dia pós-diálise para prevenir polineuropatia dialítica. CVVH/CVVHD: suplementação padrão recomendada.',
+    effects: ['Neuropatia sensorial periférica / ataxia sensitiva com uso crônico de megadoses (> 200 a 500 mg/dia por meses)', 'Sonolência e náuseas em altas doses'],
+    monitor: ['Sintomas sensitivos em extremidades no uso prolongado', 'Controle de crises convulsivas na intoxicação aguda'],
+    maxDose: { value: '100 mg/dia em uso contínuo (até 5 g IV agudo como antídoto de intoxicação por isoniazida)' }
+  },
+  alteplase: {
+    name: 'Alteplase (rt-PA)',
+    tags: ['trombolitico', 'fibrinolitico', 'emergencia_uti', 'alto_risco'],
+    renal: [
+      { min: 0, max: 999, dose: 'AVCI isquêmico agudo: 0,9 mg/kg IV (máx 90 mg; 10% em bolus 1 min, restante em 60 min). TEP maciço: 100 mg IV em 2 horas. Não requer ajuste posológico na disfunção renal (depuração hepática acelerada com meia-vida < 5 min).' }
+    ],
+    dialysis: 'Hemodiálise: Sem ajuste de dose; contraindicação relativa se heparinização sistêmica de diálise recente não revertida ou diatese hemorrágica ativa. CVVH: manter estrita vigilância de sítios vasculares e cateteres.',
+    effects: ['Hemorragia grave (hemorragia intracraniana sintomática, sangramento retroperitoneal, hemorragia digestiva)', 'Angioedema orolingual (frequência aumentada em pacientes em uso concomitante de IECA)', 'Arritmias de reperfusão miocárdica e hipotensão transitória', 'Hematomas em locais de punção vascular prévia'],
+    monitor: ['Exame neurológico rigoroso e escala de NIHSS a cada 15 min', 'Pressão arterial (manter rigorosamente PAS < 180 e PAD < 105 mmHg antes e após infusão)', 'Fibrinogênio, TAP, TTPA, plaquetas e hematócrito', 'Monitorização de sangramentos externos e sítios de punção por 24 horas'],
+    maxDose: { value: '90 mg no AVCI agudo; 100 mg no TEP maciço / IAM' }
+  },
+  metilergometrina: {
+    name: 'Metilergometrina',
+    tags: ['obstetricia', 'uterotonico', 'alcaloide_ergot'],
+    renal: [
+      { min: 50, max: 999, dose: '0,2 mg IM a cada 2 a 4 horas (máx 5 doses); ou 0,125 a 0,25 mg VO a cada 6 a 8 horas por até 7 dias.' },
+      { min: 10, max: 49, dose: 'Usar com cautela; titular dose mínima efetiva e monitorar pressão arterial com rigor.' },
+      { min: 0, max: 9, dose: 'Evitar ou usar sob extrema vigilância na disfunção renal avançada (risco acentuado de hipertensão refratária e vasoespasmo).' }
+    ],
+    dialysis: 'Hemodiálise: Não dialisável; monitorar pressão arterial continuamente. CVVH: monitorar perfusão e tônus vascular.',
+    effects: ['Picos hipertensivos agudos severos e crise hipertensiva (contraindicado na pré-eclâmpsia e eclâmpsia)', 'Vasoespasmo coronariano com angina ou infarto agudo do miocárdio', 'Cefaleia intensa, tontura e convulsões', 'Cólicas uterinas dolorosas, náuseas e vômitos'],
+    monitor: ['Pressão arterial rigorosa antes de cada administração (não administrar se PAS > 140 ou PAD > 90 mmHg)', 'Tônus uterino e sangramento puerperal', 'Sinais de isquemia coronariana ou periférica'],
+    maxDose: { value: '1,0 mg/dia IM (5 doses de 0,2 mg) ou 1,25 mg/dia VO' }
+  },
+  mesna: {
+    name: 'Mesna',
+    tags: ['oncologia', 'uroprotetor', 'antidoto'],
+    renal: [
+      { min: 0, max: 999, dose: '60% a 100% da dose de Ifosfamida ou Ciclofosfamida, dividida em 3 administrações IV (hora 0, hora 4 e hora 8) ou infusão contínua 24h. Não requer redução de dose para clearance renal reduzido (a molécula precisa atingir a bexiga para neutralizar a acroleína tóxica).' }
+    ],
+    dialysis: 'Hemodiálise: Moderadamente dialisável; alinhar sessões com o cronograma de quimioterapia. CVVH: manter infusão contínua protetora durante a quimioterapia com agentes alquilantes.',
+    effects: ['Náuseas, vômitos, cólicas abdominais e diarreia', 'Reações alérgicas (exantema cutâneo, prurido, rubor facial)', 'Falso-positivo para corpos cetônicos no exame de urina em fita reagente (reação com nitroprussiato)', 'Disgeusia (gosto metálico ou sulfuroso característico)'],
+    monitor: ['EAS / Urina I para rastreamento de microhematúria a cada diurese', 'Diurese horária vigorosa (> 100 mL/m²/h com hidratação concomitante)', 'Sinais de cistite hemorrágica'],
+    maxDose: { value: '100% a 120% da dose do agente alquilante associado' }
+  },
+  milrinona: {
+    name: 'Milrinona',
+    tags: ['cardiologia', 'terapia_intensiva', 'inotropico', 'vasodilatador'],
+    renal: [
+      { min: 50, max: 999, dose: 'Manutenção: 0,375 a 0,75 mcg/kg/min em infusão contínua IV (bolus de 50 mcg/kg habitualmente omitido na UTI para evitar hipotensão severa).' },
+      { min: 40, max: 49, dose: 'Manutenção: 0,38 mcg/kg/min em infusão contínua IV.' },
+      { min: 30, max: 39, dose: 'Manutenção: 0,33 mcg/kg/min em infusão contínua IV.' },
+      { min: 20, max: 29, dose: 'Manutenção: 0,28 mcg/kg/min em infusão contínua IV.' },
+      { min: 10, max: 19, dose: 'Manutenção: 0,23 mcg/kg/min em infusão contínua IV.' },
+      { min: 0, max: 9, dose: 'Manutenção: 0,20 mcg/kg/min em infusão contínua IV sob rigorosa vigilância hemodinâmica.' }
+    ],
+    dialysis: 'Hemodiálise: Parcialmente dialisável; iniciar na menor taxa de infusão (0,20 mcg/kg/min). CVVH/CVVHD: titular entre 0,23 e 0,33 mcg/kg/min com monitorização hemodinâmica invasiva.',
+    effects: ['Hipotensão arterial marcante por vasodilatação periférica', 'Arritmias ventriculares (extrassístoles ventriculares frequentes, TV sustentada e não sustentada)', 'Trombocitopenia reversível', 'Cefaleia, tremores e hipocalemia'],
+    monitor: ['Pressão arterial invasiva (PAI) ou contínua', 'Frequência cardíaca e ritmo em monitor multiparamétrico contínuo', 'Débito cardíaco, lactato e perfusão tecidual', 'Plaquetas e potássio sérico diários'],
+    maxDose: { value: '1,13 mg/kg/dia (ou 0,75 mcg/kg/min contínuo)' }
+  },
+  neostigmina: {
+    name: 'Neostigmina',
+    tags: ['anestesiologia', 'terapia_intensiva', 'anticolinesterasico'],
+    renal: [
+      { min: 50, max: 999, dose: 'Reversão de BNM: 0,03 a 0,07 mg/kg IV lento (máx 5 mg), SEMPRE acompanhada de Atropina (0,01 a 0,02 mg/kg). Miastenia Gravis: 0,5 a 2,5 mg IM/SC a cada 3 a 4h.' },
+      { min: 10, max: 49, dose: 'Reduzir dose em 25% a 50% (meia-vida de eliminação renal significativamente prolongada).' },
+      { min: 0, max: 9, dose: 'Reduzir dose em 50% (risco elevado de síndrome colinérgica e bloqueio despolarizante paradoxal).' }
+    ],
+    dialysis: 'Hemodiálise: Dialisável; meia-vida prolongada na insuficiência renal terminal. Administrar dose reduzida sob monitorização neuromuscular de TOF. CVVH: titular com monitorização motora.',
+    effects: ['Bradicardia severa, bloqueio atrioventricular e risco de assistolia (prevenido com Atropina prévia)', 'Broncorreia excessiva, salivação intensa e broncoespasmo', 'Cólicas abdominais intensas e diarreia', 'Fasciculações musculares e fraqueza paradoxal por crise colinérgica'],
+    monitor: ['Monitorização de TOF (Train of Four) antes e após a reversão', 'Frequência cardíaca contínua e ausculta pulmonar', 'Sinais de intoxicação colinérgica (miose, sialorreia, sudorese)'],
+    maxDose: { value: '5 mg em dose única IV no adulto' }
+  },
+  desmopressina: {
+    name: 'Desmopressina (DDAVP)',
+    tags: ['endocrinologia', 'hematologia', 'antidiuretico', 'hemostatico'],
+    renal: [
+      { min: 50, max: 999, dose: 'Diabetes Insipidus: 1 a 4 mcg IV/SC a cada 12-24h (ou 0,1 a 0,2 mg VO q8h). Hemostasia / Sangramento: 0,3 mcg/kg IV em 50 mL SF 0,9% em 30 min.' },
+      { min: 0, max: 49, dose: 'Contraindicada em Diabetes Insipidus crônico com ClCr < 50 mL/min pelo risco de intoxicação hídrica fatal. Em sangramento agudo da uremia: 0,3 mcg/kg IV em dose única de resgate com restrição hídrica estrita.' }
+    ],
+    dialysis: 'Hemodiálise: Não dialisável; fármaco de escolha no sangramento urêmico ou antes de biópsias na dose de 0,3 mcg/kg IV 1 hora antes do procedimento. CVVH: monitorar sódio sérico rigorosamente a cada 4 horas.',
+    effects: ['Hiponatremia grave dilucional e intoxicação hídrica (risco de edema cerebral, convulsões e coma)', 'Cefaleia, náuseas e vômitos', 'Rubor facial, hipotensão transitória e taquicardia reflexa em infusão rápida', 'Retenção hídrica com sobrecarga volêmica'],
+    monitor: ['Sódio sérico basal e controles seriados a cada 4 a 6 horas', 'Osmolaridade sérica e urinária', 'Balanço hídrico horário com restrição estrita de líquidos durante o uso'],
+    maxDose: { value: '0,3 mcg/kg em dose única hemostática; 4 mcg/dia IV para diabetes insipidus' }
+  },
+  efedrina: {
+    name: 'Efedrina',
+    tags: ['anestesiologia', 'terapia_intensiva', 'vasopressor', 'simpatomimetico'],
+    renal: [
+      { min: 50, max: 999, dose: '5 a 10 mg IV em bolus lento a cada 3 a 5 minutos titulado por PAM (diluir ampola de 50 mg/mL para 5 mg/mL em 10 mL de SF 0,9%). IM: 25 a 50 mg.' },
+      { min: 0, max: 49, dose: 'Usar com cautela (eliminação predominantemente renal de droga inalterada; risco de acúmulo e taquicardia prolongada).' }
+    ],
+    dialysis: 'Hemodiálise: Parcialmente dialisável; titular bolus com monitorização contínua de PA. CVVH: titular conforme metas pressóricas.',
+    effects: ['Taquicardia sinusal marcante, palpitações e arritmias cardíacas', 'Hipertensão arterial rebote', 'Taquifilaxia rápida (esgotamento de estoques de noradrenalina após 3 a 4 doses repetidas)', 'Agitação, tremores, ansiedade e retenção urinária'],
+    monitor: ['Pressão arterial a cada 1 a 2 minutos após o bolus', 'Frequência cardíaca e ritmo eletrocardiográfico', 'Presença de taquifilaxia (se refratário, migrar para agonista alfa direto como fenilefrina ou noradrenalina)'],
+    maxDose: { value: '50 mg no intraoperatório imediato (ou máx 150 mg em 24 horas)' }
+  },
+  esmolol: {
+    name: 'Esmolol',
+    tags: ['cardiologia', 'terapia_intensiva', 'anestesiologia', 'antiarritmico', 'betabloqueador'],
+    renal: [
+      { min: 0, max: 999, dose: 'Ataque opcional: 500 mcg/kg IV em 1 min; Manutenção: 50 a 300 mcg/kg/min em infusão contínua IV. Não requer ajuste na disfunção renal (metabolização ultra-rápida por esterases eritrocitárias; meia-vida de 9 min).' }
+    ],
+    dialysis: 'Hemodiálise: Efeito farmacológico cessa em 10 a 20 minutos após desligar a bomba de infusão. Não requer ajuste de dose em HD ou métodos contínuos. CVVH: titular por resposta cronotrópica.',
+    effects: ['Hipotensão arterial dose-dependente (mais comum; reverte rapidamente com redução da infusão)', 'Bradicardia excessiva e bloqueio atrioventricular', 'Broncoespasmo em pneumopatas hiper-reativos', 'Irritação venosa e flebite em concentrações > 10 mg/mL'],
+    monitor: ['Frequência cardíaca e ECG contínuo', 'Pressão arterial a cada 5 minutos na titulação', 'Sinais de broncoespasmo ou insuficiência cardíaca descompensada'],
+    maxDose: { value: '300 mcg/kg/min em infusão contínua' }
+  },
+  fitomenadiona: {
+    name: 'Fitomenadiona (Vitamina K1)',
+    tags: ['hematologia', 'antidoto', 'hemostatico', 'vitamina_k'],
+    renal: [
+      { min: 0, max: 999, dose: 'Reversão de Varfarina com sangramento grave: 5 a 10 mg IV lento em 20-30 min. Reversão sem sangramento (RNI elevado): 1 a 2,5 mg VO/IV. Não requer ajuste para disfunção renal.' }
+    ],
+    dialysis: 'Hemodiálise: Sem necessidade de ajuste ou suplementação em diálise. CVVH: monitorar coagulograma e RNI.',
+    effects: ['Reação anafilactoide e colapso cardiovascular com infusão IV rápida (infundir sempre em > 20 a 30 min)', 'Rubor facial, diaforese e dispneia', 'Resistência temporária à anticoagulação oral subsequente com antagonistas de vitamina K por vários dias'],
+    monitor: ['RNI / Tempo de Protrombina a cada 6 a 12 horas após a dose', 'Controle do sangramento clínico', 'Sinais vitais durante infusão intravenosa'],
+    maxDose: { value: '10 mg em dose única IV no adulto' }
+  },
+  monoetanolamina: {
+    name: 'Oleato de Monoetanolamina',
+    tags: ['gastroenterologia', 'endoscopia', 'esclerosante'],
+    renal: [
+      { min: 0, max: 999, dose: '1,5 a 5 mL por cordão varicoso em injeção endoscópica submucosa/intravaricosa (máx 20 mL por sessão). Uso estritamente tópico endoscópico; não aplicável ajuste renal.' }
+    ],
+    dialysis: 'Hemodiálise: Sem ajuste posológico; monitorar estabilidade hemodinâmica pós-endoscopia.',
+    effects: ['Ulcerações da mucosa esofágica e estenose esofágica cicatricial tardia', 'Dor retroesternal e febre transitória pós-procedimento', 'Perfuração esofágica e mediastinite química (complicação cirúrgica grave)', 'Pleurite estéril com derrame pleural'],
+    monitor: ['Estabilidade hemodinâmica pós-procedimento', 'Dor torácica atípica, enfisema subcutâneo e sinais de perfuração esofágica', 'Recidiva de hemorragia digestiva alta'],
+    maxDose: { value: '20 mL no total por sessão endoscópica' }
+  },
+  vasopressina: {
+    name: 'Vasopressina',
+    tags: ['terapia_intensiva', 'choque_septico', 'vasopressor'],
+    renal: [
+      { min: 0, max: 999, dose: 'Choque séptico: 0,01 a 0,04 UI/min em infusão contínua IV (dose fixa recomendada: 0,03 UI/min). Não requer redução de dose para clearance renal reduzido.' }
+    ],
+    dialysis: 'Hemodiálise: Não dialisável; manter infusão em acesso venoso central durante a sessão. CVVH/CVVHD: manter velocidade por metas pressóricas (PAM 65-70 mmHg).',
+    effects: ['Isquemia miocárdica e vasoespasmo coronariano grave', 'Isquemia mesentérica e necrose de extremidades e ponta de dedos', 'Hiponatremia dilucional por retenção de água livre (efeito V2)', 'Bradicardia reflexa e queda do débito cardíaco'],
+    monitor: ['Pressão arterial invasiva (PAM alvo: 65 a 70 mmHg)', 'Perfusão periférica de dedos, orelhas e ponta nasal', 'Eletrocardiograma (desnivelamento de segmento ST)', 'Sódio sérico e lactato arterial'],
+    maxDose: { value: '0,04 UI/min no choque séptico (doses superiores aumentam dramaticamente o risco de isquemia coronariana e esplâncnica)' }
+  },
+  terlipressina: {
+    name: 'Terlipressina',
+    tags: ['gastroenterologia', 'hepatologia', 'terapia_intensiva', 'vasopressor'],
+    renal: [
+      { min: 0, max: 999, dose: 'Varizes esofágicas: 2 mg IV bolus inicial, depois 1 a 2 mg a cada 4 horas por 48h. Síndrome Hepatorrenal: 1 mg IV a cada 4 a 6 horas (com Albumina 20-40 g/dia) ou infusão contínua de 2 a 12 mg/dia. Droga de escolha na Síndrome Hepatorrenal com disfunção renal aguda; não requer redução para ClCr baixo.' }
+    ],
+    dialysis: 'Hemodiálise: Não dialisável; CVVH: pode ser mantida no choque vasodilatador ou na síndrome hepatorrenal grave sob monitorização contínua.',
+    effects: ['Isquemia coronariana e necrose isquêmica de extremidades', 'Sobrecarga de volume com edema agudo de pulmão (risco elevado na coadministração com albumina na SHR)', 'Hiponatremia grave por ação V2 antidiurética', 'Cólicas abdominais intensas e diarreia'],
+    monitor: ['Oximetria de pulso e gasometria (suspender se edema pulmonar ou hipoxemia grave)', 'Creatinina sérica diária na SHR (alvo terapêutico: regressão de 50% ou creatinina < 1,5 mg/dL)', 'ECG para descartar isquemia miocárdica', 'Perfusão de extremidades'],
+    maxDose: { value: '12 mg em 24 horas (em bolus ou infusão contínua)' }
+  },
+  protamina: {
+    name: 'Cloridrato de Protamina',
+    tags: ['hematologia', 'antidoto', 'hemostatico'],
+    renal: [
+      { min: 0, max: 999, dose: '1 mg neutraliza ~100 UI de heparina não fracionada (HNF) infundida nas últimas 2 horas. Dose máxima por injeção: 50 mg. Não requer ajuste de dose para função renal.' }
+    ],
+    dialysis: 'Hemodiálise: Utilizada na reversão de heparinização sistêmica pós-hemodiálise quando indicado. CVVH: monitorar TTPA rigorosamente.',
+    effects: ['Hipotensão arterial catastrófica e colapso circulatório se injetada rapidamente', 'Hipertensão pulmonar aguda com dilatação aguda e falência de ventrículo direito', 'Reações anafilactoides graves (risco elevado em diabéticos usando insulina NPH com protamina, pacientes vasectomizados e alérgicos a peixes)', 'Efeito anticoagulante paradoxal em doses excessivas ("efeito rebote da protamina")'],
+    monitor: ['Pressão arterial contínua durante e 30 minutos pós-infusão', 'TTPA ou Tempo de Coagulação Ativado (TCA)', 'Sinais de anafilaxia ou broncoespasmo'],
+    maxDose: { value: '50 mg em qualquer período de 10 minutos' }
+  },
+  polidocanol: {
+    name: 'Polidocanol',
+    tags: ['cirurgia_vascular', 'angiologia', 'esclerosante'],
+    renal: [
+      { min: 0, max: 999, dose: '0,1 a 0,5 mL por ponto de punção vascular (solução 0,5% a 3% líquida ou microespuma densa). Dose máxima diária: 2 mg/kg/dia. Não requer ajuste renal (ação primariamente local endotelial com metabolização rápida).' }
+    ],
+    dialysis: 'Hemodiálise: Sem necessidade de ajuste; monitorar perfusão pós-procedimento.',
+    effects: ['Hiperpigmentação cutânea residual no trajeto da veia tratada', 'Tromboflebite superficial e necrose tecidual se extravasamento perivascular', 'Reações anafilactoides raras', 'Escotomas cintilantes transitórios e enxaqueca com microespuma'],
+    monitor: ['Inspeção da pele para evitar extravasamento', 'Terapia de compressão elástica graduada imediata pós-procedimento', 'Deambulação precoce para prevenção de trombose venosa profunda (TVP)'],
+    maxDose: { value: '2 mg/kg/dia (máx 140 mg em paciente de 70 kg)' }
+  },
+  biperideno: {
+    name: 'Biperideno',
+    tags: ['neurologia', 'psiquiatria', 'anticolinergico'],
+    renal: [
+      { min: 50, max: 999, dose: 'Distonia aguda por neurolépticos: 2,5 a 5 mg IV ou IM lento (pode repetir em 30 min se necessário, máx 20 mg/dia). Manutenção oral: 2 mg VO a cada 8 a 12 horas.' },
+      { min: 0, max: 49, dose: 'Usar com cautela (eliminação de metabólitos renais; maior suscetibilidade a retenção urinária e confusão mental).' }
+    ],
+    dialysis: 'Hemodiálise: Pouco dialisável (grande volume de distribuição tecidual e ligação proteica). CVVH: monitorar efeitos anticolinérgicos e nível de sedação.',
+    effects: ['Boca seca acentuada, visão turva por midríase e constipação intestinal', 'Retenção urinária aguda (alto risco em idosos com hiperplasia prostática)', 'Delirium anticolinérgico, alucinações e desorientação temporoespacial', 'Sonolência e hipotensão ortostática'],
+    monitor: ['Resolução da crise distônica e sintomas extrapiramidais', 'Volume de diurese e palpação de bexigoma / resíduo vesical', 'Avaliação cognitiva e nível de consciência em pacientes idosos'],
+    food: ['Administrar preferencialmente durante ou após as refeições para amenizar desconforto gástrico.'],
+    maxDose: { value: '16 mg/dia VO ou 20 mg/dia parenteral' }
+  },
+  clorpromazina: {
+    name: 'Clorpromazina',
+    tags: ['psiquiatria', 'antipsicotico', 'sedativo', 'fenotiazina'],
+    renal: [
+      { min: 50, max: 999, dose: 'Psiquiatria/Agitação: 25 a 100 mg VO/SNE a cada 6 a 8 horas; ou 25 a 50 mg IM profunda a cada 4 a 6 horas. Soluço intratável: 25 a 50 mg VO/IM a cada 6 a 8 horas (ou 25 a 50 mg em 500 mL SF 0,9% IV lento).' },
+      { min: 0, max: 49, dose: 'Usar doses menores (iniciar com 12,5 a 25 mg) e titular lentamente; maior suscetibilidade a sedação profunda e hipotensão.' }
+    ],
+    dialysis: 'Hemodiálise: Não dialisável (>90% de ligação proteica e alta lipofilicidade). CVVH: monitorar pressão arterial e sedação.',
+    effects: ['Hipotensão postural acentuada e taquicardia reflexa', 'Sedação profunda e sonolência residual', 'Sintomas extrapiramidais (distonia aguda, parkinsonismo secundário, acatisia)', 'Prolongamento do intervalo QTc e risco de arritmias ventriculares / Torsades de Pointes', 'Síndrome Neuroléptica Maligna (SNM)'],
+    monitor: ['Pressão arterial deitada e em pé', 'ECG seriado para monitorização de intervalo QTc', 'Rigidez muscular e temperatura corporal (rastreamento de SNM)', 'Hemograma em tratamentos prolongados'],
+    food: ['Pode ser tomado com alimentos para reduzir irritação gástrica. Evitar sucos cítricos concentrados que diminuem absorção.'],
+    maxDose: { value: '800 mg/dia em psiquiatria refratária (ambulatorial: máx 400 mg/dia; parenteral: máx 200 mg/dia)' }
+  },
+  codeina: {
+    name: 'Codeína',
+    tags: ['analgesia', 'dor', 'opioide'],
+    renal: [
+      { min: 50, max: 999, dose: '30 a 60 mg VO/SNE a cada 4 a 6 horas conforme dor (ou 30 mg SC/IM a cada 4 a 6h). VIA IV É CONTRAINDICADA.' },
+      { min: 10, max: 49, dose: 'Reduzir para 75% da dose habitual (20 a 45 mg a cada 6 horas).' },
+      { min: 0, max: 9, dose: 'Reduzir para 50% da dose habitual (15 a 30 mg a cada 8 a 12 horas); risco de acúmulo de metabólitos ativos (morfina e codeína-6-glicuronídeo) causando depressão respiratória prolongada.' }
+    ],
+    dialysis: 'Hemodiálise: Pouco dialisável; administrar 50% da dose normal com monitorização rigorosa do padrão respiratório. CVVH: 50% a 75% da dose com espaçamento de horários.',
+    effects: ['Constipação intestinal intensa (prescrever laxativo profilático)', 'Sonolência, sedação excessiva e tontura', 'Náuseas e vômitos no início da terapia', 'Depressão respiratória grave (especialmente em metabolizadores ultrarrápidos do CYP2D6)', 'Retenção urinária'],
+    monitor: ['Escala de dor e nível de sedação (escala de Ramsay ou RASS)', 'Frequência respiratória e oximetria de pulso', 'Hábito intestinal diário', 'Uso concomitante com outros depressores do SNC'],
+    food: ['Pode ser tomado com ou sem alimentos; tomar com alimentos reduz náuseas.'],
+    maxDose: { value: '240 mg/dia' }
   }
 };
 
@@ -1815,6 +2088,7 @@ export const DRUGS: Record<string, Drug> = Object.fromEntries(
   Object.entries(RAW_DRUGS).map(([id, drug]) => {
     const ref = DRUG_REFERENCES[id];
     const routeConfig = DRUG_ROUTE_REGISTRY[id];
+    const mech = DRUG_MECHANISMS[id];
     return [
       id,
       {
@@ -1831,6 +2105,8 @@ export const DRUGS: Record<string, Drug> = Object.fromEntries(
         defaultRoute: routeConfig?.defaultRoute || 'VO',
         routeNotes: routeConfig?.routeNotes,
         nptIncompatibility: routeConfig?.nptIncompatibility,
+        mechanism: mech?.mechanism,
+        pharmacologicalClass: mech?.pharmacologicalClass,
       }
     ];
   })
@@ -2237,5 +2513,65 @@ export const SPECIFIC_RULES = [
     key: 'duplicidade_hipnotico_z',
     severity: 'critico' as const,
     text: 'Duplicidade de hipnóticos Z (Zolpidem + Eszopiclona): mesmo mecanismo modulador do sítio GABA-A. Risco duplicado de comportamentos complexos do sono potencialmente perigosos (sonambulismo, amnésia anterógrada total), sedação residual diurna e depressão respiratória.'
+  },
+  {
+    match: ['alteplase', 'enoxaparina'],
+    key: 'alteplase_enoxaparina',
+    severity: 'critico' as const,
+    text: 'Alteplase (trombolítico) associado a Enoxaparina em dose terapêutica: risco gravíssimo de sangramento intracraniano e hemorragia sistêmica maciça. No AVCI isquêmico, qualquer anticoagulação plena nas primeiras 24 horas pós-trombolítico é formalmente contraindicada.'
+  },
+  {
+    match: ['alteplase', 'heparina'],
+    key: 'alteplase_heparina',
+    severity: 'critico' as const,
+    text: 'Alteplase associado a Heparina não fracionada em dose plena: risco hemorrágico crítico imediato. No AVCI agudo, contraindicada heparinização nas primeiras 24h. No TEP maciço, iniciar heparina apenas após o término da infusão da alteplase e confirmação de TTPA < 2x o controle.'
+  },
+  {
+    match: ['deslanosideo', 'amiodarona'],
+    key: 'deslanosideo_amiodarona',
+    severity: 'critico' as const,
+    text: 'Amiodarona inibe a depuração renal e a glicoproteína-P do Deslanosídeo, elevando sua concentração sérica em 50% a 100%, somando-se à depressão sinusal e atrioventricular (risco iminente de BAV total e toxicidade digitálica fatal). Conduta: reduzir a dose do deslanosídeo em 50% e monitorar ECG contínuo.'
+  },
+  {
+    match: ['deslanosideo', 'furosemida'],
+    key: 'deslanosideo_furosemida',
+    severity: 'atencao' as const,
+    text: 'Furosemida induz perda urinária de potássio e magnésio. A hipocalemia e hipomagnesemia sensibilizam a bomba Na+/K+ ATPase, deflagrando arritmias ventriculares graves mesmo com níveis séricos terapêuticos de deslanosídeo. Conduta: manter estrito controle e reposição de K+ (> 4,0 mEq/L) e Mg2+ (> 2,0 mg/dL).'
+  },
+  {
+    match: ['esmolol', 'verapamil'],
+    key: 'esmolol_verapamil',
+    severity: 'critico' as const,
+    text: 'Associação de Esmolol com Verapamil IV: potente sinergismo inotrópico e dromotrópico negativo com risco de colapso circulatório imediato, assistolia e choque cardiogênico refratário. Coadministração intravenosa é formalmente contraindicada.'
+  },
+  {
+    match: ['esmolol', 'diltiazem'],
+    key: 'esmolol_diltiazem',
+    severity: 'critico' as const,
+    text: 'Esmolol IV coadministrado com Diltiazem IV: depressão miocárdica sinérgica severa, bradicardia extrema e bloqueio AV avançado. Evitar uso intravenoso concomitante.'
+  },
+  {
+    match: ['metilergometrina', 'claritromicina'],
+    key: 'metilergometrina_claritromicina',
+    severity: 'critico' as const,
+    text: 'Claritromicina inibe potentemente o CYP3A4, bloqueando a eliminação da Metilergometrina. Risco grave de ergotismo agudo, vasoespasmo coronariano com infarto agudo do miocárdio e isquemia periférica grave de membros.'
+  },
+  {
+    match: ['biperideno', 'prometazina'],
+    key: 'biperideno_prometazina',
+    severity: 'critico' as const,
+    text: 'Associação de dois potentes agentes anticolinérgicos (Biperideno + Prometazina): toxicidade muscarínica sinérgica grave com retenção urinária aguda, glaucoma de ângulo fechado, íleo paralítico obstrutivo, hipertermia maligna e confusão mental/delirium florido, especialmente em idosos.'
+  },
+  {
+    match: ['clorpromazina', 'haloperidol'],
+    key: 'clorpromazina_haloperidol',
+    severity: 'critico' as const,
+    text: 'Duplo bloqueio dopaminérgico central de alta intensidade (Clorpromazina + Haloperidol): risco potencializado de reações distônicas agudas severas, parkinsonismo farmacológico incapacitante, Síndrome Neuroléptica Maligna e prolongamento sinérgico do intervalo QTc.'
+  },
+  {
+    match: ['clorpromazina', 'amiodarona'],
+    key: 'clorpromazina_amiodarona',
+    severity: 'critico' as const,
+    text: 'Clorpromazina e Amiodarona compartilham prolongamento marcante da repolarização ventricular cardíaca (intervalo QTc). Risco iminente de Torsades de Pointes, taquicardia ventricular polimórfica e parada cardiorrespiratória. Monitorar ECG e evitar associação.'
   }
 ];

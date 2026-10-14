@@ -44,6 +44,8 @@ export interface Drug {
   defaultRoute?: AdminRoute;
   routeNotes?: Partial<Record<AdminRoute, string>>;
   nptIncompatibility?: { incompatible: boolean; reason: string };
+  mechanism?: string;
+  pharmacologicalClass?: string;
 }
 
 export interface ClinicalFinding {

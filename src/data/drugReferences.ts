@@ -183,8 +183,8 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     manufacturer: 'Meda Pharma / Ministério da Saúde (SUS)',
     referenceType: 'referencia',
     bulaSlug: 'flucitosina',
-    bulaUrl: 'https://www.gov.br/conitec/pt-br/midias/relatorios/2021/20210604_relatorio_flucitosina_meningite_criptococica_614_final.pdf',
-    bulaLabel: 'Relatório Oficial SUS / MS',
+    bulaUrl: 'https://consultas.anvisa.gov.br/#/medicamentos/q/?nomeProduto=Flucitosina',
+    bulaLabel: 'Consulta ANVISA / SUS',
     anvisaSearchQuery: 'Flucitosina',
     anvisaRegNumber: 'Portaria SCTIE/MS nº 21/2021'
   },
@@ -232,7 +232,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Azactam®',
     manufacturer: 'Bristol-Myers Squibb',
     referenceType: 'referencia',
-    bulaSlug: 'azactam',
+    bulaSlug: 'aztreonam',
     anvisaSearchQuery: 'Azactam',
     anvisaRegNumber: '1.0180.0152'
   },
@@ -272,7 +272,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Tavanic® / Levaquin®',
     manufacturer: 'Sanofi Medley',
     referenceType: 'referencia',
-    bulaSlug: 'tavanic',
+    bulaSlug: 'levofloxacino',
     anvisaSearchQuery: 'Tavanic',
     anvisaRegNumber: '1.1300.0264'
   },
@@ -296,7 +296,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Flagyl®',
     manufacturer: 'Sanofi Medley',
     referenceType: 'referencia',
-    bulaSlug: 'flagyl',
+    bulaSlug: 'metronidazol',
     anvisaSearchQuery: 'Flagyl',
     anvisaRegNumber: '1.1300.0255'
   },
@@ -434,7 +434,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Metadon®',
     manufacturer: 'Cristália Produtos Químicos Farmacêuticos',
     referenceType: 'referencia',
-    bulaSlug: 'metadon',
+    bulaSlug: 'metadona',
     anvisaSearchQuery: 'Metadon',
     anvisaRegNumber: '1.0298.0123'
   },
@@ -514,7 +514,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Retrovir®',
     manufacturer: 'GlaxoSmithKline (GSK)',
     referenceType: 'referencia',
-    bulaSlug: 'retrovir',
+    bulaSlug: 'zidovudina',
     anvisaSearchQuery: 'Retrovir',
     anvisaRegNumber: '1.0107.0108'
   },
@@ -570,8 +570,10 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Zovirax®',
     manufacturer: 'GlaxoSmithKline (GSK)',
     referenceType: 'referencia',
-    bulaSlug: 'zovirax',
-    anvisaSearchQuery: 'Zovirax',
+    bulaSlug: 'aciclovir',
+    bulaUrl: 'https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=Aciclovir',
+    bulaLabel: 'Bula Oficial ANVISA',
+    anvisaSearchQuery: 'Aciclovir',
     anvisaRegNumber: '1.0107.0101'
   },
   tenofovir: {
@@ -586,7 +588,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Epivir®',
     manufacturer: 'GlaxoSmithKline (GSK)',
     referenceType: 'referencia',
-    bulaSlug: 'epivir',
+    bulaSlug: 'lamivudina',
     anvisaSearchQuery: 'Epivir',
     anvisaRegNumber: '1.0107.0142'
   },
@@ -594,7 +596,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Levophed® / Hyponor®',
     manufacturer: 'Pfizer / Hypofarma',
     referenceType: 'referencia',
-    bulaSlug: 'levophed',
+    bulaSlug: 'hemitartarato-de-norepinefrina',
     anvisaSearchQuery: 'Levophed',
     anvisaRegNumber: '1.0216.0089'
   },
@@ -650,7 +652,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Losec Mups® (Genérico Teuto)',
     manufacturer: 'AstraZeneca / Laboratório Teuto',
     referenceType: 'referencia',
-    bulaSlug: 'losec',
+    bulaSlug: 'omeprazol',
     anvisaSearchQuery: 'Losec',
     anvisaRegNumber: '1.1618.0019'
   },
@@ -674,7 +676,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Prelone®',
     manufacturer: 'Aché Laboratórios',
     referenceType: 'referencia',
-    bulaSlug: 'prelone',
+    bulaSlug: 'prednisolona',
     anvisaSearchQuery: 'Prelone',
     anvisaRegNumber: '1.0573.0232'
   },
@@ -810,7 +812,7 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     brandName: 'Wellbutrin XL®',
     manufacturer: 'GlaxoSmithKline (GSK)',
     referenceType: 'referencia',
-    bulaSlug: 'wellbutrin',
+    bulaSlug: 'cloridrato-de-bupropiona',
     anvisaSearchQuery: 'Wellbutrin',
     anvisaRegNumber: '1.0107.0250'
   },
@@ -1333,5 +1335,187 @@ export const DRUG_REFERENCES: Record<string, DrugReferenceInfo> = {
     bulaSlug: 'besilato-de-cisatracurio',
     anvisaSearchQuery: 'Nimbex',
     anvisaRegNumber: '1.9860.0011'
+  },
+
+  // --- NOVOS MEDICAMENTOS CADASTRADOS ---
+  ampicilina: {
+    brandName: 'Binotal® (Genérico Teuto / Eurofarma)',
+    manufacturer: 'Bayer / Laboratório Teuto',
+    referenceType: 'referencia',
+    bulaSlug: 'ampicilina',
+    anvisaSearchQuery: 'Binotal',
+    anvisaRegNumber: '1.7056.0014'
+  },
+  deslanosideo: {
+    brandName: 'Cedilanide® / Deslanosídeo',
+    manufacturer: 'Novartis Biociências / União Química',
+    referenceType: 'referencia',
+    bulaSlug: 'deslanosideo',
+    anvisaSearchQuery: 'Deslanosideo',
+    anvisaRegNumber: '1.0497.1189'
+  },
+  ganciclovir: {
+    brandName: 'Cymevir® (Bolsa Pronta RTU) / Cymevene®',
+    manufacturer: 'Halex Istar Indústria Farmacêutica / Roche',
+    referenceType: 'referencia',
+    bulaSlug: 'cymevir',
+    bulaUrl: 'https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=Cymevir',
+    bulaLabel: 'Bula Cymevir® RTU',
+    anvisaSearchQuery: 'Cymevir',
+    anvisaRegNumber: '1.0311.0100'
+  },
+  simeticona: {
+    brandName: 'Luftal®',
+    manufacturer: 'Reckitt Benckiser Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'luftal',
+    anvisaSearchQuery: 'Luftal',
+    anvisaRegNumber: '1.0367.0079'
+  },
+  piridoxina: {
+    brandName: 'Seis-B® / Vitamina B6',
+    manufacturer: 'Sanofi Medley / Hipolabor',
+    referenceType: 'referencia',
+    bulaSlug: 'cloridrato-de-piridoxina',
+    anvisaSearchQuery: 'Piridoxina',
+    anvisaRegNumber: '1.0298.0039'
+  },
+  alteplase: {
+    brandName: 'Actilyse® (rt-PA)',
+    manufacturer: 'Boehringer Ingelheim do Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'actilyse',
+    anvisaSearchQuery: 'Actilyse',
+    anvisaRegNumber: '1.0367.0029'
+  },
+  metilergometrina: {
+    brandName: 'Methergin®',
+    manufacturer: 'Novartis Biociências',
+    referenceType: 'referencia',
+    bulaSlug: 'methergin',
+    anvisaSearchQuery: 'Methergin',
+    anvisaRegNumber: '1.0068.0051'
+  },
+  mesna: {
+    brandName: 'Mitexan® / Mesna Eurofarma',
+    manufacturer: 'Baxter Hospitalar / Eurofarma',
+    referenceType: 'referencia',
+    bulaSlug: 'mesna',
+    anvisaSearchQuery: 'Mesna',
+    anvisaRegNumber: '1.0068.1065'
+  },
+  milrinona: {
+    brandName: 'Primacor®',
+    manufacturer: 'Sanofi-Aventis Farmacêutica',
+    referenceType: 'referencia',
+    bulaSlug: 'primacor',
+    anvisaSearchQuery: 'Primacor',
+    anvisaRegNumber: '1.1300.0272'
+  },
+  neostigmina: {
+    brandName: 'Prostigmine®',
+    manufacturer: 'Bausch Health / Valeant Farmacêutica',
+    referenceType: 'referencia',
+    bulaSlug: 'prostigmine',
+    anvisaSearchQuery: 'Prostigmine',
+    anvisaRegNumber: '1.1961.0021'
+  },
+  desmopressina: {
+    brandName: 'DDAVP®',
+    manufacturer: 'Ferring Farmacêutica',
+    referenceType: 'referencia',
+    bulaSlug: 'ddavp',
+    anvisaSearchQuery: 'DDAVP',
+    anvisaRegNumber: '1.2876.0003'
+  },
+  efedrina: {
+    brandName: 'Sulfato de Efedrina Cristália',
+    manufacturer: 'Cristália Produtos Químicos Farmacêuticos',
+    referenceType: 'referencia',
+    bulaSlug: 'sulfato-de-efedrina',
+    anvisaSearchQuery: 'Sulfato de Efedrina',
+    anvisaRegNumber: '1.0298.0263'
+  },
+  esmolol: {
+    brandName: 'Brevibloc®',
+    manufacturer: 'Baxter Hospitalar',
+    referenceType: 'referencia',
+    bulaSlug: 'brevibloc',
+    anvisaSearchQuery: 'Brevibloc',
+    anvisaRegNumber: '1.0068.1030'
+  },
+  fitomenadiona: {
+    brandName: 'Kanakion MM® (Vitamina K1)',
+    manufacturer: 'Produtos Roche Químicos e Farmacêuticos',
+    referenceType: 'referencia',
+    bulaSlug: 'kanakion-mm',
+    anvisaSearchQuery: 'Kanakion',
+    anvisaRegNumber: '1.0100.0163'
+  },
+  monoetanolamina: {
+    brandName: 'Ethamolin® (Oleato de Monoetanolamina)',
+    manufacturer: 'Zest Farmacêutica',
+    referenceType: 'referencia',
+    bulaSlug: 'ethamolin',
+    anvisaSearchQuery: 'Ethamolin',
+    anvisaRegNumber: '1.4107.0012'
+  },
+  vasopressina: {
+    brandName: 'Encrise® / Vasopressina',
+    manufacturer: 'Biolab Sanus Farmacêutica',
+    referenceType: 'referencia',
+    bulaSlug: 'encrise',
+    anvisaSearchQuery: 'Encrise',
+    anvisaRegNumber: '1.0974.0152'
+  },
+  terlipressina: {
+    brandName: 'Glypressin®',
+    manufacturer: 'Ferring Farmacêutica',
+    referenceType: 'referencia',
+    bulaSlug: 'glypressin',
+    anvisaSearchQuery: 'Glypressin',
+    anvisaRegNumber: '1.2876.0006'
+  },
+  protamina: {
+    brandName: 'Protamina 1000 UI/mL',
+    manufacturer: 'Eurofarma Laboratórios / Isofarma',
+    referenceType: 'referencia',
+    bulaSlug: 'cloridrato-de-protamina',
+    anvisaSearchQuery: 'Protamina',
+    anvisaRegNumber: '1.0043.0802'
+  },
+  polidocanol: {
+    brandName: 'Polidocanol (Aethoxysklerol®)',
+    manufacturer: 'Chemische Fabrik Kreussler / Farmácia Hospitalar',
+    referenceType: 'referencia',
+    bulaSlug: 'polidocanol',
+    bulaUrl: 'https://consultas.anvisa.gov.br/#/medicamentos/q/?nomeProduto=Polidocanol',
+    bulaLabel: 'Consulta ANVISA',
+    anvisaSearchQuery: 'Polidocanol',
+    anvisaRegNumber: '1.0573.0031'
+  },
+  biperideno: {
+    brandName: 'Akineton®',
+    manufacturer: 'Abbott Laboratórios do Brasil',
+    referenceType: 'referencia',
+    bulaSlug: 'akineton',
+    anvisaSearchQuery: 'Akineton',
+    anvisaRegNumber: '1.0553.0236'
+  },
+  clorpromazina: {
+    brandName: 'Amplictil®',
+    manufacturer: 'Sanofi Medley Farmacêutica',
+    referenceType: 'referencia',
+    bulaSlug: 'amplictil',
+    anvisaSearchQuery: 'Amplictil',
+    anvisaRegNumber: '1.1300.0243'
+  },
+  codeina: {
+    brandName: 'Codein®',
+    manufacturer: 'Cristália Produtos Químicos Farmacêuticos',
+    referenceType: 'referencia',
+    bulaSlug: 'fosfato-de-codeina',
+    anvisaSearchQuery: 'Codein',
+    anvisaRegNumber: '1.0298.0016'
   }
 };

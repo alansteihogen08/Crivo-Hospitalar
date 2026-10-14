@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { X, Search, BookOpen, Plus, Check, Gauge, ShieldAlert, AlertTriangle } from 'lucide-react';
+import { X, Search, BookOpen, Plus, Check, Zap, ShieldCheck, ExternalLink } from 'lucide-react';
 import { DRUGS } from '../data/drugs';
 import { getAvailableRoutesForDrug, ROUTE_METADATA } from '../data/drugRoutes';
 
@@ -24,21 +24,19 @@ export const DrugCatalogModal: React.FC<DrugCatalogModalProps> = ({
     { id: 'todos', label: 'Todas Classes' },
     { id: 'cardiovascular', label: 'Cardiovascular' },
     { id: 'anti-hipertensivo', label: 'Anti-hipertensivos' },
+    { id: 'antibiotico', label: 'Antibióticos' },
+    { id: 'antiviral', label: 'Antivirais' },
+    { id: 'antifungico', label: 'Antifúngicos' },
+    { id: 'anticonvulsivante', label: 'Anticonvulsivantes' },
+    { id: 'sedativo', label: 'Sedativos & Hipnóticos' },
+    { id: 'opioide', label: 'Opioides' },
+    { id: 'bloqueador_neuromuscular', label: 'Bloqueadores Neuromusculares' },
     { id: 'diuretico', label: 'Diuréticos' },
     { id: 'antidiabetico', label: 'Antidiabéticos' },
     { id: 'hipolipemiante', label: 'Hipolipemiantes' },
-    { id: 'antibiotico', label: 'Antibióticos' },
-    { id: 'antifungico', label: 'Antifúngicos' },
-    { id: 'anticonvulsivante', label: 'Anticonvulsivantes' },
-    { id: 'antiparasitario', label: 'Antiparasitários' },
-    { id: 'bloqueador_neuromuscular', label: 'Bloqueadores Neuromusculares' },
-    { id: 'anti-histaminico', label: 'Anti-histamínicos' },
-    { id: 'sedativo', label: 'Sedativos' },
-    { id: 'opioide', label: 'Opioides' },
-    { id: 'antidepressivo', label: 'Antidepressivos' },
-    { id: 'antirretroviral', label: 'Antirretrovirais' },
+    { id: 'corticosteroide', label: 'Corticosteroides' },
+    { id: 'antiemético', label: 'Gastrointestinais' },
     { id: 'nefrotoxico', label: 'Nefrotóxicos' },
-    { id: 'qt', label: 'Prolonga QT' },
   ];
 
   // Sort drugs alphabetically (A-Z) by name
@@ -71,12 +69,16 @@ export const DrugCatalogModal: React.FC<DrugCatalogModalProps> = ({
         !q ||
         drug.name.toLowerCase().includes(q) ||
         (drug.brandName && drug.brandName.toLowerCase().includes(q)) ||
-        drug.tags.some((t) => t.toLowerCase().includes(q));
+        (drug.pharmacologicalClass && drug.pharmacologicalClass.toLowerCase().includes(q)) ||
+        drug.tags.some((t) => t.toLowerCase().includes(q)) ||
+        (drug.mechanism && drug.mechanism.toLowerCase().includes(q));
 
       const matchesTag =
         activeTag === 'todos' ||
         drug.tags.includes(activeTag) ||
-        (activeTag === 'nefrotoxico' && drug.tags.includes('nefrotoxico_alto'));
+        (activeTag === 'corticosteroide' && drug.tags.some((t) => t.includes('corticoide') || t.includes('corticosteroide'))) ||
+        (activeTag === 'antiemético' && drug.tags.some((t) => t.includes('antiemetico') || t.includes('gastrointestinal') || t.includes('antiflatulento'))) ||
+        (activeTag === 'nefrotoxico' && drug.tags.some((t) => t.includes('nefrotoxico')));
 
       const firstChar = drug.name.trim().charAt(0).toUpperCase();
       const matchesLetter =
@@ -100,14 +102,14 @@ export const DrugCatalogModal: React.FC<DrugCatalogModalProps> = ({
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h2 className="text-sm sm:text-base font-bold font-mono tracking-tight truncate">
-                  Guia & Catálogo Farmacológico
+                  Guia Farmacológico & Mecanismo de Ação
                 </h2>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-teal-950 text-teal-300 border border-teal-800 hidden sm:inline-block">
                   {sortedDrugs.length} Fármacos
                 </span>
               </div>
               <p className="text-[11px] sm:text-xs text-slate-400 truncate">
-                Ajuste renal, posologia hospitalar e monitorização clínica
+                Mecanismos de ação farmacodinâmicos baseados estritamente nas bulas oficiais aprovadas pela ANVISA
               </p>
             </div>
           </div>
@@ -133,7 +135,7 @@ export const DrugCatalogModal: React.FC<DrugCatalogModalProps> = ({
                 setSearch(e.target.value);
                 if (e.target.value) setSelectedLetter('TODOS');
               }}
-              placeholder="Pesquisar fármaco, marca comercial ou classe..."
+              placeholder="Pesquisar por fármaco, marca comercial, classe farmacológica ou mecanismo..."
               className="w-full pl-9 pr-3 py-2 sm:py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-900 focus:ring-2 focus:ring-teal-500 focus:outline-none placeholder:text-slate-400 shadow-2xs"
             />
           </div>
@@ -168,15 +170,15 @@ export const DrugCatalogModal: React.FC<DrugCatalogModalProps> = ({
           </div>
 
           {/* Quick Tag Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 scrollbar-none">
+          <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 scrollbar-none text-xs font-mono">
             {allTags.map((tag) => (
               <button
                 key={tag.id}
                 type="button"
                 onClick={() => setActiveTag(tag.id)}
-                className={`px-2 py-0.5 rounded-md text-[11px] font-mono transition whitespace-nowrap cursor-pointer ${
+                className={`px-2.5 py-1 rounded-lg transition shrink-0 cursor-pointer text-[11px] ${
                   activeTag === tag.id
-                    ? 'bg-teal-800 text-teal-100 font-bold shadow-2xs'
+                    ? 'bg-teal-700 text-white font-bold shadow-2xs'
                     : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
                 }`}
               >
@@ -187,7 +189,7 @@ export const DrugCatalogModal: React.FC<DrugCatalogModalProps> = ({
         </div>
 
         {/* Scrollable Drug List (A-Z) */}
-        <div className="p-3 sm:p-5 overflow-y-auto space-y-3 flex-1 divide-y divide-slate-100 bg-slate-50/40">
+        <div className="p-3 sm:p-5 overflow-y-auto space-y-3 flex-1 bg-slate-50/50">
           {filteredDrugs.length === 0 ? (
             <div className="p-10 text-center text-slate-400 space-y-2">
               <BookOpen className="w-8 h-8 mx-auto text-slate-300" />
@@ -198,49 +200,62 @@ export const DrugCatalogModal: React.FC<DrugCatalogModalProps> = ({
           ) : (
             filteredDrugs.map((drug, index) => {
               const isAdded = selectedDrugIds.includes(drug.id);
+              const isReadyToUse =
+                drug.id === 'ganciclovir' ||
+                drug.tags.includes('bolsa_pronta_rtu') ||
+                (drug.brandName && drug.brandName.toLowerCase().includes('bolsa pronta'));
+
+              const finalBulaUrl = drug.bulaUrl
+                ? drug.bulaUrl
+                : `https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=${encodeURIComponent(drug.anvisaSearchQuery || drug.name)}`;
 
               return (
                 <div
                   key={drug.id}
-                  className="bg-white p-3 sm:p-4 rounded-xl border border-slate-200 shadow-2xs space-y-3 text-left"
+                  className="bg-white p-4 sm:p-4.5 rounded-xl border border-slate-200 shadow-2xs space-y-3 text-left transition hover:border-slate-300 hover:shadow-xs"
                 >
                   {/* Title Bar & Add Button */}
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="space-y-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-500 font-mono text-[11px] flex items-center justify-center font-bold">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="space-y-1.5 min-w-0">
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                        <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-500 font-mono text-[11px] flex items-center justify-center font-bold shrink-0">
                           {index + 1}
                         </span>
                         <h3 className="text-sm sm:text-base font-bold text-slate-900 font-mono">
                           {drug.name}
                         </h3>
+
+                        {/* Marca de Referência */}
                         {drug.brandName && (
-                          <span className="text-xs font-mono font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">
+                          <span className="text-[11px] font-mono font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200/80">
                             {drug.brandName}
+                          </span>
+                        )}
+
+                        {/* Destaque especial Bolsa Pronta (RTU) */}
+                        {isReadyToUse && (
+                          <span className="text-[10px] font-mono font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-300 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                            Bolsa Pronta (RTU)
+                          </span>
+                        )}
+
+                        {/* Classe Farmacológica */}
+                        {drug.pharmacologicalClass && (
+                          <span className="text-[10px] font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                            {drug.pharmacologicalClass}
                           </span>
                         )}
                       </div>
 
-                      {/* Tags / Categories */}
-                      <div className="flex flex-wrap gap-1 pt-0.5">
-                        {drug.tags.slice(0, 4).map((t) => (
-                          <span
-                            key={t}
-                            className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200"
-                          >
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-
-                      {/* Vias de Administração */}
-                      <div className="flex items-center gap-1 pt-1">
-                        <span className="text-[10px] font-mono text-slate-400">Vias:</span>
+                      {/* Vias de Administração Permitidas */}
+                      <div className="flex items-center gap-1.5 pt-0.5">
+                        <span className="text-[10px] font-mono text-slate-400">Vias permitidas:</span>
                         {getAvailableRoutesForDrug(drug.id).map((r) => (
                           <span
                             key={r}
                             className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ${
-                              ROUTE_METADATA[r]?.badgeColor || 'bg-slate-100 text-slate-700'
+                              ROUTE_METADATA[r]?.badgeColor || 'bg-slate-100 text-slate-700 border-slate-200'
                             }`}
                           >
                             {r}
@@ -249,6 +264,7 @@ export const DrugCatalogModal: React.FC<DrugCatalogModalProps> = ({
                       </div>
                     </div>
 
+                    {/* Botão Adicionar */}
                     <button
                       type="button"
                       onClick={() => onAddDrug(drug.id)}
@@ -273,70 +289,44 @@ export const DrugCatalogModal: React.FC<DrugCatalogModalProps> = ({
                     </button>
                   </div>
 
-                  {/* Renal Adjustment info */}
-                  {drug.renal && drug.renal.length > 0 && (
-                    <div className="text-xs text-slate-700 bg-slate-50 p-2.5 rounded-lg border border-slate-200/80 flex items-start gap-2">
-                      <Gauge className="w-4 h-4 text-teal-600 shrink-0 mt-0.5" />
-                      <div className="space-y-0.5 min-w-0">
-                        <span className="font-bold text-slate-900 font-mono text-[11px] uppercase tracking-wider block">
-                          Ajuste de Dose por Função Renal:
-                        </span>
-                        <div className="font-mono text-[11px] leading-relaxed">
-                          {(() => {
-                            const isNonAdjustmentText = (txt: string) => {
-                              const t = (txt || '').toLowerCase();
-                              return (
-                                t.includes('não é necessário') ||
-                                t.includes('não necessita') ||
-                                t.includes('não há necessidade') ||
-                                t.includes('sem ajuste') ||
-                                t.includes('metabolização hepática') ||
-                                t.includes('eliminação predominantemente')
-                              );
-                            };
-
-                            if (
-                              drug.requiresRenalAdjustment === false ||
-                              (drug.renal.length === 1 && isNonAdjustmentText(drug.renal[0].dose)) ||
-                              drug.renal.every((r) => isNonAdjustmentText(r.dose))
-                            ) {
-                              return (
-                                <span className="text-emerald-700 font-medium">
-                                  {drug.renal[0]?.dose ||
-                                    'Não é necessário ajuste de dose pela função renal.'}
-                                </span>
-                              );
-                            }
-
-                            return drug.renal
-                              .map((r) => {
-                                let bracket = '';
-                                if (r.max >= 500) {
-                                  bracket = `ClCr ≥ ${r.min} mL/min`;
-                                } else if (r.min === 0) {
-                                  bracket = `ClCr < ${r.max + 1} mL/min`;
-                                } else {
-                                  bracket = `ClCr ${r.min} a ${r.max} mL/min`;
-                                }
-                                return `${bracket}: ${r.dose}`;
-                              })
-                              .join(' • ');
-                          })()}
-                        </div>
+                  {/* MECANISMO DE AÇÃO - Elemento central do card no Guia */}
+                  <div className="bg-gradient-to-r from-teal-50/70 via-slate-50 to-slate-50/90 border border-teal-100/90 rounded-xl p-3 text-xs space-y-1.5 shadow-2xs">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 font-bold font-mono text-[11px] text-teal-900 uppercase tracking-wide">
+                        <Zap className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                        <span>Mecanismo de Ação Farmacodinâmico</span>
                       </div>
+                      <span className="text-[10px] font-mono text-teal-700 font-semibold bg-teal-100/60 px-2 py-0.5 rounded border border-teal-200/50">
+                        Bula Oficial
+                      </span>
                     </div>
-                  )}
+                    <p className="text-slate-800 text-xs sm:text-[13px] leading-relaxed font-sans">
+                      {drug.mechanism ||
+                        'Mecanismo de ação farmacológico descrito na monografia e bula registrada na ANVISA.'}
+                    </p>
+                  </div>
 
-                  {/* Effects and Precautions */}
-                  {drug.effects && drug.effects.length > 0 && (
-                    <div className="text-xs text-slate-600 pt-0.5 flex items-start gap-1.5 font-sans">
-                      <ShieldAlert className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
-                      <p className="text-[11px] leading-relaxed">
-                        <strong className="text-slate-800 font-mono">Efeitos & Cuidados: </strong>
-                        {drug.effects.join(' • ')}
-                      </p>
+                  {/* Rodapé de Referência da Bula ANVISA */}
+                  <div className="pt-1 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 text-[11px] font-mono text-slate-500">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span className="truncate">
+                        Fonte Oficial: Bula ANVISA • {drug.brandName || drug.name}
+                        {drug.manufacturer ? ` (${drug.manufacturer})` : ''}
+                        {drug.anvisaRecord ? ` • MS: ${drug.anvisaRecord}` : ''}
+                      </span>
                     </div>
-                  )}
+
+                    <a
+                      href={finalBulaUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-teal-700 hover:text-teal-900 hover:underline shrink-0"
+                    >
+                      <span>{drug.bulaLabel || 'Acessar Bula ANVISA'}</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
                 </div>
               );
             })

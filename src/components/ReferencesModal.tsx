@@ -298,10 +298,8 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({ isOpen, onClos
               filteredDrugs.map((drug, index) => {
                 const finalBulaUrl = drug.bulaUrl
                   ? drug.bulaUrl
-                  : drug.bulaSlug
-                  ? `https://bula.com.br/${drug.bulaSlug}`
-                  : `https://bula.com.br/${encodeURIComponent(drug.name.toLowerCase().replace(/[^a-z0-9]/g, ''))}`;
-                const bulaButtonText = drug.bulaLabel || 'Bula.com.br';
+                  : `https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=${encodeURIComponent(drug.anvisaSearchQuery || drug.name)}`;
+                const bulaButtonText = drug.bulaLabel || 'Bula Oficial ANVISA';
                 const isCopied = copiedDrug === drug.name;
 
                 return (
@@ -380,6 +378,17 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({ isOpen, onClos
                         title={`Acessar bula online: ${bulaButtonText} (${drug.brandName || drug.name})`}
                       >
                         <span>{bulaButtonText}</span>
+                        <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                      </a>
+
+                      <a
+                        href={`https://consultas.anvisa.gov.br/#/medicamentos/q/?nomeProduto=${encodeURIComponent(drug.anvisaSearchQuery || drug.name)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-mono font-medium text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100/80 border border-emerald-200 rounded-lg transition cursor-pointer"
+                        title={`Consultar bulário eletrônico e registro na ANVISA: ${drug.name}`}
+                      >
+                        <span>ANVISA</span>
                         <ExternalLink className="w-3.5 h-3.5 shrink-0" />
                       </a>
                     </div>
