@@ -48,10 +48,10 @@ export const PatientContextForm: React.FC<PatientContextFormProps> = ({
   };
 
   return (
-    <section className="bg-white rounded-xl border border-[#D9E2EC] p-5 shadow-xs space-y-4">
-      {/* Title from Screenshot 1: CONTEXTO E SETOR */}
+    <section className="bg-white rounded-xl border border-[#D9E2EC] p-3.5 sm:p-4 shadow-xs space-y-2.5">
+      {/* Title & Setores button */}
       <div className="flex items-center justify-between">
-        <h2 className="font-mono text-[13px] font-bold uppercase tracking-[1.2px] text-[#627D98] m-0">
+        <h2 className="font-mono text-[12px] font-bold uppercase tracking-[1.2px] text-[#627D98] m-0">
           Contexto e Setor
         </h2>
         {setores.length === 0 && (
@@ -65,55 +65,59 @@ export const PatientContextForm: React.FC<PatientContextFormProps> = ({
         )}
       </div>
 
-      {/* Field: Setor / Unidade */}
-      <div>
-        <label className="block text-xs font-semibold text-slate-700 mb-1">
-          Setor / Unidade
-        </label>
-        <select
-          value={ctx.setorId}
-          onChange={(e) => onChange({ setorId: e.target.value })}
-          className="w-full px-3 py-2 bg-white border border-[#D9E2EC] rounded-lg text-sm text-slate-900 focus:outline-none focus:border-[#0A7EA4] transition"
-        >
-          <option value="">Selecione o setor...</option>
-          {setores.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.nome} {s.souDono ? '' : '(compartilhado)'}
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* Linha 1: Setor (6 cols) + Leito (3 cols) + Paciente (3 cols) */}
+      <div className="grid grid-cols-12 gap-2">
+        <div className="col-span-6">
+          <label className="block text-[11px] font-semibold text-slate-600 mb-0.5 truncate">
+            Setor / Unidade
+          </label>
+          <select
+            value={ctx.setorId}
+            onChange={(e) => onChange({ setorId: e.target.value })}
+            className="w-full h-9 px-2.5 bg-white border border-[#D9E2EC] rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#0A7EA4] transition truncate"
+          >
+            <option value="">Selecione...</option>
+            {setores.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.nome} {s.souDono ? '' : '(compart.)'}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      {/* Row 2: Leito + Paciente (Iniciais) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">Leito</label>
+        <div className="col-span-3">
+          <label className="block text-[11px] font-semibold text-slate-600 mb-0.5 truncate">
+            Leito
+          </label>
           <input
             type="text"
             value={ctx.leito}
             onChange={(e) => onChange({ leito: e.target.value })}
-            placeholder="ex: Leito 4"
-            className="w-full px-3 py-2 bg-white border border-[#D9E2EC] rounded-lg text-sm text-slate-900 focus:outline-none focus:border-[#0A7EA4] transition placeholder:text-slate-400"
+            placeholder="ex: 04"
+            className="w-full h-9 px-2.5 bg-white border border-[#D9E2EC] rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#0A7EA4] transition placeholder:text-slate-400 font-medium"
           />
         </div>
-        <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
-            Paciente (Iniciais)
+
+        <div className="col-span-3">
+          <label className="block text-[11px] font-semibold text-slate-600 mb-0.5 truncate">
+            Paciente
           </label>
           <input
             type="text"
             value={ctx.pacienteIniciais}
             onChange={(e) => onChange({ pacienteIniciais: e.target.value })}
-            placeholder="ex: J. S."
-            className="w-full px-3 py-2 bg-white border border-[#D9E2EC] rounded-lg text-sm text-slate-900 focus:outline-none focus:border-[#0A7EA4] transition placeholder:text-slate-400"
+            placeholder="ex: J.S."
+            className="w-full h-9 px-2.5 bg-white border border-[#D9E2EC] rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#0A7EA4] transition placeholder:text-slate-400 font-medium uppercase"
           />
         </div>
       </div>
 
-      {/* Row 3: Idade + Peso + Sexo (from Screenshot 1) */}
-      <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-        <div className="sm:col-span-4">
-          <label className="block text-xs font-semibold text-slate-700 mb-1">Idade (anos)</label>
+      {/* Linha 2: Idade (4 cols) + Peso (4 cols) + Sexo (4 cols segmented) */}
+      <div className="grid grid-cols-12 gap-2">
+        <div className="col-span-4">
+          <label className="block text-[11px] font-semibold text-slate-600 mb-0.5 truncate">
+            Idade (anos)
+          </label>
           <input
             type="number"
             min={0}
@@ -121,12 +125,14 @@ export const PatientContextForm: React.FC<PatientContextFormProps> = ({
             value={ctx.idade ?? ''}
             onChange={(e) => handleNumericInput('idade', e.target.value)}
             placeholder="—"
-            className="w-full px-3 py-2 bg-white border border-[#D9E2EC] rounded-lg text-sm text-slate-900 focus:outline-none focus:border-[#0A7EA4] transition"
+            className="w-full h-9 px-2.5 bg-white border border-[#D9E2EC] rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#0A7EA4] transition font-medium"
           />
         </div>
 
-        <div className="sm:col-span-4">
-          <label className="block text-xs font-semibold text-slate-700 mb-1">Peso (kg)</label>
+        <div className="col-span-4">
+          <label className="block text-[11px] font-semibold text-slate-600 mb-0.5 truncate">
+            Peso (kg)
+          </label>
           <input
             type="number"
             min={0}
@@ -135,20 +141,22 @@ export const PatientContextForm: React.FC<PatientContextFormProps> = ({
             value={ctx.peso ?? ''}
             onChange={(e) => handleNumericInput('peso', e.target.value)}
             placeholder="—"
-            className="w-full px-3 py-2 bg-white border border-[#D9E2EC] rounded-lg text-sm text-slate-900 focus:outline-none focus:border-[#0A7EA4] transition"
+            className="w-full h-9 px-2.5 bg-white border border-[#D9E2EC] rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#0A7EA4] transition font-medium"
           />
         </div>
 
-        <div className="sm:col-span-4">
-          <label className="block text-xs font-semibold text-slate-700 mb-1">Sexo</label>
-          <div className="flex items-center gap-2 pt-0.5">
+        <div className="col-span-4">
+          <label className="block text-[11px] font-semibold text-slate-600 mb-0.5 truncate">
+            Sexo
+          </label>
+          <div className="h-9 flex items-center bg-slate-100 p-0.5 rounded-lg border border-[#D9E2EC]">
             <button
               type="button"
               onClick={() => handleSexoChange('m')}
-              className={`w-9 h-9 rounded-full border text-xs font-bold transition flex items-center justify-center cursor-pointer ${
+              className={`flex-1 h-full rounded-md text-xs font-bold transition flex items-center justify-center cursor-pointer ${
                 ctx.sexo === 'm'
-                  ? 'bg-[#0B1F3A] text-white border-[#0B1F3A]'
-                  : 'bg-white text-slate-700 border-[#D9E2EC] hover:bg-slate-50'
+                  ? 'bg-[#0B1F3A] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
               }`}
             >
               M
@@ -156,10 +164,10 @@ export const PatientContextForm: React.FC<PatientContextFormProps> = ({
             <button
               type="button"
               onClick={() => handleSexoChange('f')}
-              className={`w-9 h-9 rounded-full border text-xs font-bold transition flex items-center justify-center cursor-pointer ${
+              className={`flex-1 h-full rounded-md text-xs font-bold transition flex items-center justify-center cursor-pointer ${
                 ctx.sexo === 'f'
-                  ? 'bg-[#0B1F3A] text-white border-[#0B1F3A]'
-                  : 'bg-white text-slate-700 border-[#D9E2EC] hover:bg-slate-50'
+                  ? 'bg-[#0B1F3A] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
               }`}
             >
               F
@@ -168,10 +176,10 @@ export const PatientContextForm: React.FC<PatientContextFormProps> = ({
         </div>
       </div>
 
-      {/* Row 4: Creatinina + ClCr (Cockcroft-Gault) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
+      {/* Linha 3: Creatinina (6 cols) + ClCr Cockcroft-Gault (6 cols) */}
+      <div className="grid grid-cols-12 gap-2">
+        <div className="col-span-6">
+          <label className="block text-[11px] font-semibold text-slate-600 mb-0.5 truncate">
             Creatinina (mg/dL)
           </label>
           <input
@@ -182,14 +190,28 @@ export const PatientContextForm: React.FC<PatientContextFormProps> = ({
             value={ctx.creatinina ?? ''}
             onChange={(e) => handleNumericInput('creatinina', e.target.value)}
             placeholder="—"
-            className="w-full px-3 py-2 bg-white border border-[#D9E2EC] rounded-lg text-sm text-slate-900 focus:outline-none focus:border-[#0A7EA4] transition"
+            className="w-full h-9 px-2.5 bg-white border border-[#D9E2EC] rounded-lg text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#0A7EA4] transition font-mono font-medium"
           />
         </div>
 
-        <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">
-            ClCr (Cockcroft-Gault)
-          </label>
+        <div className="col-span-6">
+          <div className="flex items-center justify-between mb-0.5">
+            <label className="block text-[11px] font-semibold text-slate-600 truncate">
+              ClCr {isManualClcr ? '(manual)' : '(C-G)'}
+            </label>
+            <button
+              type="button"
+              onClick={() => {
+                const nextState = !isManualClcr;
+                setIsManualClcr(nextState);
+                onChange({ clcrManual: nextState });
+              }}
+              className="text-[10px] font-semibold text-[#6D28D9] hover:text-[#5B21B6] hover:underline cursor-pointer"
+              title={isManualClcr ? 'Mudar para cálculo automático' : 'Digitar valor manual de ClCr'}
+            >
+              {isManualClcr ? '↺ Auto' : '✎ Manual'}
+            </button>
+          </div>
           {isManualClcr ? (
             <input
               type="number"
@@ -197,7 +219,7 @@ export const PatientContextForm: React.FC<PatientContextFormProps> = ({
               value={ctx.clcr ?? ''}
               onChange={(e) => handleManualClcrChange(e.target.value)}
               placeholder="ex: 45"
-              className="w-full px-3 py-2 bg-amber-50/50 border border-amber-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:border-amber-500 font-mono font-bold"
+              className="w-full h-9 px-2.5 bg-amber-50/60 border border-amber-300 rounded-lg text-xs sm:text-sm text-amber-950 focus:outline-none focus:border-amber-500 font-mono font-bold"
             />
           ) : (
             <input
@@ -205,25 +227,10 @@ export const PatientContextForm: React.FC<PatientContextFormProps> = ({
               readOnly
               value={ctx.clcr !== null ? `${ctx.clcr} mL/min` : ''}
               placeholder="automático"
-              className="w-full px-3 py-2 bg-[#F1F5F9] border border-[#D9E2EC] rounded-lg text-sm text-slate-700 font-mono cursor-not-allowed"
+              className="w-full h-9 px-2.5 bg-[#F1F5F9] border border-[#D9E2EC] rounded-lg text-xs sm:text-sm text-slate-800 font-mono font-semibold cursor-not-allowed placeholder:text-slate-400"
             />
           )}
         </div>
-      </div>
-
-      {/* Link from Screenshot 1: Digitar ClCr manualmente */}
-      <div>
-        <button
-          type="button"
-          onClick={() => {
-            const nextState = !isManualClcr;
-            setIsManualClcr(nextState);
-            onChange({ clcrManual: nextState });
-          }}
-          className="text-xs italic underline text-[#6D28D9] hover:text-[#5B21B6] cursor-pointer"
-        >
-          {isManualClcr ? 'Calcular automaticamente (Cockcroft-Gault)' : 'Digitar ClCr manualmente'}
-        </button>
       </div>
     </section>
   );
