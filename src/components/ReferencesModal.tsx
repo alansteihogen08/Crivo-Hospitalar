@@ -296,10 +296,10 @@ export const ReferencesModal: React.FC<ReferencesModalProps> = ({ isOpen, onClos
               </div>
             ) : (
               filteredDrugs.map((drug, index) => {
-                const finalBulaUrl = drug.bulaUrl
-                  ? drug.bulaUrl
-                  : `https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=${encodeURIComponent(drug.anvisaSearchQuery || drug.name)}`;
-                const bulaButtonText = drug.bulaLabel || 'Bula Oficial ANVISA';
+                const finalBulaUrl = drug.bulaSlug
+                  ? `https://bula.com.br/${drug.bulaSlug}`
+                  : `https://bula.com.br/buscar?termo=${encodeURIComponent(drug.name)}`;
+                const bulaButtonText = 'Bula Online (bula.com.br)';
                 const isCopied = copiedDrug === drug.name;
 
                 return (

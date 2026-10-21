@@ -147,16 +147,21 @@ ${latest.observacao || 'Sem observações adicionais'}
         />
       </div>
 
-      {/* Form Fields: Observação livre */}
+      {/* Form Fields: Evolução Farmacêutica (Texto Livre) */}
       <div>
-        <label className="block text-xs font-semibold text-slate-700 mb-1">
-          Observação livre
-        </label>
+        <div className="flex items-center justify-between mb-1">
+          <label className="block text-xs font-semibold text-slate-700">
+            Evolução Farmacêutica (Texto Livre)
+          </label>
+          <span className="text-[10px] text-slate-400 font-mono">
+            VM • Diálise • NPT • Diagnóstico • Condutas
+          </span>
+        </div>
         <textarea
           rows={3}
           value={observacao}
           onChange={(e) => setObservacao(e.target.value)}
-          placeholder="observações..."
+          placeholder="Descreva a evolução clínica livremente (ex: Paciente em ar ambiente, sem diálise, dieta enteral com boa aceitação. Sugerido ajuste de antimicrobiano conforme ClCr...)"
           className="w-full px-3 py-2 bg-white border border-[#D9E2EC] rounded-lg text-sm text-slate-900 focus:outline-none focus:border-[#0A7EA4] transition placeholder:text-slate-400 font-sans"
         />
       </div>

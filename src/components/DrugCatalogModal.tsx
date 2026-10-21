@@ -205,9 +205,9 @@ export const DrugCatalogModal: React.FC<DrugCatalogModalProps> = ({
                 drug.tags.includes('bolsa_pronta_rtu') ||
                 (drug.brandName && drug.brandName.toLowerCase().includes('bolsa pronta'));
 
-              const finalBulaUrl = drug.bulaUrl
-                ? drug.bulaUrl
-                : `https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=${encodeURIComponent(drug.anvisaSearchQuery || drug.name)}`;
+              const finalBulaUrl = drug.bulaSlug
+                ? `https://bula.com.br/${drug.bulaSlug}`
+                : `https://bula.com.br/buscar?termo=${encodeURIComponent(drug.name)}`;
 
               return (
                 <div
@@ -323,7 +323,7 @@ export const DrugCatalogModal: React.FC<DrugCatalogModalProps> = ({
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 text-[11px] font-semibold text-teal-700 hover:text-teal-900 hover:underline shrink-0"
                     >
-                      <span>{drug.bulaLabel || 'Acessar Bula ANVISA'}</span>
+                      <span>Bula Online (bula.com.br)</span>
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
