@@ -4,7 +4,8 @@ import {
   Layers,
   RotateCcw,
   CheckCircle2,
-  Activity
+  Activity,
+  Sparkles
 } from 'lucide-react';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { auth, crivoFirestore } from './services/firebase';
@@ -78,6 +79,60 @@ export default function App() {
 
   // Auth observer
   useEffect(() => {
+    // Check if URL has ?demo=1 or ?orientador=1 for direct evaluation bypass
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('demo') === '1' || params.get('orientador') === '1' || params.get('demo') === 'true') {
+        const demoUser: ClinicalUser = {
+          uid: 'demo_user',
+          email: 'demo@crivo.hospital',
+          displayName: 'Usuário Demonstração',
+          photoURL: ''
+        };
+        clinicalAuth.setActiveSession(demoUser);
+        setUser(demoUser);
+        setViewMode('app');
+        refreshSetores(demoUser);
+        setPatientCtx({
+          setorId: 'setor_uti_geral',
+          leito: '04',
+          pacienteIniciais: 'M.A.S.',
+          idade: 68,
+          peso: 72,
+          sexo: 'm',
+          creatinina: 1.4,
+          clcr: 49,
+          clcrManual: false,
+          emVM: true,
+          gestacaoLactacao: '',
+          dialise: '',
+          ctxNota: 'VM invasiva • Foco pulmonar',
+          indications: [],
+        });
+        setSelectedDrugIds(['meropenem', 'vancomicina']);
+        setDrugRoutes({ meropenem: 'IV', vancomicina: 'IV' });
+        setEvolutionEntries([
+          {
+            id: 'demo_evo_1',
+            dataIso: new Date().toISOString(),
+            dataHoraFormatada: new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }),
+            autor: 'Farmacêutico Clínico (Demonstração)',
+            autorEmail: 'demo@crivo.hospital',
+            farmacos: ['Meropenem', 'Vancomicina'],
+            achados: [
+              'Ajuste Renal: Meropenem requer adequação posológica para ClCr < 50 mL/min.',
+              'Monitorização: Vancomicina requer dosagem de nível sérico (vale sérico).'
+            ],
+            textoLivre: 'Paciente idoso em ventilação mecânica invasiva na UTI Geral (Leito 04). ClCr calculado em 49 mL/min. Recomendado ajuste posológico de Meropenem para 1g IV a cada 12h (conforme função renal) e monitorização rigorosa de vancomicinemia.',
+            episodioId: 'ep_demo_04'
+          }
+        ]);
+        return;
+      }
+    } catch {
+      // ignore
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
@@ -106,7 +161,41 @@ export default function App() {
   const refreshSetores = async (activeUserParam?: any) => {
     setIsSyncing(true);
     const target = activeUserParam || user || clinicalAuth.getActiveSession();
-    const list = await crivoFirestore.getSetores(target);
+    let list = await crivoFirestore.getSetores(target);
+
+    // If demo account and no sectors yet, seed realistic demonstration sectors
+    if ((!list || list.length === 0) && target?.email?.includes('demo')) {
+      list = [
+        {
+          id: 'setor_uti_geral',
+          nome: 'UTI Geral Adulto',
+          ownerUid: 'demo_orientador',
+          ownerEmail: 'orientador.demo@crivo.hospital',
+          membros: [],
+          membrosEmails: [],
+          souDono: true
+        },
+        {
+          id: 'setor_clinica_medica',
+          nome: 'Clínica Médica',
+          ownerUid: 'demo_orientador',
+          ownerEmail: 'orientador.demo@crivo.hospital',
+          membros: [],
+          membrosEmails: [],
+          souDono: true
+        },
+        {
+          id: 'setor_uco',
+          nome: 'Unidade Coronariana (UCO)',
+          ownerUid: 'demo_orientador',
+          ownerEmail: 'orientador.demo@crivo.hospital',
+          membros: [],
+          membrosEmails: [],
+          souDono: true
+        }
+      ];
+    }
+
     setSetores(list);
     setIsSyncing(false);
   };
@@ -289,11 +378,50 @@ export default function App() {
             }
             clinicalAuth.setActiveSession(activeUser);
             setUser(activeUser);
-            setPatientCtx(initialPatientCtx);
-            setEvolutionEntries([]);
             setViewMode('app');
             await refreshSetores(activeUser);
-            showToast(`Ambiente Clínico ativado: ${activeUser.email || 'Profissional'}`);
+
+            if (activeUser.email?.includes('demo')) {
+              setPatientCtx({
+                setorId: 'setor_uti_geral',
+                leito: '04',
+                pacienteIniciais: 'M.A.S.',
+                idade: 68,
+                peso: 72,
+                sexo: 'm',
+                creatinina: 1.4,
+                clcr: 49,
+                clcrManual: false,
+                emVM: true,
+                gestacaoLactacao: '',
+                dialise: '',
+                ctxNota: 'VM invasiva • Foco pulmonar',
+                indications: [],
+              });
+              setSelectedDrugIds(['meropenem', 'vancomicina']);
+              setDrugRoutes({ meropenem: 'IV', vancomicina: 'IV' });
+              setEvolutionEntries([
+                {
+                  id: 'demo_evo_1',
+                  dataIso: new Date().toISOString(),
+                  dataHoraFormatada: new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }),
+                  autor: 'Prof. Orientador (Demonstração)',
+                  autorEmail: 'orientador.demo@crivo.hospital',
+                  farmacos: ['Meropenem', 'Vancomicina'],
+                  achados: [
+                    'Ajuste Renal: Meropenem requer adequação posológica para ClCr < 50 mL/min.',
+                    'Monitorização: Vancomicina requer dosagem de nível sérico (vale sérico).'
+                  ],
+                  textoLivre: 'Paciente idoso em ventilação mecânica invasiva na UTI Geral (Leito 04). ClCr calculado em 49 mL/min. Recomendado ajuste posológico de Meropenem para 1g IV a cada 12h (conforme função renal) e monitorização rigorosa de vancomicinemia.',
+                  episodioId: 'ep_demo_04'
+                }
+              ]);
+              showToast('🎓 Modo Demonstração ativado! Cenário da UTI carregado.');
+            } else {
+              setPatientCtx(initialPatientCtx);
+              setEvolutionEntries([]);
+              showToast(`Ambiente Clínico ativado: ${activeUser.email || 'Profissional'}`);
+            }
           }}
         />
 
@@ -342,6 +470,46 @@ export default function App() {
         onOpenReferences={() => setIsReferencesModalOpen(true)}
         isSyncing={isSyncing}
       />
+
+      {/* Banner de Demonstração */}
+      {user?.email?.includes('demo') && (
+        <div className="bg-gradient-to-r from-teal-900 via-slate-900 to-indigo-950 text-white text-xs px-3 sm:px-6 py-2 border-b border-teal-500/30 shadow-xs flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="p-1 bg-teal-500/20 text-teal-300 rounded-md shrink-0">
+              <Sparkles className="w-3.5 h-3.5" />
+            </span>
+            <span className="text-[11px] sm:text-xs">
+              <strong className="text-teal-300 font-semibold">Modo Demonstração Ativo:</strong> Cenário clínico de UTI carregado para teste rápido. Todas as funções liberadas.
+            </span>
+          </div>
+          <div className="flex items-center gap-3 text-[11px] font-mono">
+            <button
+              type="button"
+              onClick={handleClearForm}
+              className="text-teal-300 hover:text-white underline cursor-pointer"
+              title="Limpar campos para testar outro paciente"
+            >
+              Limpar / Novo Paciente
+            </button>
+            <span className="text-slate-600">|</span>
+            <button
+              type="button"
+              onClick={async () => {
+                await clinicalAuth.logout();
+                setUser(null);
+                setSetores([]);
+                setPatientCtx(initialPatientCtx);
+                setEvolutionEntries([]);
+                setActiveTab('triagem');
+                setViewMode('landing');
+              }}
+              className="text-slate-400 hover:text-rose-300 cursor-pointer"
+            >
+              Sair
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Navigation Tabs Bar */}
       <nav className="bg-[#0B1F3A] border-b border-slate-800 text-slate-300">

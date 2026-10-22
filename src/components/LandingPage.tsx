@@ -30,6 +30,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [infoNotice, setInfoNotice] = useState<string | null>(null);
 
+  const handleDemoAccess = () => {
+    const demoUser: ClinicalUser = {
+      uid: 'demo_user',
+      email: 'demo@crivo.hospital',
+      displayName: 'Usuário Demonstração',
+      photoURL: ''
+    };
+    clinicalAuth.setActiveSession(demoUser);
+    onEnterApp(demoUser);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password) {
@@ -121,15 +132,35 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onEnterApp }) => {
           </div>
 
           {/* Title & Subtitle */}
-          <div className="text-left mb-6">
+          <div className="text-left mb-5">
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">
               {isRegisterMode ? 'Criar conta no Crivo' : 'Bem-vindo ao Crivo'}
             </h1>
             <p className="text-sm text-slate-500 mt-1">
               {isRegisterMode
                 ? 'Cadastre seus dados profissionais'
-                : 'Entre com seus dados cadastrados'}
+                : 'Suporte à Decisão Clínica e Farmacoterapia Segura'}
             </p>
+          </div>
+
+          {/* Botão Acesso Demonstração */}
+          <div className="mb-5">
+            <button
+              type="button"
+              onClick={handleDemoAccess}
+              className="w-full py-3 px-4 bg-teal-800 hover:bg-teal-900 active:bg-teal-950 text-white font-semibold text-sm rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Sparkles className="w-4 h-4 text-teal-300" />
+              <span>Acesso Demonstração</span>
+            </button>
+          </div>
+
+          <div className="relative flex py-1 items-center mb-4">
+            <div className="flex-grow border-t border-slate-200"></div>
+            <span className="shrink-0 px-2.5 text-[11px] text-slate-400 font-mono">
+              ou entrar com e-mail e senha
+            </span>
+            <div className="flex-grow border-t border-slate-200"></div>
           </div>
 
           {/* Error Message */}
